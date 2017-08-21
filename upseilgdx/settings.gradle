@@ -1,4 +1,5 @@
 include ":core"
 include ":util"
+include ":artemis"
 
 rootProject.name = 'upseilgdx'

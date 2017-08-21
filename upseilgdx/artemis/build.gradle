@@ -1,11 +1,12 @@
-// UpseilGDX - LibGDX Extensions
+// UpseilGDX - Artemis Extensions 
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
 }
 
 eclipse.project {
-    name = appName + "-Core"
+    name = appName + "-Artemis"
 }
