@@ -1,0 +1,11 @@
+// UpseilGDX Core
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+}
+
+eclipse.project {
+    name = appName + "-Core"
+}

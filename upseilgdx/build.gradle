@@ -1,0 +1,43 @@
+// UpseilGDX Parent
+
+apply plugin: 'base'
+
+allprojects {
+    apply plugin: "eclipse"
+
+	group = 'com.upseil.upseilgdx'
+    version = '0.1.0'
+    
+    ext {
+        appName = "UpseilGDX"
+		gradleTarget = '3.2.1'
+		javaTarget = '1.8'
+        gdxTarget = '1.9.6'
+        artemisTarget = '2.1.0'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+	sourceCompatibility = "$javaTarget"
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
+
+task wrapper (type: Wrapper) {
+	group = 'help'
+	description = "Configures the wrapper for the target version $gradleTarget."
+	
+	gradleVersion = "$gradleTarget"
+}

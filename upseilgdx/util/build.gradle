@@ -1,0 +1,8 @@
+// UpseilGDX Utilities
+// Independent from libGDX and artemis-odb
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+eclipse.project {
+    name = appName + "-Util"
+}
