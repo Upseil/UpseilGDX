@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+group = 'com.upseil.libgdx'
+version = '0.1.0'
+
+ext {
+	gradleTarget = '3.2.1'
+	javaTarget = '1.8'
+	gdxTarget = '1.9.6'
+    artemisTarget = '2.1.0'
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+sourceCompatibility = "$javaTarget"
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+dependencies {
+    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
+}
+
+eclipse.project {
+    name = "UpseilGDX"
+}
+
+task wrapper (type: Wrapper) {
+	group = 'help'
+	description = "Configures the wrapper for the target version $gradleTarget."
+	
+	gradleVersion = "$gradleTarget"
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
