@@ -24,7 +24,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  */
-package com.upseil.gdx.evalex;
+package com.upseil.gdx.util;
 
 import java.math.MathContext;
 import java.util.ArrayList;

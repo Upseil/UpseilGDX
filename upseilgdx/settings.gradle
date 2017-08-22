@@ -1,6 +1,6 @@
 include ":core"
 include ":util"
 include ":artemis"
-include ":html"
+include ":gwt"
 
 rootProject.name = 'upseilgdx'

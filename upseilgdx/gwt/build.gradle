@@ -8,5 +8,5 @@ dependencies {
 }
 
 eclipse.project {
-    name = appName + "-HTML"
+    name = appName + "-GWT"
 }
