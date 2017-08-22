@@ -1,19 +1,23 @@
 // UpseilGDX Parent
 
 apply plugin: 'base'
+apply plugin: 'maven-publish'
 
 allprojects {
     apply plugin: "eclipse"
 
-	group = 'com.upseil.upseilgdx'
-    version = '0.1.0'
+	group = 'com.upseil.gdx'
+    version = '0.1.0-SNAPSHOT'
     
     ext {
         appName = "UpseilGDX"
 		gradleTarget = '3.2.1'
 		javaTarget = '1.8'
         gdxTarget = '1.9.6'
+        gwtTarget = '2.8.0'
         artemisTarget = '2.1.0'
+        jacksonTarget = '2.8.8'
+        jacksonGwtTarget = '0.14.2'
     }
 
     repositories {
@@ -29,6 +33,16 @@ subprojects {
 
 	sourceCompatibility = "$javaTarget"
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+	publishing {
+	    publications {
+			"$project.name"(MavenPublication) {
+				artifactId "$project.name"
+			
+				from components.java
+			}
+	    }
+	}
 }
 
 tasks.eclipse.doLast {
