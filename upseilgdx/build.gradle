@@ -33,7 +33,8 @@ subprojects {
 
 	sourceCompatibility = "$javaTarget"
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
+}
+configure(subprojects.findAll {it.name != 'tools'}) {
 	publishing {
 	    publications {
 			"$project.name"(MavenPublication) {
