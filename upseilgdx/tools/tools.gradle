@@ -46,6 +46,12 @@ ext {
 // --------------------------------------------------------------------------------------------------------------------
 
 buildscript {
+	repositories {
+	    mavenLocal()
+	    mavenCentral()
+	    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	    jcenter()
+	}
     dependencies {
         classpath "com.badlogicgames.gdx:gdx-tools:$gdxTarget"
     }
@@ -130,8 +136,8 @@ task packSkins (group: 'build') {
             String skinName = skin[2]
         
             String fontRootDir = rawFontRoot + '/' + fontName + '/'
-            String skinBaseDir = rawSkinRoot + baseName + '/'
-            String packedSkinDir = rawSkinRoot + skinName + '/'
+            String skinBaseDir = rawSkinRoot + '/' + baseName + '/'
+            String packedSkinDir = rawSkinRoot + '/' + skinName + '/'
             
             println 'Collecting skin base ' + baseName + ' and font ' + fontName
             copy { from skinBaseDir into upseilGdxTools_workingDirectory }
@@ -158,8 +164,8 @@ task deploySkins (group: 'build') {
     doLast {
         for (String[] skin : skins) {
             String skinName = skin[2]
-            String packedSkin = rawSkinRoot + skinName + '/'
-            String target = skinRoot + skinName + '/'
+            String packedSkin = rawSkinRoot + '/' + skinName + '/'
+            String target = skinRoot + '/' + skinName + '/'
             println 'Deploying Skin ' + skinName + ': ' + packedSkin + ' -> ' + target
             copy {
                 from packedSkin
