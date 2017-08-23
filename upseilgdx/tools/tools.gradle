@@ -1,0 +1,170 @@
+// UpseilGDX Tools - Gradle Utilites
+
+/** pixelateFonts Configuration
+ *   Filters every pixel in the fonts .png file:
+ *     if pixel.rgb == filter.rgb && pixel.alpha >= alphaThreshold {
+ *       pixel.rgba = filter.rgba
+ *     } else {
+ *       pixel.rgba = transparent.rgba
+ *     }
+ *
+ *   Pattern for the path to the font folder containing the .fnt and .png:
+ *     fontPath = <rawFontRoot>/<fontFamilyName>/fnt-<fontSize>/
+ *     fntPath = <fontPath>/<fontFamilyName>-<fontSize>.fnt
+ *     pngPath = <fontPath>/<fontFamilyName>-<fontSize>.png
+ */
+ext {
+    rawFontRoot = 'relative path to root font folder'
+    fontsToPixelate = [
+        ['fontFamilyName', [
+                ['fontSize as Integer', 'filterColor as Hex-String', 0 /*alphaThreshold as Integer*/]
+            ]
+        ]
+    ]
+}
+
+
+/** packSkins/deploySkins Configuration
+ *   Packs the fonts and components of the defined skins
+ *   and deploys them to the skin root folder in the game assets.
+ *   Packed skins are saved in the raw skin root folder.
+ *
+ *   Requires the rawFontRoot variable from the pixelateFonts configuration.
+ *
+ *   Path patterns for used
+ *     fonts:     <rawFoontRoot>/<fontName>/fnt-*
+ *     resources: <rawSkinRoot>/<skinBase>
+ */
+ext {
+    rawSkinRoot = 'relative path to root folder of the skin resources'
+    skinRoot = 'relative path to root folder of the skin assets (deploy destination)'
+    skins = [
+        ['skinBase', 'fontName', 'skinName']
+    ]
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+buildscript {
+    dependencies {
+        classpath "com.badlogicgames.gdx:gdx-tools:$gdxTarget"
+    }
+}
+    
+ext {
+    upseilGdxTools_workingDirectory = 'build/tmp/'
+}
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import javax.imageio.ImageIO;
+task pixelateFonts (group: 'build') {
+    description = 'Pixelates the configured fonts.'
+    doLast {
+        for (Object[] fontFamily : fontsToPixelate) {
+            String familyName = fontFamily[0]
+            String familyPath = rawFontRoot + '/' + familyName + '/'
+            String pixelatedFamilyName = familyName + '-pixelated'
+            String pixelatedFamilyPath = rawFontRoot + '/' + pixelatedFamilyName + '/'
+            println 'Pixelating font family ' + familyName
+            for (Object[] font : fontFamily[1]) {
+                String fontSize = font[0]
+                Color filter = Color.decode(font[1])
+                Color transparent = new Color(0, true)
+                double minAlpha = font[2]
+                
+                String fontPath = familyPath + 'fnt-' + fontSize + '/'
+                String pixelatedFontPath = pixelatedFamilyPath + 'fnt-' + fontSize + '/'
+                println '  Pixelating font fnt-' + fontSize + ':' + fontPath + ' -> ' + pixelatedFontPath
+                
+                String bitmapPath = fontPath + familyName + '-' + fontSize + '.png'
+                BufferedImage bitmap = ImageIO.read(new File(bitmapPath))
+                byte[] pixels = ((DataBufferByte) bitmap.getRaster().getDataBuffer()).getData()
+                int x = 0;
+                int y = 0;
+                for (int pixelStart = 0; pixelStart < pixels.length; pixelStart += 4) {
+                    int value = (((int) pixels[pixelStart] & 0xFF) << 24)     |  // alpha
+                                (((int) pixels[pixelStart + 3] & 0xFF) << 16) |  // red
+                                (((int) pixels[pixelStart + 2] & 0xFF) << 8)  |  // green
+                                (((int) pixels[pixelStart + 1] & 0xFF) << 0);    // blue
+                    Color color = new Color(value, true)
+                    
+                    if (color.getRed() == filter.getRed() &&
+                        color.getGreen() == filter.getGreen() &&
+                        color.getBlue() == filter.getBlue() &&
+                        color.getAlpha() >= minAlpha) {
+                            bitmap.setRGB(x, y, filter.getRGB())
+                    } else {
+                        bitmap.setRGB(x, y, transparent.getRGB())
+                    }
+                    
+                    x++;
+                    if (x == bitmap.getWidth()) {
+                        x = 0;
+                        y++;
+                    }
+                }
+                
+                String fntPath = fontPath + familyName + '-' + fontSize + '.fnt'
+                copy {
+                    from fntPath
+                    into pixelatedFontPath
+                    rename(familyName + '-' + fontSize + '.fnt',
+                           pixelatedFamilyName + '-' + fontSize + '.fnt')
+                }
+                String pixelatedBitmapPath = pixelatedFontPath + pixelatedFamilyName + '-' + fontSize + '.png'
+                ImageIO.write(bitmap, 'png', new File(pixelatedBitmapPath))
+            }
+        }
+    }
+}
+
+import com.badlogic.gdx.tools.texturepacker.TexturePacker
+task packSkins (group: 'build') {
+    description = 'Packs the skins in the raw assets.'
+    doLast {
+        for (String[] skin : skins) {
+            String baseName = skin[0]
+            String fontName = skin[1]
+            String skinName = skin[2]
+        
+            String fontRootDir = rawFontRoot + '/' + fontName + '/'
+            String skinBaseDir = rawSkinRoot + baseName + '/'
+            String packedSkinDir = rawSkinRoot + skinName + '/'
+            
+            println 'Collecting skin base ' + baseName + ' and font ' + fontName
+            copy { from skinBaseDir into upseilGdxTools_workingDirectory }
+            FileTree fontTree = fileTree(dir: fontRootDir, includes: ['**/fnt-*/*.fnt', '**/fnt-*/*.png'])
+            copy { from fontTree.files into upseilGdxTools_workingDirectory }
+            
+            println 'Packing skin ' + skinName + ' into ' + packedSkinDir
+            delete fileTree(dir: packedSkinDir)
+            TexturePacker.process(upseilGdxTools_workingDirectory, packedSkinDir, skinName)
+            copy {
+                from upseilGdxTools_workingDirectory
+                into packedSkinDir
+                include '**/*.fnt'
+            }
+            
+            delete fileTree(dir: upseilGdxTools_workingDirectory)
+        }
+    }
+}
+
+task deploySkins (group: 'build') {
+    description = 'Packs the skins in the raw assets and deploys them to the game assets.'
+    dependsOn packSkins
+    doLast {
+        for (String[] skin : skins) {
+            String skinName = skin[2]
+            String packedSkin = rawSkinRoot + skinName + '/'
+            String target = skinRoot + skinName + '/'
+            println 'Deploying Skin ' + skinName + ': ' + packedSkin + ' -> ' + target
+            copy {
+                from packedSkin
+                into target
+            }
+        }
+    }
+}
