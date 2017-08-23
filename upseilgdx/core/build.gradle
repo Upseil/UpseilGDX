@@ -6,6 +6,15 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
 }
 
+publishing {
+    publications {
+		core(MavenPublication) {
+			// Overriding the default artifact pattern
+			artifactId "$rootProject.name"
+		}
+    }
+}
+
 eclipse.project {
     name = appName + "-Core"
 }
