@@ -31,7 +31,7 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
     }
     
     @Override
-    protected void initialize() {
+    protected final void initialize() {
         ImmutableBag<BaseSystem> systems = world.getSystems();
         for (int i = 0; i < systems.size(); i++) {
             BaseSystem system = systems.get(i);
@@ -43,7 +43,11 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
                 visualSystems.add(handle);
             }
         }
+        
+        customInitialize();
     }
+
+    protected void customInitialize() { }
 
     @Override
     protected void process() {
@@ -51,10 +55,16 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
         logicalDelta += (isPaused ? 0 : world.getDelta()) + additionalDelta;
         isAdditionalDeltaConsumed = true;
         
+        beforeSystemProcessing();
+        
         world.setDelta(Math.min(logicalDelta, frameTimeInSeconds));
         do {
             logicalDelta -= frameTimeInSeconds;
             process(logicalSystems);
+            if (abortLogicProcessing()) {
+                onAbortLogicProcessing();
+                logicalDelta = 0;
+            }
         } while (logicalDelta > frameTimeInSeconds);
         logicalDelta = logicalDelta < 0 ? 0 : logicalDelta;
         
@@ -62,10 +72,22 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
         world.setDelta(visualDelta);
         process(visualSystems);
         updateEntityStates();
+        
+        afterSystemProcessing();
 
         additionalDelta = isAdditionalDeltaConsumed ? 0 : additionalDelta;
     }
+
+    protected void beforeSystemProcessing() { }
     
+    protected boolean abortLogicProcessing() {
+        return false;
+    }
+
+    protected void onAbortLogicProcessing() { }
+
+    protected void afterSystemProcessing() { }
+
     private void process(Array<SystemHandle> systems) {
         for (SystemHandle handle : systems) {
             if (disabled.get(handle.disabledIndex))
@@ -75,24 +97,37 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
             handle.system.process();
         }
     }
+    
+    protected final float getLogicalDelta() {
+        return logicalDelta;
+    }
+    
+    protected final float getAdditionalDelta() {
+        return additionalDelta;
+    }
+    
+    protected final void setAdditionalDelta(float additionalDelta) {
+        this.additionalDelta = additionalDelta;
+        isAdditionalDeltaConsumed = false;
+    }
 
-    public float getFrameTimeInSeconds() {
+    public final float getFrameTimeInSeconds() {
         return frameTimeInSeconds;
     }
 
-    public int getFrameTimeInMilliseconds() {
+    public final int getFrameTimeInMilliseconds() {
         return frameTimeInMilliseconds;
     }
 
-    public float getMaximumLogicActionsPerSecond() {
+    public final float getMaximumLogicActionsPerSecond() {
         return maximumLogicActionsPerSecond;
     }
     
-    public void setPaused(boolean isPaused) {
+    public final void setPaused(boolean isPaused) {
         this.isPaused = isPaused;
     }
     
-    public boolean isPaused() {
+    public final boolean isPaused() {
         return isPaused && additionalDelta <= 0;
     }
 
