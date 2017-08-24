@@ -65,7 +65,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import javax.imageio.ImageIO;
-task pixelateFonts (group: 'build') {
+task pixelateFonts (group: 'Asset') {
     description = 'Pixelates the configured fonts.'
     doLast {
         for (Object[] fontFamily : fontsToPixelate) {
@@ -127,7 +127,7 @@ task pixelateFonts (group: 'build') {
 }
 
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
-task packSkins (group: 'build') {
+task packSkins (group: 'Asset') {
     description = 'Packs the skins in the raw assets.'
     doLast {
         for (String[] skin : skins) {
@@ -158,7 +158,7 @@ task packSkins (group: 'build') {
     }
 }
 
-task deploySkins (group: 'build') {
+task deploySkins (group: 'Asset') {
     description = 'Packs the skins in the raw assets and deploys them to the game assets.'
     dependsOn packSkins
     doLast {
@@ -171,6 +171,19 @@ task deploySkins (group: 'build') {
                 from packedSkin
                 into target
             }
+        }
+    }
+}
+
+task deploySkinsTraceless (group: 'Asset') {
+    description = "Packs the skins and deploys them to the game assets without traces in the raw assets."
+    dependsOn deploySkins
+    doLast {
+        for (String[] skin : skins) {
+            String skinName = skin[2]
+            String packedSkin = rawSkinRoot + '/' + skinName + '/'
+            
+            delete packedSkin
         }
     }
 }
