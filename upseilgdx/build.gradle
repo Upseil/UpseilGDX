@@ -35,12 +35,18 @@ subprojects {
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 }
 configure(subprojects.findAll {it.name != 'tools'}) {
+	task sourceJar(type: Jar, dependsOn: classes) {
+		from sourceSets.main.allSource
+		classifier "sources"
+	}
+
 	publishing {
 	    publications {
 			"$project.name"(MavenPublication) {
 				artifactId "$rootProject.name-$project.name"
 			
 				from components.java
+				artifact sourceJar
 			}
 	    }
 	}
