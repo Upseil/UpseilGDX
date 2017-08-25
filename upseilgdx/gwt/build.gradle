@@ -1,7 +1,7 @@
 // UpseilGDX - LibGDX Extensions for targeting HTML
 
 dependencies {
-    compile project(":core")
+    compile "com.upseil.gdx:upseilgdx:$version"
     compile "com.github.nmorel.gwtjackson:gwt-jackson:$jacksonGwtTarget"
 }
 
