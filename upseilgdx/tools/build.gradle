@@ -1,7 +1,5 @@
 // UpseilGDX Tools
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-
 eclipse.project {
     name = appName + "-Tools"
 }

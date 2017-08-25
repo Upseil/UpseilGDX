@@ -1,0 +1,52 @@
+// Parent Gradle file for easier setup of projects depending on UpseilGDX
+
+apply plugin: 'base'
+
+allprojects {
+    apply plugin: "eclipse"
+
+	buildscript {
+	    repositories {
+	        mavenLocal()
+	        mavenCentral()
+	        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+	        jcenter()
+	    }
+	}
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+	sourceSets.main.java.srcDirs = [ "src/" ]
+	sourceCompatibility = "$javaTarget"
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
+
+tasks.eclipse.doLast {
+    delete ".project"
+}
+
+task wrapper (type: Wrapper) {
+	group = 'help'
+	description = "Configures the wrapper for the target version $gradleTarget."
+	
+	gradleVersion = "$gradleTarget"
+}
+
+// UpseilGDX Tooling
+
+task publishUpseilGDX(type: GradleBuild) {
+	dir = "$upseilGdxPath"
+	buildFile = '$upseilGdxPath/build.gradle'
+	tasks = ['publishToMavenLocal']
+}
+
+apply from: "$upseilGdxPath/tools/tools.gradle"

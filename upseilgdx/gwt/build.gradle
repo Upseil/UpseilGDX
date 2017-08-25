@@ -1,7 +1,5 @@
 // UpseilGDX - LibGDX Extensions for targeting HTML
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-
 dependencies {
     compile project(":core")
     compile "com.github.nmorel.gwtjackson:gwt-jackson:$jacksonGwtTarget"

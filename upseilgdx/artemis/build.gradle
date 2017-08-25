@@ -1,7 +1,5 @@
 // UpseilGDX - Artemis Extensions 
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"

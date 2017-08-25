@@ -1,7 +1,5 @@
 // UpseilGDX - LibGDX Extensions
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
 }
