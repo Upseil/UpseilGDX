@@ -2,6 +2,7 @@
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    compile "com.upseil.gdx:upseilgdx-util:$version"
 }
 
 publishing {
