@@ -3,6 +3,7 @@
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
+    compile "com.upseil.gdx:upseilgdx:$version"
 }
 
 eclipse.project {

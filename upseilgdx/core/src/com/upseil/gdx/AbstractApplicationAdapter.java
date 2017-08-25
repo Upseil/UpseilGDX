@@ -16,6 +16,10 @@ public abstract class AbstractApplicationAdapter extends ApplicationAdapter {
     }
 
     protected abstract void render(float deltaTime);
+    
+    protected Skin loadSkin(String path) {
+        return loadSkin(path, true, true);
+    }
 
     protected Skin loadSkin(String path, boolean registerColors, boolean enableFontMarkup) {
         Skin skin = new Skin(Gdx.files.internal(path));
