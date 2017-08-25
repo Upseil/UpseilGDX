@@ -37,6 +37,10 @@ import com.upseil.gdx.util.DoubleBasedExpression;
  */
 public class RawConfig {
     
+    public static RawConfig loadConfig(String path) {
+        return new RawConfig(null, loadJson(path));
+    }
+    
     public static JsonValue loadJson(String path) {
         FileHandle handle = Gdx.files.internal(path);
         JsonValue jsonRoot;
@@ -47,10 +51,6 @@ public class RawConfig {
             throw new RuntimeException("Could not load config file with path: " + path, e);
         }
         return jsonRoot;
-    }
-    
-    public static RawConfig loadConfig(String path) {
-        return new RawConfig(null, loadJson(path));
     }
     
     private final RawConfig parent;
