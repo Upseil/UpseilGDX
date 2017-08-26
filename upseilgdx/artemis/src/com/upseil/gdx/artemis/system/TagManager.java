@@ -2,6 +2,7 @@ package com.upseil.gdx.artemis.system;
 
 import com.artemis.Aspect;
 import com.artemis.BaseSystem;
+import com.artemis.Entity;
 import com.artemis.EntitySubscription.SubscriptionListener;
 import com.artemis.utils.IntBag;
 import com.badlogic.gdx.utils.Array;
@@ -37,8 +38,16 @@ public class TagManager<TagType> extends BaseSystem {
         });
     }
     
+    public void register(TagType tag, Entity entity) {
+        register(tag, entity.getId());
+    }
+    
     public void register(TagType tag, int entity) {
         register(tag.toString(), entity);
+    }
+    
+    public void register(String tag, Entity entity) {
+        register(tag, entity.getId());
     }
     
     public void register(String tag, int entity) {
@@ -71,12 +80,20 @@ public class TagManager<TagType> extends BaseSystem {
     public boolean isRegistered(String tag) {
         return entitiesByTag.containsKey(tag);
     }
-    
-    public int getEntity(TagType tag) {
+
+    public Entity getEntity(TagType tag) {
         return getEntity(tag.toString());
     }
     
-    public int getEntity(String tag) {
+    public Entity getEntity(String tag) {
+        return world.getEntity(getEntityId(tag));
+    }
+    
+    public int getEntityId(TagType tag) {
+        return getEntityId(tag.toString());
+    }
+    
+    public int getEntityId(String tag) {
         return entitiesByTag.get(tag, -1);
     }
     
