@@ -38,3 +38,15 @@ configure(subprojects.findAll {it.name != 'tools'}) {
 	    }
 	}
 }
+
+model {
+	tasks.publishCorePublicationToMavenLocal {
+		dependsOn 'publishUtilPublicationToMavenLocal'
+	}
+	tasks.publishArtemisPublicationToMavenLocal {
+		dependsOn 'publishCorePublicationToMavenLocal'
+	}
+	tasks.publishGwtPublicationToMavenLocal {
+		dependsOn 'publishCorePublicationToMavenLocal'
+	}
+}
