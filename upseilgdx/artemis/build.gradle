@@ -1,11 +1,12 @@
 // UpseilGDX - Artemis Extensions 
 
 dependencies {
+    compile project(":upseilgdx:gdx")
+    
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
-    compile "com.upseil.gdx:upseilgdx:$version"
 }
 
 eclipse.project {
-    name = appName + "-Artemis"
+    name = "UpseilGDX-Artemis"
 }

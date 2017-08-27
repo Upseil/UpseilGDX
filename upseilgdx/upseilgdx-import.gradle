@@ -1,0 +1,8 @@
+include ":upseilgdx"
+project(":upseilgdx").projectDir = file("$upseilGdxPath")
+
+include ":upseilgdx:gdx"
+include ":upseilgdx:util"
+include ":upseilgdx:artemis"
+include ":upseilgdx:gwt"
+include ":upseilgdx:tools"

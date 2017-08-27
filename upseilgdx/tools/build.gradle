@@ -1,5 +1,5 @@
 // UpseilGDX Tools
 
 eclipse.project {
-    name = appName + "-Tools"
+    name = "UpseilGDX-Tools"
 }

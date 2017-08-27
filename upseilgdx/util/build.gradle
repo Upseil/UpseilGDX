@@ -2,5 +2,5 @@
 // Independent from libGDX and artemis-odb
 
 eclipse.project {
-    name = appName + "-Util"
+    name = "UpseilGDX-Util"
 }

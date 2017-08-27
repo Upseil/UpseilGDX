@@ -1,10 +1,10 @@
 // UpseilGDX - LibGDX Extensions for targeting HTML
 
 dependencies {
-    compile "com.upseil.gdx:upseilgdx:$version"
+    compile project(":upseilgdx:gdx")
     compile "com.github.nmorel.gwtjackson:gwt-jackson:$jacksonGwtTarget"
 }
 
 eclipse.project {
-    name = appName + "-GWT"
+    name = "UpseilGDX-GWT"
 }

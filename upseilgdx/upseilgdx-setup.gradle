@@ -42,11 +42,4 @@ task wrapper (type: Wrapper) {
 }
 
 // UpseilGDX Tooling
-
-task publishUpseilGDX(type: GradleBuild) {
-	dir = "$upseilGdxPath"
-	buildFile = "$upseilGdxPath/build.gradle"
-	tasks = ['publishToMavenLocal']
-}
-
-apply from: "$upseilGdxPath/tools/tools.gradle"
+apply from: "$upseilGdxPath/tools.gradle"

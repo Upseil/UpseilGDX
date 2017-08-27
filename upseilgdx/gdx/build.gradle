@@ -1,0 +1,10 @@
+// UpseilGDX - LibGDX Extensions
+
+dependencies {
+    compile project(":upseilgdx:util")
+    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+}
+
+eclipse.project {
+    name = "UpseilGDX-GDX"
+}

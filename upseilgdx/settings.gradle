@@ -1,7 +1,0 @@
-include ":core"
-include ":util"
-include ":artemis"
-include ":gwt"
-include ":tools"
-
-rootProject.name = 'upseilgdx'
