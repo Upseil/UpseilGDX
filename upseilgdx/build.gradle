@@ -1,0 +1,7 @@
+subprojects {
+    apply plugin: 'java'
+
+	sourceSets.main.java.srcDirs = [ "src/" ]
+	sourceCompatibility = "$javaTarget"
+	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+}
