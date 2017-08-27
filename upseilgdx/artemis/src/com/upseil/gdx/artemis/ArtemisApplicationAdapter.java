@@ -1,10 +1,11 @@
-package com.upseil.gdx;
+package com.upseil.gdx.artemis;
 
 import com.artemis.BaseSystem;
 import com.artemis.World;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.upseil.gdx.AbstractApplicationAdapter;
 import com.upseil.gdx.util.RequiresResize;
 
 public abstract class ArtemisApplicationAdapter extends AbstractApplicationAdapter {
