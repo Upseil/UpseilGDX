@@ -17,7 +17,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean keyDown(int keycode) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().keyDown(keycode) || handler.isModal()) {
@@ -29,7 +29,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean keyUp(int keycode) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().keyUp(keycode) || handler.isModal()) {
@@ -41,7 +41,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean keyTyped(char character) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().keyTyped(character) || handler.isModal()) {
@@ -53,7 +53,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().touchDown(screenX, screenY, pointer, button) || handler.isModal()) {
@@ -65,7 +65,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().touchUp(screenX, screenY, pointer, button) || handler.isModal()) {
@@ -77,7 +77,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().touchDragged(screenX, screenY, pointer) || handler.isModal()) {
@@ -89,7 +89,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().mouseMoved(screenX, screenY) || handler.isModal()) {
@@ -101,7 +101,7 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
 
     @Override
     public boolean scrolled(int amount) {
-        EntityIterator iterator = iterator();
+        EntityIterator iterator = reverseIterator();
         while (iterator.hasNext()) {
             InputHandler handler = inputHandlerMapper.get(iterator.next());
             if (handler.getProcessor().scrolled(amount) || handler.isModal()) {

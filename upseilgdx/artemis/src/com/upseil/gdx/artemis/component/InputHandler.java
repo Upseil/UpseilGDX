@@ -12,16 +12,18 @@ public class InputHandler extends PooledComponent {
         return processor;
     }
 
-    public void setProcessor(InputProcessor processor) {
+    public InputHandler setProcessor(InputProcessor processor) {
         this.processor = processor;
+        return this;
     }
 
     public boolean isModal() {
         return isModal;
     }
 
-    public void setModal(boolean isModal) {
+    public InputHandler setModal(boolean isModal) {
         this.isModal = isModal;
+        return this;
     }
 
     @Override

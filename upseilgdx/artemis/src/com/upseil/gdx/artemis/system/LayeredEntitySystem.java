@@ -1,7 +1,6 @@
 package com.upseil.gdx.artemis.system;
 
 import java.util.NoSuchElementException;
-import java.util.function.IntConsumer;
 
 import com.artemis.Aspect.Builder;
 import com.artemis.BaseEntitySystem;
@@ -52,35 +51,37 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
     }
     
     protected EntityIterator iterator() {
-        iterator.reset();
+        iterator.reset(false);
         return iterator;
     }
     
-    protected void forEach(IntConsumer entityConsumer) {
-        for (int i = 0; i < layersToRender.size; i++) {
-            IntSetIterator iterator = entitiesPerLayer.get(layersToRender.get(i)).iterator();
-            while (iterator.hasNext) {
-                entityConsumer.accept(iterator.next());
-            }
-        }
+    protected EntityIterator reverseIterator() {
+        iterator.reset(true);
+        return iterator;
     }
     
     protected class EntityIterator {
         
         private int layerIndex;
+        private boolean reverse;
         private IntSetIterator layerIterator;
         
-        private void reset() {
-            layerIndex = 0;
+        private void reset(boolean reverse) {
+            this.reverse = reverse;
+            layerIndex = reverse ? layersToRender.size - 1 : 0;
             layerIterator = entitiesPerLayer.get(layersToRender.get(layerIndex)).iterator();
         }
         
         public boolean hasNext() {
-            while (!layerIterator.hasNext && layerIndex < layersToRender.size) {
+            while (!layerIterator.hasNext && hasNextLayer()) {
                 layerIterator = entitiesPerLayer.get(layersToRender.get(layerIndex)).iterator();
-                layerIndex++;
+                layerIndex += reverse ? -1 : 1;
             };
             return layerIterator.hasNext;
+        }
+
+        private boolean hasNextLayer() {
+            return reverse ? layerIndex >= 0 : layerIndex < layersToRender.size;
         }
         
         public int next() {
