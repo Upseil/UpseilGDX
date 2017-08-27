@@ -53,6 +53,10 @@ public class LayeredSceneRenderSystem extends LayeredIteratingSystem implements 
         resized = true;
     }
     
+    public Batch getGlobalBatch() {
+        return globalBatch;
+    }
+    
     @Override
     protected void dispose() {
         globalBatch.dispose();

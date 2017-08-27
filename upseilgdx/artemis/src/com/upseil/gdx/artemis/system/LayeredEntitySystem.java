@@ -69,7 +69,7 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
         private void reset(boolean reverse) {
             this.reverse = reverse;
             layerIndex = reverse ? layersToRender.size - 1 : 0;
-            layerIterator = entitiesPerLayer.get(layersToRender.get(layerIndex)).iterator();
+            layerIterator = entitiesPerLayer.get(layersToRender.get(layerIndex)).iterator(); // FIXME Index negative when layers empty
         }
         
         public boolean hasNext() {
