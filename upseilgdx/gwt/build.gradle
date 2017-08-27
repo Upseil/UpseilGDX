@@ -1,11 +1,5 @@
 // UpseilGDX - LibGDX Extensions for targeting HTML
 
-apply plugin: 'java'
-
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceCompatibility = "$javaTarget"
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 dependencies {
     compile project(":upseilgdx:gdx")
     compile "com.github.nmorel.gwtjackson:gwt-jackson:$jacksonGwtTarget"

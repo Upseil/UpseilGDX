@@ -1,12 +1,6 @@
 // UpseilGDX Utilities
 // Independent from libGDX and artemis-odb
 
-apply plugin: 'java'
-
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceCompatibility = "$javaTarget"
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 eclipse.project {
     name = "UpseilGDX-Util"
 }

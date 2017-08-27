@@ -1,11 +1,5 @@
 // UpseilGDX - Artemis Extensions 
 
-apply plugin: 'java'
-
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceCompatibility = "$javaTarget"
-[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-
 dependencies {
     compile project(":upseilgdx:gdx")
     
