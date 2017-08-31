@@ -3,6 +3,9 @@
 <module>
 	<source path="artemis" />
 	
+	<extend-configuration-property name="artemis.reflect.include" value="com.badlogic.gdx.utils.I18NBundle" />
+	<extend-configuration-property name="artemis.reflect.include" value="com.badlogic.gdx.scenes.scene2d.ui.Skin" />
+	
 	<extend-configuration-property name="artemis.reflect.include" value="com.upseil.gdx.artemis.system" />
 	<extend-configuration-property name="artemis.reflect.include" value="com.upseil.gdx.artemis.component" />
 </module>
