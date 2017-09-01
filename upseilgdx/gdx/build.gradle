@@ -3,6 +3,8 @@
 dependencies {
     compile project(":upseilgdx:util")
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonTarget"
 }
 
 eclipse.project {

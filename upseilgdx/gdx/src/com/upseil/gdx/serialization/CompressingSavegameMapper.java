@@ -4,11 +4,13 @@ import com.upseil.gdx.lzstring.LZString;
 
 public abstract class CompressingSavegameMapper<T> implements SavegameMapper<T> {
     
+    private boolean compressing = true;
+    
     @Override
     public String write(T game) {
         try {
             String uncompressedData = writeUncompressed(game);
-            return LZString.compressToBase64(uncompressedData);
+            return compressing ? LZString.compressToBase64(uncompressedData) : uncompressedData;
         } catch (Throwable e) {
             return null;
         }
@@ -19,7 +21,7 @@ public abstract class CompressingSavegameMapper<T> implements SavegameMapper<T> 
     @Override
     public T read(String data) {
         try {
-            String uncompressedData = LZString.decompressFromBase64(data);
+            String uncompressedData = compressing ? LZString.decompressFromBase64(data) : data;
             return readUncompressed(uncompressedData);
         } catch (Throwable e) {
             return null;
@@ -27,5 +29,13 @@ public abstract class CompressingSavegameMapper<T> implements SavegameMapper<T> 
     }
     
     protected abstract T readUncompressed(String uncompressedData) throws Exception;
+
+    public boolean isCompressing() {
+        return compressing;
+    }
+
+    public void setCompressing(boolean compressing) {
+        this.compressing = compressing;
+    }
     
 }
