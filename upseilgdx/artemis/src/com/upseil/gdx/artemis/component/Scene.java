@@ -8,7 +8,7 @@ public class Scene extends PooledComponent implements Disposable {
     
     private Stage stage;
     
-    public void initialize(Stage stage) {
+    public Scene initialize(Stage stage) {
         if (this.stage != null) {
             throw new IllegalStateException("Allready initialized");
         }
@@ -16,6 +16,7 @@ public class Scene extends PooledComponent implements Disposable {
             throw new NullPointerException("The given stage mustn't be null");
         }
         this.stage = stage;
+        return this;
     }
 
     public void apply() {
