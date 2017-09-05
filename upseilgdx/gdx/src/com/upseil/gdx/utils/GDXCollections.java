@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.CharArray;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Entry;
-import com.upseil.gdx.function.CharConsumer;
-import com.upseil.gdx.function.IntObjectConsumer;
+import com.upseil.gdx.util.function.CharConsumer;
+import com.upseil.gdx.util.function.IntObjectConsumer;
 
 public class GDXCollections {
     

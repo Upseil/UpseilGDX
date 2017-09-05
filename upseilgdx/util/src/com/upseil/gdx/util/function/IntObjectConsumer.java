@@ -1,4 +1,4 @@
-package com.upseil.gdx.function;
+package com.upseil.gdx.util.function;
 
 public interface IntObjectConsumer<T> {
     

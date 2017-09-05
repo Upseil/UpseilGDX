@@ -4,6 +4,6 @@ import com.badlogic.gdx.math.Rectangle;
 
 public interface ScreenDivider {
     
-    Rectangle getScreenPart(int screenWidth, int screenHeight);
+    void getScreenPart(Rectangle screen);
     
 }

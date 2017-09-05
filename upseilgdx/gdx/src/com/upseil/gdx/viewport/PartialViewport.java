@@ -23,11 +23,20 @@ public abstract class PartialViewport extends Viewport {
     
     @Override
     public void update(int screenWidth, int screenHeight, boolean centerCamera) {
-        screenPart.set(divider.getScreenPart(screenWidth, screenHeight));
+        screenPart.set(0, 0, screenWidth, screenHeight);
+        divider.getScreenPart(screenPart);
         updateScreenBounds(screenPart);
         apply(centerCamera);
     }
 
     protected abstract void updateScreenBounds(Rectangle screenPart);
+
+    public ScreenDivider getDivider() {
+        return divider;
+    }
+
+    public void setDivider(ScreenDivider divider) {
+        this.divider = divider;
+    }
     
 }

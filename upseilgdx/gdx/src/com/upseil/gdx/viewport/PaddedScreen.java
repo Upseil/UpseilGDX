@@ -10,8 +10,12 @@ public class PaddedScreen implements ScreenDivider {
     private int right;
 
     @Override
-    public Rectangle getScreenPart(int screenWidth, int screenHeight) {
-        return new Rectangle(left, bottom, screenWidth - left - right, screenHeight - top - bottom);
+    public void getScreenPart(Rectangle screen) {
+        float newX = screen.x + left;
+        float newY = screen.y + bottom;
+        float newWidth = screen.width - left - right;
+        float newHeight = screen.height - top - bottom;
+        screen.set(newX, newY, newWidth, newHeight);
     }
 
     public int getTop() {
