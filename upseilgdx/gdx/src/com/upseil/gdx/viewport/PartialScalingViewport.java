@@ -18,17 +18,10 @@ public class PartialScalingViewport extends PartialViewport {
         super(divider, worldWidth, worldHeight, camera);
         this.scaling = scaling;
     }
-
+    
     @Override
-    protected void updateScreenBounds(Rectangle screenPart) {
-        Vector2 viewportSize = scaling.apply(getWorldWidth(), getWorldHeight(), screenPart.getWidth(), screenPart.getHeight());
-        
-        int viewportWidth = Math.round(viewportSize.x);
-        int viewportHeight = Math.round(viewportSize.y);
-        int screenX = Math.round(screenPart.x + (screenPart.width - viewportSize.x) / 2);
-        int screenY = Math.round(screenPart.y + (screenPart.height - viewportSize.y) / 2);
-        
-        setScreenBounds(screenX, screenY, viewportWidth, viewportHeight);
+    protected Vector2 calculateViewportSize(Rectangle screenPart) {
+        return scaling.apply(getWorldWidth(), getWorldHeight(), screenPart.getWidth(), screenPart.getHeight());
     }
 
     public Scaling getScaling() {

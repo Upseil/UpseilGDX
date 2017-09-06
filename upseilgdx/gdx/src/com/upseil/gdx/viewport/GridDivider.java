@@ -8,6 +8,10 @@ public class GridDivider implements ScreenDivider {
     private int rows;
     private int column;
     private int row;
+    
+    public GridDivider() {
+        set(1, 1, 0, 0);
+    }
 
     public void set(int columns, int rows, int column, int row) {
         this.columns = columns;
