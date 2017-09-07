@@ -5,7 +5,11 @@ dependencies {
     
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
+    
+    testCompile "junit:junit:$junitTarget"
 }
+
+sourceSets.test.java.srcDirs = [ "test/" ]
 
 eclipse.project {
     name = "UpseilGDX-Artemis"

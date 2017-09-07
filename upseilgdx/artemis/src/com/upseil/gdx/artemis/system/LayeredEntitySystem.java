@@ -60,7 +60,7 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
         return iterator;
     }
     
-    protected class EntityIterator {
+    public class EntityIterator {
         
         private int layerIndex;
         private boolean reverse;
@@ -78,8 +78,8 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
             }
             
             while (!layerIterator.hasNext && hasNextLayer()) {
-                layerIterator = getLayerIterator();
                 layerIndex += reverse ? -1 : 1;
+                layerIterator = getLayerIterator();
             };
             return layerIterator.hasNext;
         }
@@ -89,7 +89,7 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
         }
 
         private boolean hasNextLayer() {
-            return reverse ? layerIndex >= 0 : layerIndex < layersToRender.size;
+            return reverse ? layerIndex > 0 : layerIndex < layersToRender.size - 1;
         }
         
         public int next() {

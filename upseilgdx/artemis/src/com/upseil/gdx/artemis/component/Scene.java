@@ -7,8 +7,13 @@ import com.badlogic.gdx.utils.Disposable;
 public class Scene extends PooledComponent implements Disposable {
     
     private Stage stage;
-    
+    private boolean manualAct;
+
     public Scene initialize(Stage stage) {
+        return initialize(stage, false);
+    }
+    
+    public Scene initialize(Stage stage, boolean manualAct) {
         if (this.stage != null) {
             throw new IllegalStateException("Allready initialized");
         }
@@ -16,6 +21,7 @@ public class Scene extends PooledComponent implements Disposable {
             throw new NullPointerException("The given stage mustn't be null");
         }
         this.stage = stage;
+        this.manualAct = manualAct;
         return this;
     }
 
@@ -28,9 +34,10 @@ public class Scene extends PooledComponent implements Disposable {
     }
 
     public void act(float delta) {
-        stage.act(delta);
+        if (!manualAct) {
+            stage.act(delta);
+        }
     }
-
 
     public void draw() {
         stage.draw();
@@ -40,6 +47,7 @@ public class Scene extends PooledComponent implements Disposable {
     protected void reset() {
         dispose();
         stage = null;
+        manualAct = false;
     }
 
     @Override
