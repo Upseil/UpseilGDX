@@ -5,5 +5,6 @@
 		<exclude name="serialization/DesktopSavegameMapper.java" />
 	</source>
 	
+	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.scene2d.actions" />
 	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.scene2d.util.CompoundDrawable" />
 </module>
