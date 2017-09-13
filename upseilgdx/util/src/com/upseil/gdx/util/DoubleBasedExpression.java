@@ -355,13 +355,10 @@ import java.util.TreeMap;
  * </ul>
  * 
  * @author Udo Klimaschewski (http://about.me/udo.klimaschewski)
- * 
+ * @author Frederik Petersen and Lennart Hensler:
+ * <br/>
  * Heavily edited for performance reason. Some parts (like IF) have been removed.
  * Primitive double used instead of BigDecimal.
- * 
- * @author Frederik Petersen
- * @author Lennart Hensler
- * 
  */
 public class DoubleBasedExpression {
 
