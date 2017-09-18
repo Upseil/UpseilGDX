@@ -3,15 +3,21 @@ package com.upseil.gdx.serialization.desktop;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.upseil.gdx.serialization.Mapper;
 
 public class DesktopMapper<T> implements Mapper<T> {
     
     private final ObjectMapper mapper;
-    private final Class<T> type;
+    private final JavaType type;
 
     public DesktopMapper(ObjectMapper mapper, Class<T> type) {
+        this(mapper, TypeFactory.defaultInstance().constructType(type));
+    }
+
+    public DesktopMapper(ObjectMapper mapper, JavaType type) {
         this.mapper = mapper;
         this.type = type;
     }

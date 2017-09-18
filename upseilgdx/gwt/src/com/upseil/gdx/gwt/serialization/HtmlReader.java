@@ -1,15 +1,15 @@
 package com.upseil.gdx.gwt.serialization;
 
 import com.github.nmorel.gwtjackson.client.JsonDeserializationContext;
-import com.github.nmorel.gwtjackson.client.ObjectMapper;
+import com.github.nmorel.gwtjackson.client.ObjectReader;
 import com.upseil.gdx.serialization.Reader;
 
 public class HtmlReader<T> implements Reader<T> {
     
-    private final ObjectMapper<T> mapper;
+    private final ObjectReader<T> mapper;
     private final JsonDeserializationContext deserializationContext;
 
-    public HtmlReader(ObjectMapper<T> mapper, JsonDeserializationContext deserializationContext) {
+    public HtmlReader(ObjectReader<T> mapper, JsonDeserializationContext deserializationContext) {
         this.mapper = mapper;
         this.deserializationContext = deserializationContext;
     }
