@@ -9,11 +9,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.upseil.gdx.artemis.ArtemisApplicationAdapter;
-import com.upseil.gdx.serialization.SavegameMapper;
+import com.upseil.gdx.serialization.Writer;
 
 public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
-    private final SavegameMapper<T> mapper;
+    private final Writer<T> mapper;
     private final Clipboard systemAccessClipboard;
     private final Preferences saveStore;
     private final String autoSaveSlot;
@@ -26,7 +26,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     private boolean isAutoSaving;
     private boolean isScheduled;
     
-    public AbstractSaveSystem(SavegameMapper<T> mapper, Clipboard systemAccessClipboard, String saveStoreName, String autoSaveSlot) {
+    public AbstractSaveSystem(Writer<T> mapper, Clipboard systemAccessClipboard, String saveStoreName, String autoSaveSlot) {
         this.mapper = mapper;
         this.systemAccessClipboard = systemAccessClipboard;
         this.saveStore = Gdx.app.getPreferences(saveStoreName);

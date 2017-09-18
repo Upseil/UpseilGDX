@@ -2,7 +2,7 @@ package com.upseil.gdx.serialization;
 
 import com.upseil.gdx.lzstring.LZString;
 
-public abstract class CompressingSavegameMapper<T> implements SavegameMapper<T> {
+public abstract class CompressingMapper<T> implements Mapper<T> {
     
     private boolean compressing = true;
     

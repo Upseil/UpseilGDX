@@ -1,8 +1,7 @@
 package com.upseil.gdx.serialization;
 
-public interface SavegameMapper<T> {
+public interface Reader<T> {
     
-    String write(T savegame);
     T read(String data);
     
 }

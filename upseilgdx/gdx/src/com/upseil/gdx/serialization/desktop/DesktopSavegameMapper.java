@@ -1,9 +1,10 @@
-package com.upseil.gdx.serialization;
+package com.upseil.gdx.serialization.desktop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.upseil.gdx.serialization.CompressingMapper;
 
-public class DesktopSavegameMapper<T> extends CompressingSavegameMapper<T> {
+public class DesktopSavegameMapper<T> extends CompressingMapper<T> {
     
     private final ObjectMapper mapper;
     private final Class<T> type;

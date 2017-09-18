@@ -3,28 +3,28 @@ package com.upseil.gdx.gwt.serialization;
 import com.github.nmorel.gwtjackson.client.JsonDeserializationContext;
 import com.github.nmorel.gwtjackson.client.JsonSerializationContext;
 import com.github.nmorel.gwtjackson.client.ObjectMapper;
-import com.upseil.gdx.serialization.CompressingMapper;
+import com.upseil.gdx.serialization.Mapper;
 
-public class HtmlSavegameMapper<T> extends CompressingMapper<T> {
+public class HtmlMapper<T> implements Mapper<T> {
     
     private final ObjectMapper<T> mapper;
     private final JsonSerializationContext serializationContext;
     private final JsonDeserializationContext deserializationContext;
 
-    public HtmlSavegameMapper(ObjectMapper<T> mapper, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
+    public HtmlMapper(ObjectMapper<T> mapper, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
         this.mapper = mapper;
         this.serializationContext = serializationContext;
         this.deserializationContext = deserializationContext;
     }
 
     @Override
-    protected String writeUncompressed(T game) throws Exception {
-        return mapper.write(game, serializationContext);
+    public String write(T object) {
+        return mapper.write(object, serializationContext);
     }
 
     @Override
-    protected T readUncompressed(String uncompressedData) throws Exception {
-        return mapper.read(uncompressedData, deserializationContext);
+    public T read(String data) {
+        return mapper.read(data, deserializationContext);
     }
     
 }

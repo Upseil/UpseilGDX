@@ -3,18 +3,18 @@ package com.upseil.gdx.artemis.system;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.upseil.gdx.serialization.SavegameMapper;
+import com.upseil.gdx.serialization.Reader;
 
 public abstract class AbstractLoadSystem<T> extends BaseSystem {
     
-    private final SavegameMapper<T> mapper;
+    private final Reader<T> mapper;
     private final Preferences saveStore;
     private final String autoSaveSlot;
     
     private T savegame;
     private boolean isScheduled;
     
-    public AbstractLoadSystem(SavegameMapper<T> mapper, String saveStoreName, String autoSaveSlot) {
+    public AbstractLoadSystem(Reader<T> mapper, String saveStoreName, String autoSaveSlot) {
         this.mapper = mapper;
         saveStore = Gdx.app.getPreferences(saveStoreName);
         this.autoSaveSlot = autoSaveSlot;
