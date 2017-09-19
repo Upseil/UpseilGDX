@@ -26,6 +26,7 @@ public class DesktopSavegameMapper<T> extends CompressingMapper<T> {
             SimpleModule module = new SimpleModule();
             module.addSerializer(IntFloatMap.class, new IntFloatMapSerializer());
             module.addDeserializer(IntFloatMap.class, new IntFloatMapDeserializer());
+            module.addSerializer(new ArraySerializer());
             module.addDeserializer(Array.class, new ArrayDeserializer());
             defaultMapper.registerModule(module);
         }

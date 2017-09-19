@@ -8,7 +8,7 @@ public class JsonConfiguration extends AbstractConfiguration {
     
     @Override
     protected void configure() {
-        type(Array.class).deserializer(ArrayDeserializer.class);
+        type(Array.class).serializer(ArraySerializer.class).deserializer(ArrayDeserializer.class);
         type(IntFloatMap.class).serializer(IntFloatMapSerializer.class).deserializer(IntFloatMapDeserializer.class);
     }
     
