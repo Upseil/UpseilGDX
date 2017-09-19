@@ -2,6 +2,7 @@
 
 dependencies {
     compile project(":upseilgdx:gdx")
+    compile "com.google.gwt:gwt-user:$gwtTarget"
     compile "com.github.nmorel.gwtjackson:gwt-jackson:$jacksonGwtTarget"
 }
 
