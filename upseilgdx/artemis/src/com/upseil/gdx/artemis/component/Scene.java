@@ -24,6 +24,10 @@ public class Scene extends PooledComponent implements Disposable {
         this.manualAct = manualAct;
         return this;
     }
+    
+    public Stage getStage() {
+        return stage;
+    }
 
     public void apply() {
         stage.getViewport().apply();
