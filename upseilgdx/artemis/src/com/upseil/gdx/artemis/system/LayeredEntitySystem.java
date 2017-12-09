@@ -68,7 +68,10 @@ public abstract class LayeredEntitySystem extends BaseEntitySystem {
         
         private void reset(boolean reverse) {
             this.reverse = reverse;
-            layerIndex = reverse ? layersToRender.size - 1 : 0;
+            layerIndex = -1;
+            if (layersToRender.size > 0) {
+                layerIndex = reverse ? layersToRender.size - 1 : 0;
+            }
             layerIterator = layerIndex < 0 ? null : getLayerIterator();
         }
         

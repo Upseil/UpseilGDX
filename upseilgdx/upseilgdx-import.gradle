@@ -4,5 +4,6 @@ project(":upseilgdx").projectDir = file("./")
 include ":upseilgdx:gdx"
 include ":upseilgdx:util"
 include ":upseilgdx:artemis"
+include ":upseilgdx:box2d"
 include ":upseilgdx:gwt"
 include ":upseilgdx:tools"

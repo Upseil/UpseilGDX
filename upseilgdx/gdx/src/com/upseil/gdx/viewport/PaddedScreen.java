@@ -8,6 +8,18 @@ public class PaddedScreen implements ScreenDivider {
     private int left;
     private int bottom;
     private int right;
+    
+    public PaddedScreen() {
+        this(0);
+    }
+
+    public PaddedScreen(int padding) {
+        this(padding, padding, padding, padding);
+    }
+
+    public PaddedScreen(int top, int left, int bottom, int right) {
+        pad(top, left, bottom, right);
+    }
 
     @Override
     public void getScreenPart(Rectangle screen) {
@@ -52,6 +64,10 @@ public class PaddedScreen implements ScreenDivider {
     public PaddedScreen padRight(int right) {
         this.right = right;
         return this;
+    }
+    
+    public PaddedScreen pad(int padding) {
+        return pad(padding, padding, padding, padding);
     }
     
     public PaddedScreen pad(int top, int left, int bottom, int right) {

@@ -12,7 +12,7 @@ public class LayeredSceneRenderSystem extends LayeredIteratingSystem implements 
     
     protected ComponentMapper<Scene> sceneMapper;
     
-    protected final Batch globalBatch;
+    private final Batch globalBatch;
 
     private int screenWidth;
     private int screenHeight;
