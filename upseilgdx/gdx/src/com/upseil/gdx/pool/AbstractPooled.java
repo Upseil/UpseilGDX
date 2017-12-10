@@ -19,6 +19,13 @@ public abstract class AbstractPooled implements Pooled {
         this.pool = pool;
     }
     
+    @SuppressWarnings("unchecked")
+    public void free() {
+        if (pool != null) {
+            pool.free(this);
+        }
+    }
+    
     @Override
     public void reset() {
         pool = null;

@@ -1,8 +1,8 @@
 package com.upseil.gdx.util.function;
 
 @FunctionalInterface
-public interface CharConsumer {
+public interface BooleanFunction<T> {
     
-    void accept(char c);
+    boolean apply(T t);
     
 }
