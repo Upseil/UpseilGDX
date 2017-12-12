@@ -4,6 +4,7 @@
 	<source path="box2d" />
 	
 	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.box2d.event" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.box2d.action" />
 	
 	<extend-configuration-property name="artemis.reflect.include" value="com.upseil.gdx.box2d.system" />
 	<extend-configuration-property name="artemis.reflect.include" value="com.upseil.gdx.box2d.component" />

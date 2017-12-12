@@ -1,7 +1,6 @@
 package com.upseil.gdx.box2d.system;
 
 import java.util.Iterator;
-import java.util.function.Function;
 
 import com.artemis.Aspect;
 import com.artemis.AspectSubscriptionManager;
@@ -19,8 +18,11 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectIntMap;
-import com.upseil.gdx.action.AbstractAction;
 import com.upseil.gdx.action.Action;
+import com.upseil.gdx.action.FireBeginContactEvent;
+import com.upseil.gdx.action.FireEndContactEvent;
+import com.upseil.gdx.action.FirePostSolveEvent;
+import com.upseil.gdx.action.FirePreSolveEvent;
 import com.upseil.gdx.artemis.component.ActorComponent;
 import com.upseil.gdx.artemis.util.ArtemisCollections;
 import com.upseil.gdx.box2d.component.BodyComponent;
@@ -29,12 +31,9 @@ import com.upseil.gdx.box2d.component.OnBeginContact;
 import com.upseil.gdx.box2d.component.OnEndContact;
 import com.upseil.gdx.box2d.component.PostSolveContact;
 import com.upseil.gdx.box2d.component.PreSolveContact;
-import com.upseil.gdx.box2d.event.ContactEvent;
-import com.upseil.gdx.box2d.event.ContactEventHandler;
 import com.upseil.gdx.box2d.event.PostSolveEvent;
 import com.upseil.gdx.box2d.event.PreSolveEvent;
 import com.upseil.gdx.box2d.event.SimpleContactEvent;
-import com.upseil.gdx.pool.PooledPool;
 import com.upseil.gdx.pool.PooledPools;
 
 public class PhysicsSystem extends BaseSystem implements ContactListener {
@@ -44,22 +43,15 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
     private ComponentMapper<ActorComponent> actorMapper;
 
     private ComponentMapper<PreSolveContact> preSolveContactMapper;
-    private Function<PreSolveEvent, ContactEventHandler<PreSolveEvent>> preSolveProvider;
     private ComponentMapper<OnBeginContact> beginContactMapper;
-    private Function<SimpleContactEvent, ContactEventHandler<SimpleContactEvent>> beginContactProvider;
     private ComponentMapper<OnEndContact> endContactMapper;
-    private Function<SimpleContactEvent, ContactEventHandler<SimpleContactEvent>> endContactProvider;
     private ComponentMapper<PostSolveContact> postSolveContactMapper;
-    private Function<PostSolveEvent, ContactEventHandler<PostSolveEvent>> postSolveProvider;
     
     private EntitySubscription worlds;
     private EntitySubscription bodies;
     private EntitySubscription bodiedActors;
     
     private final ObjectIntMap<Body> bodyToEntity;
-    private final PreSolveEventActionPool preSolvePool;
-    private final SimpleContactEventActionPool contactPool;
-    private final PostSolveEventActionPool postSolvePool;
     private final Array<Action<?>> actions;
 
     private final float maxFrameTime;
@@ -79,19 +71,11 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         this.positionIterations = positionIterations;
         
         bodyToEntity = new ObjectIntMap<>();
-        preSolvePool = new PreSolveEventActionPool();
-        contactPool = new SimpleContactEventActionPool();
-        postSolvePool = new PostSolveEventActionPool();
         actions = new Array<>();
     }
     
     @Override
     protected void initialize() {
-        preSolveProvider = e -> preSolveContactMapper.get(e.getSelfId());
-        beginContactProvider = e -> beginContactMapper.get(e.getSelfId());
-        endContactProvider = e -> endContactMapper.get(e.getSelfId());
-        postSolveProvider = e -> postSolveContactMapper.get(e.getSelfId());
-        
         AspectSubscriptionManager subscriptionManager = world.getAspectSubscriptionManager();
         
         worlds = subscriptionManager.get(Aspect.all(Box2DWorld.class));
@@ -146,6 +130,8 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
                 }
             }
             
+            ArtemisCollections.forEach(bodies.getEntities(), id -> bodyMapper.get(id).act(stepTime));
+            
             accumulator -= stepTime;
         }
         
@@ -176,10 +162,10 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int entityB = getEntityForBody(fixtureB.getBody());
         
         if (entityA != -1 && preSolveContactMapper.has(entityA)) {
-            schedulePreSolveEvent(preSolveProvider, entityA, fixtureA, entityB, fixtureB, contact, oldManifold);
+            schedulePreSolveEvent(entityA, fixtureA, entityB, fixtureB, contact, oldManifold);
         }
         if (entityB != -1 && preSolveContactMapper.has(entityB)) {
-            schedulePreSolveEvent(preSolveProvider, entityB, fixtureB, entityA, fixtureA, contact, oldManifold);
+            schedulePreSolveEvent(entityB, fixtureB, entityA, fixtureA, contact, oldManifold);
         }
     }
 
@@ -191,10 +177,10 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int entityB = getEntityForBody(fixtureB.getBody());
         
         if (entityA != -1 && beginContactMapper.has(entityA)) {
-            scheduleSimpleContactEvent(beginContactProvider, entityA, fixtureA, entityB, fixtureB, contact);
+            scheduleBeginContactEvent(entityA, fixtureA, entityB, fixtureB, contact);
         }
         if (entityB != -1 && beginContactMapper.has(entityB)) {
-            scheduleSimpleContactEvent(beginContactProvider, entityB, fixtureB, entityA, fixtureA, contact);
+            scheduleBeginContactEvent(entityB, fixtureB, entityA, fixtureA, contact);
         }
     }
 
@@ -206,10 +192,10 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int entityB = getEntityForBody(fixtureB.getBody());
         
         if (entityA != -1 && endContactMapper.has(entityA)) {
-            scheduleSimpleContactEvent(endContactProvider, entityA, fixtureA, entityB, fixtureB, contact);
+            scheduleEndContactEvent(entityA, fixtureA, entityB, fixtureB, contact);
         }
         if (entityB != -1 && endContactMapper.has(entityB)) {
-            scheduleSimpleContactEvent(endContactProvider, entityB, fixtureB, entityA, fixtureA, contact);
+            scheduleEndContactEvent(entityB, fixtureB, entityA, fixtureA, contact);
         }
     }
 
@@ -221,109 +207,43 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int entityB = getEntityForBody(fixtureB.getBody());
         
         if (entityA != -1 && postSolveContactMapper.has(entityA)) {
-            schedulePostSolveEvent(postSolveProvider, entityA, fixtureA, entityB, fixtureB, contact, impulse);
+            schedulePostSolveEvent(entityA, fixtureA, entityB, fixtureB, contact, impulse);
         }
         if (entityB != -1 && postSolveContactMapper.has(entityB)) {
-            schedulePostSolveEvent(postSolveProvider, entityB, fixtureB, entityA, fixtureA, contact, impulse);
+            schedulePostSolveEvent(entityB, fixtureB, entityA, fixtureA, contact, impulse);
         }
     }
 
-    private void schedulePreSolveEvent(Function<PreSolveEvent, ContactEventHandler<PreSolveEvent>> handlerProvider,
-                                       int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, Manifold oldManifold) {
-        ContactEventAction<PreSolveEvent> action = preSolvePool.obtain();
-        action.set(handlerProvider, obtainPreSolveEvent(selfId, selfFixture, otherId, otherFixture, contact, oldManifold));
+    private void schedulePreSolveEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, Manifold oldManifold) {
+        FirePreSolveEvent action = PooledPools.obtain(FirePreSolveEvent.class);
+        PreSolveEvent event = PooledPools.obtain(PreSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, oldManifold);
+        action.setMapper(preSolveContactMapper);
+        action.setContext(event);
         actions.add(action);
     }
 
-    private void scheduleSimpleContactEvent(Function<SimpleContactEvent, ContactEventHandler<SimpleContactEvent>> handlerProvider,
-                                           int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
-        ContactEventAction<SimpleContactEvent> action = contactPool.obtain();
-        action.set(handlerProvider, obtainSimpleContactEvent(selfId, selfFixture, otherId, otherFixture, contact));
+    private void scheduleBeginContactEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
+        FireBeginContactEvent action = PooledPools.obtain(FireBeginContactEvent.class);
+        SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
+        action.setMapper(beginContactMapper);
+        action.setContext(event);
         actions.add(action);
     }
 
-    private void schedulePostSolveEvent(Function<PostSolveEvent, ContactEventHandler<PostSolveEvent>> handlerProvider,
-                                       int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, ContactImpulse impulse) {
-        ContactEventAction<PostSolveEvent> action = postSolvePool.obtain();
-        action.set(handlerProvider, obtainPostSolveEvent(selfId, selfFixture, otherId, otherFixture, contact, impulse));
+    private void scheduleEndContactEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
+        FireEndContactEvent action = PooledPools.obtain(FireEndContactEvent.class);
+        SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
+        action.setMapper(endContactMapper);
+        action.setContext(event);
         actions.add(action);
     }
-    
-    private PreSolveEvent obtainPreSolveEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, Manifold oldManifold) {
-        return PooledPools.obtain(PreSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, oldManifold);
-    }
 
-    private SimpleContactEvent obtainSimpleContactEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
-        return PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
-    }
-    
-    private PostSolveEvent obtainPostSolveEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, ContactImpulse impulse) {
-        return PooledPools.obtain(PostSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, impulse);
-    }
-    
-    private class PreSolveEventActionPool extends PooledPool<ContactEventAction<PreSolveEvent>> {
-        
-        public PreSolveEventActionPool() {
-            super(32, 100);
-        }
-
-        @Override
-        protected ContactEventAction<PreSolveEvent> newObject() {
-            return new ContactEventAction<PreSolveEvent>();
-        }
-        
-    }
-    
-    private class SimpleContactEventActionPool extends PooledPool<ContactEventAction<SimpleContactEvent>> {
-        
-        public SimpleContactEventActionPool() {
-            super(32, 100);
-        }
-
-        @Override
-        protected ContactEventAction<SimpleContactEvent> newObject() {
-            return new ContactEventAction<SimpleContactEvent>();
-        }
-        
-    }
-    
-    private class PostSolveEventActionPool extends PooledPool<ContactEventAction<PostSolveEvent>> {
-        
-        public PostSolveEventActionPool() {
-            super(32, 100);
-        }
-
-        @Override
-        protected ContactEventAction<PostSolveEvent> newObject() {
-            return new ContactEventAction<PostSolveEvent>();
-        }
-        
-    }
-    
-    private class ContactEventAction<E extends ContactEvent<E>> extends AbstractAction<ContactEventAction<E>> {
-        
-        private Function<E, ContactEventHandler<E>> handlerProvider;
-        private E event;
-        
-        public ContactEventAction<E> set(Function<E, ContactEventHandler<E>> handlerProvider, E event) {
-            this.handlerProvider = handlerProvider;
-            this.event = event;
-            return this;
-        }
-
-        @Override
-        public boolean act(float deltaTime) {
-            handlerProvider.apply(event).accept(event);
-            return true;
-        }
-        
-        @Override
-        public void reset() {
-            super.reset();
-            handlerProvider = null;
-            event = null;
-        }
-        
+    private void schedulePostSolveEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, ContactImpulse impulse) {
+        FirePostSolveEvent action = PooledPools.obtain(FirePostSolveEvent.class);
+        PostSolveEvent event = PooledPools.obtain(PostSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, impulse);
+        action.setMapper(postSolveContactMapper);
+        action.setContext(event);
+        actions.add(action);
     }
     
 }
