@@ -1,12 +1,14 @@
 package com.upseil.gdx.box2d.component;
 
 import com.artemis.PooledComponent;
+import com.artemis.annotations.DelayedComponentRemoval;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+@DelayedComponentRemoval
 public class Box2DWorld extends PooledComponent implements Disposable {
     
     private World world;

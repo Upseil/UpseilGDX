@@ -7,11 +7,11 @@ import com.upseil.gdx.box2d.event.SimpleContactEvent;
 import com.upseil.gdx.util.function.BooleanFunction;
 import com.upseil.gdx.utils.GDXCollections;
 
-public class OnBeginContact extends PooledComponent implements ContactEventHandler<SimpleContactEvent> {
+public class OnEndContact extends PooledComponent implements ContactEventHandler<SimpleContactEvent> {
     
     private final Array<ContactEventHandler<SimpleContactEvent>> reactions;
     
-    public OnBeginContact() {
+    public OnEndContact() {
         reactions = new Array<>(4);
     }
     
