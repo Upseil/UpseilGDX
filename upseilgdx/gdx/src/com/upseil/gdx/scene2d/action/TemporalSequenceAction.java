@@ -1,4 +1,4 @@
-package com.upseil.gdx.scene2d.actions;
+package com.upseil.gdx.scene2d.action;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;

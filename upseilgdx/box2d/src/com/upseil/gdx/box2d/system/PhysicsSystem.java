@@ -19,10 +19,10 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectIntMap;
+import com.upseil.gdx.action.AbstractAction;
+import com.upseil.gdx.action.Action;
 import com.upseil.gdx.artemis.component.ActorComponent;
 import com.upseil.gdx.artemis.util.ArtemisCollections;
-import com.upseil.gdx.box2d.action.AbstractPhysicsAction;
-import com.upseil.gdx.box2d.action.PhysicsAction;
 import com.upseil.gdx.box2d.component.BodyComponent;
 import com.upseil.gdx.box2d.component.Box2DWorld;
 import com.upseil.gdx.box2d.component.OnBeginContact;
@@ -60,21 +60,21 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
     private final PreSolveEventActionPool preSolvePool;
     private final SimpleContactEventActionPool contactPool;
     private final PostSolveEventActionPool postSolvePool;
-    private final Array<PhysicsAction<?>> actions;
+    private final Array<Action<?>> actions;
 
     private final float maxFrameTime;
-    private final float timeStep;
+    private final float stepTime;
     private final int velocityIterations;
     private final int positionIterations;
     private float accumulator;
     
-    public PhysicsSystem(float timeStep, int velocityIterations, int positionIterations) {
-        this(Float.MAX_VALUE, timeStep, velocityIterations, positionIterations);
+    public PhysicsSystem(float stepTime, int velocityIterations, int positionIterations) {
+        this(Float.MAX_VALUE, stepTime, velocityIterations, positionIterations);
     }
     
-    public PhysicsSystem(float maxFrameTime, float timeStep, int velocityIterations, int positionIterations) {
+    public PhysicsSystem(float maxFrameTime, float stepTime, int velocityIterations, int positionIterations) {
         this.maxFrameTime = maxFrameTime;
-        this.timeStep = timeStep;
+        this.stepTime = stepTime;
         this.velocityIterations = velocityIterations;
         this.positionIterations = positionIterations;
         
@@ -131,21 +131,22 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int[] worldIds = worldsBag.getData();
         
         accumulator += Math.min(world.delta, maxFrameTime);
-        while (accumulator >= timeStep) {
-            Iterator<PhysicsAction<?>> actionsIterator = actions.iterator();
+        while (accumulator >= stepTime) {
+            for (int index = 0; index < worldsBag.size(); index++) {
+                Box2DWorld world = worldMapper.get(worldIds[index]);
+                world.step(stepTime, velocityIterations, positionIterations);
+            }
+
+            Iterator<Action<?>> actionsIterator = actions.iterator();
             while (actionsIterator.hasNext()) {
-                PhysicsAction<?> action = actionsIterator.next();
-                if (action.act(timeStep)) {
+                Action<?> action = actionsIterator.next();
+                if (action.act(stepTime)) {
                     action.free();
                     actionsIterator.remove();
                 }
             }
             
-            for (int index = 0; index < worldsBag.size(); index++) {
-                Box2DWorld world = worldMapper.get(worldIds[index]);
-                world.step(timeStep, velocityIterations, positionIterations);
-            }
-            accumulator -= timeStep;
+            accumulator -= stepTime;
         }
         
         ArtemisCollections.forEach(bodiedActors.getEntities(), id -> {
@@ -160,6 +161,11 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
     
     public int getEntityForBody(Body body) {
         return bodyToEntity.get(body, -1);
+    }
+    
+    public float getPhysicsDeltaTime(float deltaTime) {
+        float timeToProcess = Math.min(accumulator + deltaTime, maxFrameTime);
+        return (int) (timeToProcess / stepTime) * stepTime;
     }
 
     @Override
@@ -294,7 +300,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         
     }
     
-    private class ContactEventAction<E extends ContactEvent<E>> extends AbstractPhysicsAction<ContactEventAction<E>> {
+    private class ContactEventAction<E extends ContactEvent<E>> extends AbstractAction<ContactEventAction<E>> {
         
         private Function<E, ContactEventHandler<E>> handlerProvider;
         private E event;
