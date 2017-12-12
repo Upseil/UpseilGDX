@@ -6,7 +6,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.upseil.gdx.pool.AbstractPooled;
-import com.upseil.gdx.pool.Pooled;
 import com.upseil.gdx.util.function.BooleanFunction;
 
 @FunctionalInterface
@@ -16,11 +15,7 @@ public interface ContactReaction extends Consumer<ContactReaction.Context> {
         return context -> { if (condition.apply(context)) this.accept(context); };
     }
     
-    static ContactReaction.Context obtainContext() {
-        return Pooled.get(Context.class);
-    }
-    
-    public class Context extends AbstractPooled {
+    public class Context extends AbstractPooled<Context> {
         
         private int selfId;
         private Fixture selfFixture;

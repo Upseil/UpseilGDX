@@ -2,27 +2,24 @@ package com.upseil.gdx.pool;
 
 import com.badlogic.gdx.utils.Pool;
 
-public abstract class AbstractPooled implements Pooled {
+public abstract class AbstractPooled<T extends AbstractPooled<T>> implements Pooled<T> {
 
-    @SuppressWarnings("rawtypes")
-    private Pool pool;
+    private Pool<T> pool;
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public Pool getPool() {
+    public Pool<T> getPool() {
         return pool;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
-    public void setPool(Pool pool) {
+    public void setPool(Pool<T> pool) {
         this.pool = pool;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public void free() {
         if (pool != null) {
-            pool.free(this);
+            ((Pool) pool).free(this);
         }
     }
     

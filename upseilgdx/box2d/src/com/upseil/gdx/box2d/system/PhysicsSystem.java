@@ -22,6 +22,7 @@ import com.upseil.gdx.box2d.ContactReaction;
 import com.upseil.gdx.box2d.component.BodyComponent;
 import com.upseil.gdx.box2d.component.Box2DWorld;
 import com.upseil.gdx.box2d.component.OnBeginContact;
+import com.upseil.gdx.pool.PooledPools;
 import com.upseil.gdx.utils.GDXCollections;
 
 public class PhysicsSystem extends BaseSystem implements ContactListener {
@@ -135,11 +136,15 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         if (entityA == entityB) return;
         
         if (entityA != -1 && beginContactMapper.has(entityA)) {
-            beginningContacts.add(ContactReaction.obtainContext().intialize(entityA, fixtureA, entityB, fixtureB, contact));
+            beginningContacts.add(obtainContactContext(entityA, fixtureA, entityB, fixtureB, contact));
         }
         if (entityB != -1 && beginContactMapper.has(entityB)) {
-            beginningContacts.add(ContactReaction.obtainContext().intialize(entityB, fixtureB, entityA, fixtureA, contact));
+            beginningContacts.add(obtainContactContext(entityB, fixtureB, entityA, fixtureA, contact));
         }
+    }
+
+    private ContactReaction.Context obtainContactContext(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
+        return PooledPools.obtain(ContactReaction.Context.class).intialize(selfId, selfFixture, otherId, otherFixture, contact);
     }
 
     @Override
