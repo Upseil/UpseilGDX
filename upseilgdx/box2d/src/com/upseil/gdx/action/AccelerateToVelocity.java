@@ -54,11 +54,11 @@ public class AccelerateToVelocity extends AbstractAction<Body, AccelerateToVeloc
         acceleration.set(xAcceleration, yAcceleration);
     }
     
-    public void setAccelerationX(int xAcceleration) {
+    public void setAccelerationX(float xAcceleration) {
         acceleration.x = xAcceleration;
     }
     
-    public void setAccelerationY(int yAcceleration) {
+    public void setAccelerationY(float yAcceleration) {
         acceleration.y = yAcceleration;
     }
     
@@ -74,11 +74,11 @@ public class AccelerateToVelocity extends AbstractAction<Body, AccelerateToVeloc
         targetVelocity.set(xVelocity, yVelocity);
     }
     
-    public void setTargetVelocityX(int xVelocity) {
+    public void setTargetVelocityX(float xVelocity) {
         targetVelocity.x = xVelocity;
     }
     
-    public void setTargetVelocityY(int yVelocity) {
+    public void setTargetVelocityY(float yVelocity) {
         targetVelocity.y = yVelocity;
     }
 
