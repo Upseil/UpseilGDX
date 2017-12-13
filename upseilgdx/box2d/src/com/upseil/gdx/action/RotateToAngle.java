@@ -5,21 +5,26 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 public class RotateToAngle extends AbstractAction<Body, RotateToAngle> {
     
+    private static final float DefaultLookAheadSteps = 6;
+    
     private float targetAngle;
     private float velocityLimit;
+    private float lookAheadTime;
 
     @Override
     public boolean act(float deltaTime) {
         float currentAngle = getState().getAngle();
-        if (MathUtils.isEqual(targetAngle, currentAngle)) return true;
-        
         float currentVelocity = getState().getAngularVelocity();
-        float nextAngle = currentAngle + currentVelocity * (deltaTime * 50);
+        if (MathUtils.isEqual(targetAngle, currentAngle) && MathUtils.isZero(currentVelocity)) return true;
+        
+        if (lookAheadTime < 0) lookAheadTime = deltaTime * DefaultLookAheadSteps;
+        
+        float nextAngle = currentAngle + currentVelocity * lookAheadTime;
         float angleToRotate = targetAngle - nextAngle;
         while (angleToRotate < -MathUtils.PI) angleToRotate += MathUtils.PI2;
         while (angleToRotate >  MathUtils.PI) angleToRotate -= MathUtils.PI2;
         
-        float desiredVelocity = angleToRotate / (deltaTime * 50);
+        float desiredVelocity = angleToRotate / lookAheadTime;
         desiredVelocity = Math.min(velocityLimit, Math.max(desiredVelocity, -velocityLimit));
         
         float impulse = getState().getInertia() * desiredVelocity;
@@ -43,19 +48,36 @@ public class RotateToAngle extends AbstractAction<Body, RotateToAngle> {
         this.targetAngle = targetAngle * MathUtils.degreesToRadians;
     }
     
-    public float getVelocityLimit() {
+    public float getVelocityLimitInRadian() {
         return velocityLimit;
     }
     
-    public void setVelocityLimit(float velocityLimit) {
+    public float getVelocityLimitInDegree() {
+        return velocityLimit * MathUtils.radiansToDegrees;
+    }
+    
+    public void setVelocityLimitInRadian(float velocityLimit) {
         this.velocityLimit = velocityLimit;
     }
     
+    public void setVelocityLimitInDegree(float velocityLimit) {
+        this.velocityLimit = velocityLimit * MathUtils.degreesToRadians;
+    }
+    
+    public float getLookAheadTime() {
+        return lookAheadTime;
+    }
+
+    public void setLookAheadTime(float lookAheadTime) {
+        this.lookAheadTime = lookAheadTime;
+    }
+
     @Override
     public void reset() {
         super.reset();
         targetAngle = 0;
-        velocityLimit = Float.MAX_VALUE;
+        velocityLimit = MathUtils.PI;
+        lookAheadTime = -1;
     }
     
 }

@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.upseil.gdx.action.Action;
 import com.upseil.gdx.action.FireBeginContactEvent;
+import com.upseil.gdx.action.FireContactEvent;
 import com.upseil.gdx.action.FireEndContactEvent;
 import com.upseil.gdx.action.FirePostSolveEvent;
 import com.upseil.gdx.action.FirePreSolveEvent;
@@ -52,7 +53,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
     private EntitySubscription bodiedActors;
     
     private final ObjectIntMap<Body> bodyToEntity;
-    private final Array<Action<?, ?>> actions;
+    private final Array<FireContactEvent<?, ?>> scheduledContactEvents;
 
     private final float maxFrameTime;
     private final float stepTime;
@@ -71,7 +72,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         this.positionIterations = positionIterations;
         
         bodyToEntity = new ObjectIntMap<>();
-        actions = new Array<>();
+        scheduledContactEvents = new Array<>();
     }
     
     @Override
@@ -116,21 +117,21 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         
         accumulator += Math.min(world.delta, maxFrameTime);
         while (accumulator >= stepTime) {
+            ArtemisCollections.forEachComponent(bodies.getEntities(), bodyMapper, body -> body.act(stepTime));
+            
             for (int index = 0; index < worldsBag.size(); index++) {
                 Box2DWorld world = worldMapper.get(worldIds[index]);
                 world.step(stepTime, velocityIterations, positionIterations);
             }
 
-            Iterator<Action<?, ?>> actionsIterator = actions.iterator();
-            while (actionsIterator.hasNext()) {
-                Action<?, ?> action = actionsIterator.next();
-                if (action.act(stepTime)) {
-                    action.free();
-                    actionsIterator.remove();
+            Iterator<FireContactEvent<?, ?>> eventsIterator = scheduledContactEvents.iterator();
+            while (eventsIterator.hasNext()) {
+                Action<?, ?> scheduledEvent = eventsIterator.next();
+                if (scheduledEvent.act(stepTime)) {
+                    scheduledEvent.free();
+                    eventsIterator.remove();
                 }
             }
-            
-            ArtemisCollections.forEach(bodies.getEntities(), id -> bodyMapper.get(id).act(stepTime));
             
             accumulator -= stepTime;
         }
@@ -218,7 +219,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         PreSolveEvent event = PooledPools.obtain(PreSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, oldManifold);
         action.setMapper(preSolveContactMapper);
         action.setState(event);
-        actions.add(action);
+        scheduledContactEvents.add(action);
     }
 
     private void scheduleBeginContactEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
@@ -226,7 +227,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
         action.setMapper(beginContactMapper);
         action.setState(event);
-        actions.add(action);
+        scheduledContactEvents.add(action);
     }
 
     private void scheduleEndContactEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact) {
@@ -234,7 +235,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
         action.setMapper(endContactMapper);
         action.setState(event);
-        actions.add(action);
+        scheduledContactEvents.add(action);
     }
 
     private void schedulePostSolveEvent(int selfId, Fixture selfFixture, int otherId, Fixture otherFixture, Contact contact, ContactImpulse impulse) {
@@ -242,7 +243,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         PostSolveEvent event = PooledPools.obtain(PostSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, impulse);
         action.setMapper(postSolveContactMapper);
         action.setState(event);
-        actions.add(action);
+        scheduledContactEvents.add(action);
     }
     
 }
