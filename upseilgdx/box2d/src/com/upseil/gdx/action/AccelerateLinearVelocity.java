@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
-public class AccelerateToVelocity extends AbstractAction<Body, AccelerateToVelocity> {
+public class AccelerateLinearVelocity extends AbstractAction<Body, AccelerateLinearVelocity> {
 
     private Vector2 acceleration;
     private Vector2 targetVelocity;
     private boolean holdVelocity;
     
-    public AccelerateToVelocity() {
+    public AccelerateLinearVelocity() {
         acceleration = new Vector2();
         targetVelocity = new Vector2();
     }
@@ -38,7 +38,6 @@ public class AccelerateToVelocity extends AbstractAction<Body, AccelerateToVeloc
         
         Vector2 position = getState().getPosition();
         getState().applyLinearImpulse(impulseX, impulseY, position.x, position.y, true);
-        
         return false;
     }
     
