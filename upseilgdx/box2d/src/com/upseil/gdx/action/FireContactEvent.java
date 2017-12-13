@@ -3,11 +3,11 @@ package com.upseil.gdx.action;
 import com.upseil.gdx.box2d.event.ContactEvent;
 import com.upseil.gdx.box2d.event.ContactEventHandler;
 
-public abstract class FireContactEvent<C extends ContactEvent<C>, T extends FireContactEvent<C, T>> extends ContextualAction<C, T> {
+public abstract class FireContactEvent<C extends ContactEvent<C>, T extends FireContactEvent<C, T>> extends AbstractAction<C, T> {
     
     @Override
     public boolean act(float deltaTime) {
-        getEventHandler().accept(getContext());
+        getEventHandler().accept(getState());
         return true;
     }
 
@@ -15,7 +15,7 @@ public abstract class FireContactEvent<C extends ContactEvent<C>, T extends Fire
     
     @Override
     public void free() {
-        getContext().free();
+        getState().free();
         super.free();
     }
     

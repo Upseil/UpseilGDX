@@ -15,7 +15,7 @@ public class FireBeginContactEvent extends FireContactEvent<SimpleContactEvent, 
 
     @Override
     protected ContactEventHandler<SimpleContactEvent> getEventHandler() {
-        return mapper.get(getContext().getSelfId());
+        return mapper.get(getState().getSelfId());
     }
     
     @Override

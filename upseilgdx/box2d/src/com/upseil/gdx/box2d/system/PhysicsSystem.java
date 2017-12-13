@@ -52,7 +52,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
     private EntitySubscription bodiedActors;
     
     private final ObjectIntMap<Body> bodyToEntity;
-    private final Array<Action<?>> actions;
+    private final Array<Action<?, ?>> actions;
 
     private final float maxFrameTime;
     private final float stepTime;
@@ -82,11 +82,11 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         SubscriptionListener worldsListener = new SubscriptionListener() {
             @Override
             public void removed(IntBag entities) {
-                ArtemisCollections.forEach(entities, id -> worldMapper.get(id).get().setContactListener(null));
+                ArtemisCollections.forEachComponent(entities, worldMapper, world -> world.get().setContactListener(null));
             }
             @Override
             public void inserted(IntBag entities) {
-                ArtemisCollections.forEach(entities, id -> worldMapper.get(id).get().setContactListener(PhysicsSystem.this));
+                ArtemisCollections.forEachComponent(entities, worldMapper, world -> world.get().setContactListener(PhysicsSystem.this));
             }
         };
         worldsListener.inserted(worlds.getEntities());
@@ -96,7 +96,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         SubscriptionListener bodiesListener = new SubscriptionListener() {
             @Override
             public void removed(IntBag entities) {
-                ArtemisCollections.forEach(entities, id -> bodyToEntity.remove(bodyMapper.get(id).get(), 0));
+                ArtemisCollections.forEachComponent(entities, bodyMapper, body -> bodyToEntity.remove(body.get(), 0));
             }
             @Override
             public void inserted(IntBag entities) {
@@ -121,9 +121,9 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
                 world.step(stepTime, velocityIterations, positionIterations);
             }
 
-            Iterator<Action<?>> actionsIterator = actions.iterator();
+            Iterator<Action<?, ?>> actionsIterator = actions.iterator();
             while (actionsIterator.hasNext()) {
-                Action<?> action = actionsIterator.next();
+                Action<?, ?> action = actionsIterator.next();
                 if (action.act(stepTime)) {
                     action.free();
                     actionsIterator.remove();
@@ -135,14 +135,13 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
             accumulator -= stepTime;
         }
         
-        ArtemisCollections.forEach(bodiedActors.getEntities(), id -> {
-            BodyComponent body = bodyMapper.get(id);
-            ActorComponent actor = actorMapper.get(id);
-            
-            Vector2 bodyPosition = body.getPosition();
-            actor.setPosition(bodyPosition.x - (actor.getWidth() / 2), bodyPosition.y - (actor.getHeight() / 2));
-            actor.setRotation(body.getRotation());
-        });
+        ArtemisCollections.forEachComponent(bodiedActors.getEntities(), bodyMapper, actorMapper,
+            (body, actor) -> {
+                Vector2 bodyPosition = body.getPosition();
+                actor.setPosition(bodyPosition.x - (actor.getWidth() / 2), bodyPosition.y - (actor.getHeight() / 2));
+                actor.setRotation(body.getRotation());
+            }
+        );
     }
     
     public int getEntityForBody(Body body) {
@@ -218,7 +217,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         FirePreSolveEvent action = PooledPools.obtain(FirePreSolveEvent.class);
         PreSolveEvent event = PooledPools.obtain(PreSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, oldManifold);
         action.setMapper(preSolveContactMapper);
-        action.setContext(event);
+        action.setState(event);
         actions.add(action);
     }
 
@@ -226,7 +225,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         FireBeginContactEvent action = PooledPools.obtain(FireBeginContactEvent.class);
         SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
         action.setMapper(beginContactMapper);
-        action.setContext(event);
+        action.setState(event);
         actions.add(action);
     }
 
@@ -234,7 +233,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         FireEndContactEvent action = PooledPools.obtain(FireEndContactEvent.class);
         SimpleContactEvent event = PooledPools.obtain(SimpleContactEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact);
         action.setMapper(endContactMapper);
-        action.setContext(event);
+        action.setState(event);
         actions.add(action);
     }
 
@@ -242,7 +241,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         FirePostSolveEvent action = PooledPools.obtain(FirePostSolveEvent.class);
         PostSolveEvent event = PooledPools.obtain(PostSolveEvent.class).set(selfId, selfFixture, otherId, otherFixture, contact, impulse);
         action.setMapper(postSolveContactMapper);
-        action.setContext(event);
+        action.setState(event);
         actions.add(action);
     }
     

@@ -15,7 +15,7 @@ public class FirePostSolveEvent extends FireContactEvent<PostSolveEvent, FirePos
 
     @Override
     protected ContactEventHandler<PostSolveEvent> getEventHandler() {
-        return mapper.get(getContext().getSelfId());
+        return mapper.get(getState().getSelfId());
     }
     
     @Override

@@ -15,7 +15,7 @@ public class FirePreSolveEvent extends FireContactEvent<PreSolveEvent, FirePreSo
 
     @Override
     protected ContactEventHandler<PreSolveEvent> getEventHandler() {
-        return mapper.get(getContext().getSelfId());
+        return mapper.get(getState().getSelfId());
     }
     
     @Override
