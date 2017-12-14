@@ -1,7 +1,8 @@
-package com.upseil.gdx.action;
+package com.upseil.gdx.box2d.action;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.upseil.gdx.action.AbstractAction;
 
 public class AccelerateAngularVelocity extends AbstractAction<Body, AccelerateAngularVelocity> {
     
@@ -26,20 +27,36 @@ public class AccelerateAngularVelocity extends AbstractAction<Body, AccelerateAn
         return false;
     }
     
-    public float getAcceleration() {
+    public float getAccelerationInRadian() {
         return acceleration;
     }
+    
+    public float getAccelerationInDegree() {
+        return acceleration * MathUtils.radiansToDegrees;
+    }
 
-    public void setAcceleration(float acceleration) {
+    public void setAccelerationInRadian(float acceleration) {
         this.acceleration = acceleration;
     }
 
-    public float getTargetVelocity() {
+    public void setAccelerationInDegree(float acceleration) {
+        this.acceleration = acceleration * MathUtils.degreesToRadians;
+    }
+
+    public float getTargetVelocityInRadian() {
         return targetVelocity;
     }
 
-    public void setTargetVelocity(float targetVelocity) {
+    public float getTargetVelocityInDegree() {
+        return targetVelocity * MathUtils.radiansToDegrees;
+    }
+
+    public void setTargetVelocityInRadian(float targetVelocity) {
         this.targetVelocity = targetVelocity;
+    }
+
+    public void setTargetVelocityInDegree(float targetVelocity) {
+        this.targetVelocity = targetVelocity * MathUtils.degreesToRadians;
     }
 
     public boolean holdVelocity() {

@@ -1,12 +1,17 @@
-package com.upseil.gdx.pool;
+package com.upseil.gdx.util;
 
-import com.badlogic.gdx.utils.Pool.Poolable;
-
-public class Pair<A, B> implements Poolable {
+public class Pair<A, B> {
     
     private A a;
     private B b;
     
+    public Pair() { }
+    
+    public Pair(A a, B b) {
+        this.a = a;
+        this.b = b;
+    }
+
     public Pair<A, B> set(A a, B b) {
         this.a = a;
         this.b = b;
@@ -16,15 +21,19 @@ public class Pair<A, B> implements Poolable {
     public A getA() {
         return a;
     }
+    
+    public Pair<A, B> setA(A a) {
+        this.a = a;
+        return this;
+    }
 
     public B getB() {
         return b;
     }
-
-    @Override
-    public void reset() {
-        a = null;
-        b = null;
+    
+    public Pair<A, B> setB(B b) {
+        this.b = b;
+        return this;
     }
 
     @Override

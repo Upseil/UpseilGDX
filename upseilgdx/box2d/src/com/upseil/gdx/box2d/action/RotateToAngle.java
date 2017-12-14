@@ -1,7 +1,8 @@
-package com.upseil.gdx.action;
+package com.upseil.gdx.box2d.action;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.upseil.gdx.action.AbstractAction;
 
 public class RotateToAngle extends AbstractAction<Body, RotateToAngle> {
     

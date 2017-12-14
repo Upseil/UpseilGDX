@@ -1,15 +1,15 @@
-package com.upseil.gdx.action;
+package com.upseil.gdx.box2d.action;
 
 import com.artemis.ComponentMapper;
-import com.upseil.gdx.box2d.component.OnBeginContact;
+import com.upseil.gdx.box2d.component.OnEndContact;
 import com.upseil.gdx.box2d.event.ContactEventHandler;
 import com.upseil.gdx.box2d.event.SimpleContactEvent;
 
-public class FireBeginContactEvent extends FireContactEvent<SimpleContactEvent, FireBeginContactEvent> {
+public class FireEndContactEvent extends FireContactEvent<SimpleContactEvent, FireEndContactEvent> {
     
-    private ComponentMapper<OnBeginContact> mapper;
+    private ComponentMapper<OnEndContact> mapper;
     
-    public void setMapper(ComponentMapper<OnBeginContact> mapper) {
+    public void setMapper(ComponentMapper<OnEndContact> mapper) {
         this.mapper = mapper;
     }
 

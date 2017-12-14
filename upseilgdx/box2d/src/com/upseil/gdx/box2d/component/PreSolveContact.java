@@ -4,8 +4,8 @@ import com.artemis.PooledComponent;
 import com.badlogic.gdx.utils.Array;
 import com.upseil.gdx.box2d.event.ContactEventHandler;
 import com.upseil.gdx.box2d.event.PreSolveEvent;
+import com.upseil.gdx.util.GDXCollections;
 import com.upseil.gdx.util.function.BooleanFunction;
-import com.upseil.gdx.utils.GDXCollections;
 
 public class PreSolveContact extends PooledComponent implements ContactEventHandler<PreSolveEvent> {
     

@@ -1,4 +1,4 @@
-package com.upseil.gdx.action;
+package com.upseil.gdx.box2d.action;
 
 import com.artemis.ComponentMapper;
 import com.upseil.gdx.box2d.component.PreSolveContact;

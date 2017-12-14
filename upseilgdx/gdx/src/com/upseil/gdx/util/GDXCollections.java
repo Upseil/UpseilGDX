@@ -1,4 +1,4 @@
-package com.upseil.gdx.utils;
+package com.upseil.gdx.util;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -37,6 +37,14 @@ public class GDXCollections {
         int size = array.size;
         for (int i = 0; i < size; i++) {
             consumer.accept(data[i]);
+        }
+    }
+    
+    public static <T> void forEach(Array<T> array, IntObjectConsumer<T> consumer) {
+        T[] data = array.items;
+        int size = array.size;
+        for (int i = 0; i < size; i++) {
+            consumer.accept(i, data[i]);
         }
     }
 

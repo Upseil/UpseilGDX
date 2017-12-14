@@ -1,5 +1,6 @@
-package com.upseil.gdx.action;
+package com.upseil.gdx.box2d.action;
 
+import com.upseil.gdx.action.AbstractAction;
 import com.upseil.gdx.box2d.event.ContactEvent;
 import com.upseil.gdx.box2d.event.ContactEventHandler;
 

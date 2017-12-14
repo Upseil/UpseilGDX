@@ -5,9 +5,10 @@ import com.artemis.annotations.DelayedComponentRemoval;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.utils.Array;
 import com.upseil.gdx.action.Action;
-import com.upseil.gdx.utils.GDXCollections;
+import com.upseil.gdx.util.GDXCollections;
 
 @DelayedComponentRemoval
 public class BodyComponent extends PooledComponent {
@@ -35,6 +36,7 @@ public class BodyComponent extends PooledComponent {
                 if (realIndex != -1) {
                     actions.removeIndex(realIndex);
                     action.free();
+                    action.setState(null);
                     index--;
                 }
             }
@@ -49,6 +51,7 @@ public class BodyComponent extends PooledComponent {
     public void removeAction(Action<Body, ?> action) {
         if (actions.removeValue(action, true)) {
             action.free();
+            action.setState(null);
         }
     }
 
@@ -61,7 +64,10 @@ public class BodyComponent extends PooledComponent {
     }
 
     public void clearActions () {
-        GDXCollections.forEach(actions, Action::free);
+        GDXCollections.forEach(actions, action -> {
+            action.free();
+            action.setState(null);
+        });
         actions.clear();
     }
 
@@ -71,6 +77,44 @@ public class BodyComponent extends PooledComponent {
     
     public float getRotation() {
         return body.getAngle() * MathUtils.radiansToDegrees;
+    }
+
+    public void setCategoryBits(short categoryBits) {
+        GDXCollections.forEach(body.getFixtureList(), fixture -> {
+            Filter filter = fixture.getFilterData();
+            filter.categoryBits = categoryBits;
+            fixture.setFilterData(filter);
+        });
+    }
+
+    public void setMaskBits(short maskBits) {
+        GDXCollections.forEach(body.getFixtureList(), fixture -> {
+            Filter filter = fixture.getFilterData();
+            filter.maskBits = maskBits;
+            fixture.setFilterData(filter);
+        });
+    }
+
+    public void setGroupIndex(short groupIndex) {
+        GDXCollections.forEach(body.getFixtureList(), fixture -> {
+            Filter filter = fixture.getFilterData();
+            filter.groupIndex = groupIndex;
+            fixture.setFilterData(filter);
+        });
+    }
+    
+    public void setFilterData(Filter filter) {
+        setFilterData(filter.categoryBits, filter.maskBits, filter.groupIndex);
+    }
+
+    public void setFilterData(short categoryBits, short maskBits, short groupIndex) {
+        GDXCollections.forEach(body.getFixtureList(), fixture -> {
+            Filter filter = fixture.getFilterData();
+            filter.categoryBits = categoryBits;
+            filter.maskBits = maskBits;
+            filter.groupIndex = groupIndex;
+            fixture.setFilterData(filter);
+        });
     }
 
     @Override
