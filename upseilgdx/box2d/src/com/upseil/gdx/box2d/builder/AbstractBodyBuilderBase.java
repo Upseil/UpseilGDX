@@ -3,10 +3,21 @@ package com.upseil.gdx.box2d.builder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Filter;
 
 abstract class AbstractBodyBuilderBase<BuilderType> implements BodyBuilderBase<BuilderType> {
     
     protected final BodyDef bodyDefinition;
+    
+    protected short categoryBits;
+    protected boolean hasCategoryBits;
+
+    protected short maskBits;
+    protected boolean hasMaskBits;
+    
+    protected short groupIndex;
+    protected boolean hasGroupIndex;
+    
     private BuilderType builder;
     
     protected AbstractBodyBuilderBase(BodyDef bodyDefinition) {
@@ -104,6 +115,40 @@ abstract class AbstractBodyBuilderBase<BuilderType> implements BodyBuilderBase<B
     @Override
     public BuilderType gravityScale(float gravityScale) {
         bodyDefinition.gravityScale = gravityScale;
+        return builder;
+    }
+
+    @Override
+    public BuilderType categoryBits(short categoryBits) {
+        this.categoryBits = categoryBits;
+        hasCategoryBits = true;
+        return builder;
+    }
+
+    @Override
+    public BuilderType maskBits(short maskBits) {
+        this.maskBits = maskBits;
+        hasMaskBits = true;
+        return builder;
+    }
+
+    @Override
+    public BuilderType groupIndex(short groupIndex) {
+        this.groupIndex = groupIndex;
+        hasGroupIndex = true;
+        return builder;
+    }
+
+    @Override
+    public BuilderType filter(Filter filter) {
+        return filter(filter.categoryBits, filter.maskBits, filter.groupIndex);
+    }
+
+    @Override
+    public BuilderType filter(short categoryBits, short maskBits, short groupIndex) {
+        categoryBits(categoryBits);
+        maskBits(maskBits);
+        groupIndex(groupIndex);
         return builder;
     }
     

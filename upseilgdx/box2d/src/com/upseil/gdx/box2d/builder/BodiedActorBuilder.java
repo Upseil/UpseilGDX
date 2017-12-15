@@ -42,6 +42,15 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<BodiedActorBuild
     
     public ShapelessFixtureBuilder beginFixture() {
         InternalFixtureBuilder fixture = new InternalFixtureBuilder();
+        if (hasCategoryBits) {
+            fixture.categoryBits(categoryBits);
+        }
+        if (hasMaskBits) {
+            fixture.maskBits(maskBits);
+        }
+        if (hasGroupIndex) {
+            fixture.groupIndex(groupIndex);
+        }
         fixtures.add(fixture);
         return fixture;
     }

@@ -1,5 +1,6 @@
 package com.upseil.gdx.box2d.builder;
 
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 interface BodyBuilderBase<BuilderType> {
@@ -29,5 +30,12 @@ interface BodyBuilderBase<BuilderType> {
     BuilderType isActive(boolean isActive);
     
     BuilderType gravityScale(float gravityScale);
+    
+    BuilderType categoryBits(short categoryBits);
+    BuilderType maskBits(short maskBits);
+    BuilderType groupIndex(short groupIndex);
+    
+    BuilderType filter(Filter filter);
+    BuilderType filter(short categoryBits, short maskBits, short groupIndex);
     
 }
