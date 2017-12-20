@@ -4,17 +4,32 @@ import com.badlogic.gdx.physics.box2d.Filter;
 
 interface FixtureBuilderBase<BuilderType> {
     
-    BuilderType friction(float friction);
-    BuilderType restitution(float restitution);
-    BuilderType density(float density);
+    BuilderType withFriction(float friction);
+    BuilderType withRestitution(float restitution);
+    BuilderType withDensity(float density);
     
-    BuilderType isSensor(boolean isSensor);
+    BuilderType asSensor(boolean isSensor);
+    default BuilderType asSensor() {
+        return asSensor(true);
+    }
+    default BuilderType notAsSensor() {
+        return asSensor(false);
+    }
     
-    BuilderType categoryBits(short categoryBits);
-    BuilderType maskBits(short maskBits);
-    BuilderType groupIndex(short groupIndex);
+    BuilderType withCategoryBits(short categoryBits);
+    BuilderType withMaskBits(short maskBits);
+    BuilderType withGroupIndex(short groupIndex);
     
-    BuilderType filter(Filter filter);
-    BuilderType filter(short categoryBits, short maskBits, short groupIndex);
+    default BuilderType withFilter(Filter filter) {
+        withCategoryBits(filter.categoryBits);
+        withMaskBits(filter.maskBits);
+        return withGroupIndex(filter.groupIndex);
+    }
+    
+    default BuilderType withFilter(short categoryBits, short maskBits, short groupIndex) {
+        withCategoryBits(categoryBits);
+        withMaskBits(maskBits);
+        return withGroupIndex(groupIndex);
+    }
     
 }
