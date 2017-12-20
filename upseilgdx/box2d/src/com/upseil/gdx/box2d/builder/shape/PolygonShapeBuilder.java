@@ -1,8 +1,11 @@
-package com.upseil.gdx.box2d.builder;
+package com.upseil.gdx.box2d.builder.shape;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-public interface PolygonShapeBuilder extends ShapeBuilderBase<PolygonShapeBuilder> {
+public interface PolygonShapeBuilder extends ShapeBuilder<PolygonShape> {
+    
+    PolygonShapeBuilder withRadius(float radius);
 
     PolygonShapeBuilder addVertix(float x, float y);
     

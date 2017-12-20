@@ -1,21 +1,35 @@
-package com.upseil.gdx.box2d.builder;
+package com.upseil.gdx.box2d.builder.shape;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.FloatArray;
+import com.upseil.gdx.box2d.builder.AbstractInternalShapeBuilder;
 
-public class InternalPolygonShapeBuilder extends AbstractShapeBuilderBase<PolygonShapeBuilder> implements PolygonShapeBuilder {
+public class InternalPolygonShapeBuilder<P> extends AbstractInternalShapeBuilder<PolygonShape, P> implements ChainedPolygonShapeBuilder<P> {
     
+    private float radius;
     private final FloatArray vertices;
     
-    public InternalPolygonShapeBuilder(FixtureBuilder parent) {
+    public InternalPolygonShapeBuilder() {
+        this(null);
+    }
+    
+    public InternalPolygonShapeBuilder(P parent) {
         super(parent);
-        super.builder = this;
         vertices = new FloatArray(16);
+    }
+    
+    @Override
+    public ChainedPolygonShapeBuilder<P> withRadius(float radius) {
+        if (!MathUtils.isEqual(this.radius, radius)) {
+            this.radius = radius;
+            changed = true;
+        }
+        return this;
     }
 
     @Override
-    public PolygonShapeBuilder addVertix(float x, float y) {
+    public ChainedPolygonShapeBuilder<P> addVertix(float x, float y) {
         vertices.add(x);
         vertices.add(y);
         bounds.merge(x, y);
@@ -23,7 +37,7 @@ public class InternalPolygonShapeBuilder extends AbstractShapeBuilderBase<Polygo
     }
     
     @Override
-    protected Shape build() {
+    protected PolygonShape createShape() {
         if (vertices.size < 6) {
             throw new IllegalStateException("Only " + (vertices.size / 2) + " have been defined, but at least 3 are necessary");
         }

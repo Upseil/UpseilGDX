@@ -19,6 +19,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.upseil.gdx.box2d.builder.shape.ChainedBoxShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.ChainedCircleShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.ChainedPolygonShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.InternalBoxShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.InternalCircleShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.InternalPolygonShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.ShapeBuilder;
 import com.upseil.gdx.util.Pair;
 import com.upseil.gdx.util.builder.Builder;
 
@@ -105,12 +112,12 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<BodiedActorBuild
     }
     
     private class InternalFixtureBuilder extends AbstractFixtureBuilderBase<FixtureBuilder>
-                                         implements FixtureBuilder, ShapelessFixtureBuilder, Disposable {//, BoxShapeBuilder, PolygonShapeBuilder, Disposable {
+                                         implements FixtureBuilder, ShapelessFixtureBuilder, Disposable {
         
         private Drawable image;
         private final Color color;
         
-        private ShapeBuilderBase<?> shapeBuilder;
+        private ShapeBuilder<?> shapeBuilder;
 
         public InternalFixtureBuilder() {
             super(copy(DefaultFixtureDefinition));
@@ -121,7 +128,7 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<BodiedActorBuild
         
         private FixtureDef getFixtureDefinition(Rectangle bodyBounds) {
             if (fixtureDefinition.shape == null) {
-                fixtureDefinition.shape = shapeBuilder.getShape();
+                fixtureDefinition.shape = shapeBuilder.build();
             }
             return fixtureDefinition;
         }
@@ -142,34 +149,36 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<BodiedActorBuild
         }
         
         @Override
-        public BoxShapeBuilder withBoxShape(float width, float height) {
+        public ChainedBoxShapeBuilder<FixtureBuilder> withBoxShape(float width, float height) {
             if (shapeBuilder != null) {
                 throw new IllegalStateException("The shape of this fixture already has been defined");
             }
             
-            InternalBoxShapeBuilder boxShapeBuilder = new InternalBoxShapeBuilder(this, width, height);
+            ChainedBoxShapeBuilder<FixtureBuilder> boxShapeBuilder = new InternalBoxShapeBuilder<>(this);
+            boxShapeBuilder.withSize(width, height);
             shapeBuilder = boxShapeBuilder;
             return boxShapeBuilder;
         }
         
         @Override
-        public CircleShapeBuilder withCircleShape(float radius) {
+        public ChainedCircleShapeBuilder<FixtureBuilder> withCircleShape(float radius) {
             if (shapeBuilder != null) {
                 throw new IllegalStateException("The shape of this fixture already has been defined");
             }
             
-            CircleShapeBuilder circleShapeBuilder = new InternalCircleShapeBuilder(this, radius);
+            ChainedCircleShapeBuilder<FixtureBuilder> circleShapeBuilder = new InternalCircleShapeBuilder<>(this);
+            circleShapeBuilder.withRadius(radius);
             shapeBuilder = circleShapeBuilder;
             return circleShapeBuilder;
         }
         
         @Override
-        public PolygonShapeBuilder withPolygonShape() {
+        public ChainedPolygonShapeBuilder<FixtureBuilder> withPolygonShape() {
             if (shapeBuilder != null) {
                 throw new IllegalStateException("The shape of this fixture already has been defined");
             }
             
-            InternalPolygonShapeBuilder polygonShapeBuilder = new InternalPolygonShapeBuilder(this);
+            ChainedPolygonShapeBuilder<FixtureBuilder> polygonShapeBuilder = new InternalPolygonShapeBuilder<>(this);
             shapeBuilder = polygonShapeBuilder;
             return polygonShapeBuilder;
         }

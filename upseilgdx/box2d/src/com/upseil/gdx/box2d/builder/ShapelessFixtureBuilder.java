@@ -1,10 +1,13 @@
 package com.upseil.gdx.box2d.builder;
 
 import com.badlogic.gdx.math.Vector2;
+import com.upseil.gdx.box2d.builder.shape.ChainedBoxShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.ChainedCircleShapeBuilder;
+import com.upseil.gdx.box2d.builder.shape.ChainedPolygonShapeBuilder;
 
 public interface ShapelessFixtureBuilder {
 
-    CircleShapeBuilder withCircleShape(float radius);
+    ChainedCircleShapeBuilder<FixtureBuilder> withCircleShape(float radius);
     default FixtureBuilder withCircleShape(float radius, float centerX, float centerY) {
         return withCircleShape(radius).at(centerX, centerY).endShape();
     }
@@ -12,7 +15,7 @@ public interface ShapelessFixtureBuilder {
         return withCircleShape(radius, centerPosition.x, centerPosition.y);
     }
     
-    BoxShapeBuilder withBoxShape(float width, float height);
+    ChainedBoxShapeBuilder<FixtureBuilder> withBoxShape(float width, float height);
     default FixtureBuilder withSimpleBoxShape(float width, float height) {
         return withBoxShape(width, height).endShape();
     }
@@ -20,6 +23,6 @@ public interface ShapelessFixtureBuilder {
         return withBoxShape(width, height).withRadius(radius).endShape();
     }
     
-    PolygonShapeBuilder withPolygonShape();
+    ChainedPolygonShapeBuilder<FixtureBuilder> withPolygonShape();
     
 }
