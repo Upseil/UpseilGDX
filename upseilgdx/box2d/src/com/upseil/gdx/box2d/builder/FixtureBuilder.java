@@ -1,16 +1,25 @@
 package com.upseil.gdx.box2d.builder;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.upseil.gdx.box2d.builder.base.AbstractShapelessFixtureBuilderBase;
+import com.upseil.gdx.box2d.builder.shape.ShapeBuilder;
+import com.upseil.gdx.box2d.util.Fixtures;
 
-public interface FixtureBuilder extends FixtureBuilderBase<FixtureBuilder> {
+public class FixtureBuilder extends AbstractShapelessFixtureBuilderBase<ShapelyFixtureBuilder> {
     
-    FixtureBuilder withImage(Drawable image);
-    FixtureBuilder withImage(String name);
+    protected final FixtureDef template;
     
-    FixtureBuilder withColor(Color color);
-    FixtureBuilder withColor(String name); 
-    
-    BodiedActorBuilder endFixture();
+    public FixtureBuilder() {
+        this(Fixtures.DefaultFixtureDefinition);
+    }
+
+    public FixtureBuilder(FixtureDef template) {
+        this.template = Fixtures.copy(template);
+    }
+
+    @Override
+    protected ShapelyFixtureBuilder createShapelyFixtureBuilder(ShapeBuilder<?> shape) {
+        return new ShapelyFixtureBuilder(Fixtures.copy(template), shape);
+    }
     
 }

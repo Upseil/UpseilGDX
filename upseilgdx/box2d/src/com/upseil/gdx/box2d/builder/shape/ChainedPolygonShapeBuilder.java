@@ -3,27 +3,50 @@ package com.upseil.gdx.box2d.builder.shape;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
-public interface ChainedPolygonShapeBuilder<P> extends PolygonShapeBuilder, ChainedShapeBuilder<PolygonShape, P> {
+public abstract class ChainedPolygonShapeBuilder<P> extends SimplePolygonShapeBuilder implements ChainedShapeBuilder<PolygonShape, P> {
     
-    ChainedPolygonShapeBuilder<P> withRadius(float radius);
+    private final P parent;
 
-    ChainedPolygonShapeBuilder<P> addVertix(float x, float y);
+    public ChainedPolygonShapeBuilder() {
+        this.parent = createParent();
+    }
+
+    protected abstract P createParent();
     
-    default ChainedPolygonShapeBuilder<P> addVertix(Vector2 vertix) {
-        return addVertix(vertix.x, vertix.y);
+    @Override
+    public P endShape() {
+        return parent;
     }
     
-    default ChainedPolygonShapeBuilder<P> vertices(Vector2[] vertices) {
-        for (Vector2 vertix : vertices) {
-            addVertix(vertix.x, vertix.y);
-        }
+//- Overriding members for concrete return type -----------------------------------------
+
+    @Override
+    public ChainedPolygonShapeBuilder<P> addVertix(float x, float y) {
+        super.addVertix(x, y);
         return this;
     }
 
-    default ChainedPolygonShapeBuilder<P> vertices(float[] vertices) {
-        for (int index = 0; index < vertices.length - 1; index += 2) {
-            addVertix(vertices[index], vertices[index + 1]);
-        }
+    @Override
+    public ChainedPolygonShapeBuilder<P> addVertix(Vector2 vertix) {
+        super.addVertix(vertix);
+        return this;
+    }
+
+    @Override
+    public ChainedPolygonShapeBuilder<P> vertices(Vector2[] vertices) {
+        super.vertices(vertices);
+        return this;
+    }
+
+    @Override
+    public ChainedPolygonShapeBuilder<P> vertices(float[] vertices) {
+        super.vertices(vertices);
+        return this;
+    }
+
+    @Override
+    public ChainedPolygonShapeBuilder<P> withRadius(float radius) {
+        super.withRadius(radius);
         return this;
     }
     

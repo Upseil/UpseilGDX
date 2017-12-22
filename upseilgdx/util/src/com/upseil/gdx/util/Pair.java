@@ -2,8 +2,8 @@ package com.upseil.gdx.util;
 
 public class Pair<A, B> {
     
-    private A a;
-    private B b;
+    protected A a;
+    protected B b;
     
     public Pair() { }
     

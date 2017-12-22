@@ -1,9 +1,6 @@
 package com.upseil.gdx.pool;
 
-import com.badlogic.gdx.utils.Pool;
-import com.upseil.gdx.util.Pair;
-
-public class PairPool<A, B> extends Pool<Pair<A, B>> {
+public class PairPool<A, B> extends PooledPool<PooledPair<A, B>> {
     
     public PairPool() {
         super();
@@ -18,13 +15,8 @@ public class PairPool<A, B> extends Pool<Pair<A, B>> {
     }
 
     @Override
-    protected Pair<A, B> newObject() {
-        return new Pair<>();
-    }
-    
-    @Override
-    protected void reset(Pair<A, B> pair) {
-        pair.set(null, null);
+    protected PooledPair<A, B> newObject() {
+        return new PooledPair<>();
     }
     
 }

@@ -3,24 +3,18 @@ package com.upseil.gdx.box2d.builder.shape;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.FloatArray;
-import com.upseil.gdx.box2d.builder.AbstractInternalShapeBuilder;
 
-public class InternalPolygonShapeBuilder<P> extends AbstractInternalShapeBuilder<PolygonShape, P> implements ChainedPolygonShapeBuilder<P> {
+public class SimplePolygonShapeBuilder extends AbstractShapeBuilder<PolygonShape> implements PolygonShapeBuilder {
     
     private float radius;
     private final FloatArray vertices;
     
-    public InternalPolygonShapeBuilder() {
-        this(null);
-    }
-    
-    public InternalPolygonShapeBuilder(P parent) {
-        super(parent);
+    public SimplePolygonShapeBuilder() {
         vertices = new FloatArray(16);
     }
     
     @Override
-    public ChainedPolygonShapeBuilder<P> withRadius(float radius) {
+    public PolygonShapeBuilder withRadius(float radius) {
         if (!MathUtils.isEqual(this.radius, radius)) {
             this.radius = radius;
             changed = true;
@@ -29,7 +23,7 @@ public class InternalPolygonShapeBuilder<P> extends AbstractInternalShapeBuilder
     }
 
     @Override
-    public ChainedPolygonShapeBuilder<P> addVertix(float x, float y) {
+    public PolygonShapeBuilder addVertix(float x, float y) {
         vertices.add(x);
         vertices.add(y);
         bounds.merge(x, y);
