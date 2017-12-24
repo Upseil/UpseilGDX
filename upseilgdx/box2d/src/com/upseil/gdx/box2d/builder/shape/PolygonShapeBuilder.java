@@ -13,14 +13,14 @@ public interface PolygonShapeBuilder extends ShapeBuilder<PolygonShape> {
         return addVertix(vertix.x, vertix.y);
     }
     
-    default PolygonShapeBuilder vertices(Vector2[] vertices) {
+    default PolygonShapeBuilder withVertices(Vector2[] vertices) {
         for (Vector2 vertix : vertices) {
             addVertix(vertix.x, vertix.y);
         }
         return this;
     }
 
-    default PolygonShapeBuilder vertices(float[] vertices) {
+    default PolygonShapeBuilder withVertices(float[] vertices) {
         for (int index = 0; index < vertices.length - 1; index += 2) {
             addVertix(vertices[index], vertices[index + 1]);
         }

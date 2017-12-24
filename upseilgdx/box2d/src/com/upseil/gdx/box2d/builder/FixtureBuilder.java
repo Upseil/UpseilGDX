@@ -8,13 +8,9 @@ import com.upseil.gdx.box2d.util.Fixtures;
 public class FixtureBuilder extends AbstractShapelessFixtureBuilderBase<ShapelyFixtureBuilder> {
     
     protected final FixtureDef template;
-    
-    public FixtureBuilder() {
-        this(Fixtures.DefaultFixtureDefinition);
-    }
 
     public FixtureBuilder(FixtureDef template) {
-        this.template = Fixtures.copy(template);
+        this.template = template;
     }
 
     @Override

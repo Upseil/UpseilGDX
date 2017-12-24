@@ -33,14 +33,14 @@ public abstract class ChainedPolygonShapeBuilder<P> extends SimplePolygonShapeBu
     }
 
     @Override
-    public ChainedPolygonShapeBuilder<P> vertices(Vector2[] vertices) {
-        super.vertices(vertices);
+    public ChainedPolygonShapeBuilder<P> withVertices(Vector2[] vertices) {
+        super.withVertices(vertices);
         return this;
     }
 
     @Override
-    public ChainedPolygonShapeBuilder<P> vertices(float[] vertices) {
-        super.vertices(vertices);
+    public ChainedPolygonShapeBuilder<P> withVertices(float[] vertices) {
+        super.withVertices(vertices);
         return this;
     }
 

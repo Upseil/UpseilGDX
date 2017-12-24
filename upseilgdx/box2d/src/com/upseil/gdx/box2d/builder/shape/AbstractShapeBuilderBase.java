@@ -9,6 +9,7 @@ public abstract class AbstractShapeBuilderBase<T> implements ShapeBuilderBase<T>
     
     protected final Rectangle bounds;
     protected float angle;
+    protected boolean changed;
     
     protected AbstractShapeBuilderBase() {
         bounds = new Rectangle();

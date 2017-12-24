@@ -4,13 +4,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.FloatArray;
 
-public class SimplePolygonShapeBuilder extends AbstractShapeBuilder<PolygonShape> implements PolygonShapeBuilder {
+public class SimplePolygonShapeBuilder extends AbstractVertixBasedShapeBuilder<PolygonShape> implements PolygonShapeBuilder {
     
     private float radius;
-    private final FloatArray vertices;
     
     public SimplePolygonShapeBuilder() {
-        vertices = new FloatArray(16);
+        super(-1, 8);
     }
     
     @Override
@@ -24,14 +23,13 @@ public class SimplePolygonShapeBuilder extends AbstractShapeBuilder<PolygonShape
 
     @Override
     public PolygonShapeBuilder addVertix(float x, float y) {
-        vertices.add(x);
-        vertices.add(y);
-        bounds.merge(x, y);
+        internalAddLast(x, y);
         return this;
     }
     
     @Override
     protected PolygonShape createShape() {
+        FloatArray vertices = vertices();
         if (vertices.size < 6) {
             throw new IllegalStateException("Only " + (vertices.size / 2) + " have been defined, but at least 3 are necessary");
         }

@@ -12,7 +12,6 @@ import com.upseil.gdx.box2d.builder.base.AbstractBodyBuilderBase;
 import com.upseil.gdx.box2d.builder.base.BodyBuilderBase;
 import com.upseil.gdx.box2d.builder.base.ChainedFixtureBuilderBase;
 import com.upseil.gdx.box2d.builder.base.ShapelessFixtureBuilderBase;
-import com.upseil.gdx.box2d.util.Bodies;
 import com.upseil.gdx.box2d.util.Fixtures;
 
 public class BodyBuilder extends AbstractBodyBuilderBase<Body, FixtureDef> {
@@ -20,12 +19,8 @@ public class BodyBuilder extends AbstractBodyBuilderBase<Body, FixtureDef> {
     protected final World world;
     protected final Array<ChainedShapelyFixtureBuilder> fixtures;
     
-    public BodyBuilder(World world) {
-        this(world, Bodies.DefaultBodyDefinition);
-    }
-
     public BodyBuilder(World world, BodyDef template) {
-        super(Bodies.copy(template));
+        super(template);
         this.world = world;
         fixtures = new Array<>();
     }

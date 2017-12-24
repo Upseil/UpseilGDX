@@ -7,13 +7,9 @@ import com.upseil.gdx.box2d.builder.base.AbstractBodyDefinitionBuilderBase;
 import com.upseil.gdx.box2d.util.Bodies;
 
 public class BodyDefinitionBuilder extends AbstractBodyDefinitionBuilderBase<BodyDef> {
-
-    public BodyDefinitionBuilder() {
-        this(Bodies.DefaultBodyDefinition);
-    }
     
     public BodyDefinitionBuilder(BodyDef template) {
-        super(Bodies.copy(template));
+        super(template);
     }
 
     @Override

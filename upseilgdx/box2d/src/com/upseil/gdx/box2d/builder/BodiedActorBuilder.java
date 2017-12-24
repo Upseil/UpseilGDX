@@ -15,35 +15,19 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import com.upseil.gdx.box2d.builder.base.AbstractBodyBuilderBase;
-import com.upseil.gdx.box2d.util.Bodies;
 import com.upseil.gdx.box2d.util.Fixtures;
-import com.upseil.gdx.pool.PairPool;
 import com.upseil.gdx.pool.PooledPair;
 
 public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body, Actor>, PooledPair<FixtureDef, Actor>> {
-    
-    public static final PairPool<Body, Actor> DefaultPool = new PairPool<>(4, 100);
     
     protected final World world;
     protected final Skin skin;
     protected final Pool<PooledPair<Body, Actor>> pool;
     
     protected final Array<ChainedShapelyFixturedActorBuilder> fixtures;
-    
-    public BodiedActorBuilder(World world) {
-        this(world, null, DefaultPool, Bodies.DefaultBodyDefinition);
-    }
-    
-    public BodiedActorBuilder(World world, Skin skin) {
-        this(world, skin, DefaultPool, Bodies.DefaultBodyDefinition);
-    }
-
-    public BodiedActorBuilder(World world, Skin skin, Pool<PooledPair<Body, Actor>> pool) {
-        this(world, skin, pool, Bodies.DefaultBodyDefinition);
-    }
 
     public BodiedActorBuilder(World world, Skin skin, Pool<PooledPair<Body, Actor>> pool, BodyDef template) {
-        super(Bodies.copy(template));
+        super(template);
         this.world = world;
         this.skin = skin;
         this.pool = pool;

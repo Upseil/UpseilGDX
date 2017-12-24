@@ -2,11 +2,20 @@ package com.upseil.gdx.box2d.util;
 
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.upseil.gdx.box2d.builder.FixtureBuilder;
 
 public final class Fixtures {
     
     public static final FixtureDef DefaultFixtureDefinition = new FixtureDef();
     
+    public static FixtureBuilder newFixtureDefinition() {
+        return newFixtureDefinition(DefaultFixtureDefinition);
+    }
+    
+    public static FixtureBuilder newFixtureDefinition(FixtureDef template) {
+        return new FixtureBuilder(copy(template));
+    }
+
     public static FixtureDef copy(FixtureDef fixtureDefinition) {
         FixtureDef clone = new FixtureDef();
         apply(fixtureDefinition, clone);

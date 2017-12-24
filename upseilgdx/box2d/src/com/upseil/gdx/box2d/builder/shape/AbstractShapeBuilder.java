@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.Shape;
 public abstract class AbstractShapeBuilder<T extends Shape> extends AbstractShapeBuilderBase<T> implements ShapeBuilder<T> {
     
     protected T shape;
-    protected boolean changed;
     
     @Override
     public T build() {

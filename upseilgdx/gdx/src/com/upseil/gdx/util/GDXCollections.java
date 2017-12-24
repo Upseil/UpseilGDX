@@ -6,10 +6,12 @@ import java.util.function.IntConsumer;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.CharArray;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Entry;
 import com.upseil.gdx.util.function.CharConsumer;
+import com.upseil.gdx.util.function.FloatConsumer;
 import com.upseil.gdx.util.function.IntObjectConsumer;
 
 public class GDXCollections {
@@ -20,6 +22,21 @@ public class GDXCollections {
         int[] data = array.items;
         int size = array.size;
         for (int i = 0; i < size; i++) {
+            consumer.accept(data[i]);
+        }
+    }
+    
+    public static void forEach(FloatArray array, FloatConsumer consumer) {
+        float[] data = array.items;
+        int size = array.size;
+        for (int i = 0; i < size; i++) {
+            consumer.accept(data[i]);
+        }
+    }
+    
+    public static void revertedForEach(FloatArray array, FloatConsumer consumer) {
+        float[] data = array.items;
+        for (int i = array.size - 1; i >= 0; i--) {
             consumer.accept(data[i]);
         }
     }
