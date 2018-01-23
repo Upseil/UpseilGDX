@@ -1,6 +1,7 @@
 package com.upseil.gdx.box2d.builder.base;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
@@ -8,6 +9,9 @@ public interface FixturedActorBuilderBase<T> extends FixtureBuilderBase<T> {
     
     FixturedActorBuilderBase<T> withImage(Drawable image);
     FixturedActorBuilderBase<T> withImage(String name);
+    
+    FixturedActorBuilderBase<T> withTexture(TextureRegion texture);
+    FixturedActorBuilderBase<T> withTexture(String name);
     
     FixturedActorBuilderBase<T> withColor(Color color);
     FixturedActorBuilderBase<T> withColor(String name); 

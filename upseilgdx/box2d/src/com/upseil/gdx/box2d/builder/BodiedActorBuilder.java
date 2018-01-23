@@ -38,20 +38,27 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body,
     public PooledPair<Body, Actor> build() {
         Body body = world.createBody(bodyDefinition);
         Actor actor;
+        float halfWidth = bounds.width / 2;
+        float halfHeight = bounds.height / 2;
         
         if (fixtures.size > 1) {
             Group group = new Group();
-            group.setTransform(true); // FIXME Do this only if necessary
+            boolean transform = false;
             for (ChainedShapelyFixturedActorBuilder fixture : fixtures) {
                 PooledPair<FixtureDef, Actor> fixturedActor = fixture.build();
                 body.createFixture(fixturedActor.getA());
                 
                 Actor fixtureActor = fixturedActor.getB();
-                fixtureActor.setPosition(fixtureActor.getX() + bounds.width / 2, fixtureActor.getY() + bounds.height / 2);
+                fixtureActor.setPosition(fixtureActor.getX() + halfWidth, fixtureActor.getY() + halfHeight);
                 group.addActor(fixtureActor);
+
+                transform |= !MathUtils.isEqual(fixtureActor.getRotation(), 0);
+                transform |= !MathUtils.isEqual(fixtureActor.getScaleX(), 1);
+                transform |= !MathUtils.isEqual(fixtureActor.getScaleY(), 1);
                 
                 fixturedActor.free();
             }
+            group.setTransform(transform);
             actor = group;
         } else {
             ChainedShapelyFixturedActorBuilder fixture = fixtures.get(0);
@@ -61,9 +68,11 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body,
             fixturedActor.free();
         }
 
-        actor.setOrigin(bounds.width / 2, bounds.height / 2);
+        Vector2 centerOfMass = body.getLocalCenter();
+        actor.setOrigin(halfWidth - centerOfMass.x, halfHeight - centerOfMass.y);
         actor.setSize(bounds.width, bounds.height);
-        actor.setPosition(body.getPosition().x - (bounds.width / 2), body.getPosition().y - (bounds.height / 2));
+        actor.setPosition(body.getPosition().x - halfWidth + centerOfMass.x,
+                          body.getPosition().y - halfHeight + centerOfMass.y);
         actor.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
         
         return pool.obtain().set(body, actor);

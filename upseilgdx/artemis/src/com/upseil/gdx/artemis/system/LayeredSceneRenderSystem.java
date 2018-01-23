@@ -4,27 +4,26 @@ import com.artemis.Aspect;
 import com.artemis.Aspect.Builder;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.upseil.gdx.artemis.component.Scene;
 import com.upseil.gdx.util.RequiresResize;
 
-public class LayeredSceneRenderSystem extends LayeredIteratingSystem implements RequiresResize {
+public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingSystem implements RequiresResize {
     
     protected ComponentMapper<Scene> sceneMapper;
     
-    private final Batch globalBatch;
+    private final B globalBatch;
 
     private int screenWidth;
     private int screenHeight;
     private boolean resized;
     
-    public LayeredSceneRenderSystem() {
-        this(Aspect.all(Scene.class));
+    public LayeredSceneRenderSystem(B batch) {
+        this(Aspect.all(Scene.class), batch);
     }
 
-    public LayeredSceneRenderSystem(Builder aspect) {
+    public LayeredSceneRenderSystem(Builder aspect, B batch) {
         super(aspect);
-        globalBatch = new SpriteBatch();
+        globalBatch = batch;
     }
 
     @Override
@@ -53,7 +52,7 @@ public class LayeredSceneRenderSystem extends LayeredIteratingSystem implements 
         resized = true;
     }
     
-    public Batch getGlobalBatch() {
+    public B getGlobalBatch() {
         return globalBatch;
     }
     

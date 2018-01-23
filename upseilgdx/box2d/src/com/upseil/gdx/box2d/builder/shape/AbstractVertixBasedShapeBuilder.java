@@ -46,7 +46,7 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
         changed = true;
     }
     
-    protected FloatArray vertices() {
+    public FloatArray vertices() {
         if (vertices == null) return lastVertices;
         if (!changed) return vertices;
         

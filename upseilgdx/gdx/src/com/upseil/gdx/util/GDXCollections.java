@@ -77,6 +77,5 @@ public class GDXCollections {
         }
         return !iterable.iterator().hasNext();
     }
-
     
 }

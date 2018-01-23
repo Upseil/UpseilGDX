@@ -5,7 +5,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public abstract class ChainedPolygonShapeBuilder<P> extends SimplePolygonShapeBuilder implements ChainedShapeBuilder<PolygonShape, P> {
     
-    private final P parent;
+    protected final P parent;
 
     public ChainedPolygonShapeBuilder() {
         this.parent = createParent();

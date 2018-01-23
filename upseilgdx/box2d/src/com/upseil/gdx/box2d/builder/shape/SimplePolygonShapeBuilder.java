@@ -31,10 +31,10 @@ public class SimplePolygonShapeBuilder extends AbstractVertixBasedShapeBuilder<P
     protected PolygonShape createShape() {
         FloatArray vertices = vertices();
         if (vertices.size < 6) {
-            throw new IllegalStateException("Only " + (vertices.size / 2) + " have been defined, but at least 3 are necessary");
+            throw new IllegalStateException("Only " + (vertices.size / 2) + " vertices have been defined, but at least 3 are necessary");
         }
         if (vertices.size > 16) {
-            throw new IllegalStateException((vertices.size / 2) + " have been defined, but Box2D only supports 8 per polygon");
+            throw new IllegalStateException((vertices.size / 2) + " vertices have been defined, but Box2D only supports 8 per polygon");
         }
         PolygonShape shape = new PolygonShape();
         shape.set(vertices.items, 0, vertices.size);

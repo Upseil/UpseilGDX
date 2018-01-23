@@ -35,6 +35,14 @@ public class ActorComponent extends PooledComponent {
     public float getHeight() {
         return actor.getHeight();
     }
+    
+    public float getOriginX() {
+        return actor.getOriginX();
+    }
+    
+    public float getOriginY() {
+        return actor.getOriginY();
+    }
 
     @Override
     protected void reset() {

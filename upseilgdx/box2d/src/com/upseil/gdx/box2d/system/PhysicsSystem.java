@@ -139,7 +139,9 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         ArtemisCollections.forEachComponent(bodiedActors.getEntities(), bodyMapper, actorMapper,
             (body, actor) -> {
                 Vector2 bodyPosition = body.getPosition();
-                actor.setPosition(bodyPosition.x - (actor.getWidth() / 2), bodyPosition.y - (actor.getHeight() / 2));
+                Vector2 centerOfMass = body.getCenterOfMass();
+                actor.setPosition(bodyPosition.x - (actor.getWidth() / 2) + centerOfMass.x,
+                                  bodyPosition.y - (actor.getHeight() / 2) + centerOfMass.y);
                 actor.setRotation(body.getRotation());
             }
         );

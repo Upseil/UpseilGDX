@@ -3,9 +3,17 @@
 dependencies {
     compile project(":upseilgdx:util")
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
-    
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonTarget"
+    
+    testCompile "junit:junit:$junitTarget"
+    testCompile project(":upseilgdx:util")
+    testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxTarget"
+    testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxTarget"
+    testCompile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    testCompile "com.badlogicgames.gdx:gdx-platform:$gdxTarget:natives-desktop"
 }
+
+sourceSets.test.java.srcDirs = [ "test/" ]
 
 eclipse.project {
     name = "UpseilGDX-GDX"

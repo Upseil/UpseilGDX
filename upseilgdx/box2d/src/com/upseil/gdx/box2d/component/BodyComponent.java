@@ -74,6 +74,10 @@ public class BodyComponent extends PooledComponent {
     public Vector2 getPosition() {
         return body.getPosition();
     }
+
+    public Vector2 getCenterOfMass() {
+        return body.getLocalCenter();
+    }
     
     public float getRotation() {
         return body.getAngle() * MathUtils.radiansToDegrees;
