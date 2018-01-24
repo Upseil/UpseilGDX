@@ -91,7 +91,7 @@ public class PolygonActorTestbed extends TestbedApplication {
         ClickListener echoNameOnClick = new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println(event.getTarget().getName());
+                System.out.println("Hit " + event.getTarget().getName());
             }
         };
         stage.getActors().forEach(actor -> actor.addListener(echoNameOnClick));

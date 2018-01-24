@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.upseil.gdx.util.GDXArrays;
 
@@ -21,6 +22,7 @@ public class PolygonActor extends ChangeNotifingActor {
     public static final int VertexSize = 2 + 1 + 2;
     
     private static final EarClippingTriangulator Triangulator = new EarClippingTriangulator();
+    private static final Vector2 tmp = new Vector2();
     
     private static final TextureRegion NullTexture = createNullTexture();
     private static TextureRegion createNullTexture() {
@@ -180,7 +182,7 @@ public class PolygonActor extends ChangeNotifingActor {
 
         float tmpX, tmpY;
         float[] polygonVertices = polygon.getVertices();
-        for (int i = 0, v = 0, n = polygonVertices.length; i < n; i += 2, v += 5) {
+        for (int i = 0, v = 0; i < polygonVertices.length; i += 2, v += 5) {
             tmpX = scaleX * (polygonVertices[i] + transformationOriginX);
             tmpY = scaleY * (polygonVertices[i + 1] + transformationOriginY);
             vertices[v] = cos * tmpX - sin * tmpY + worldOriginX;
@@ -189,6 +191,34 @@ public class PolygonActor extends ChangeNotifingActor {
         
         dirty = false;
         return vertices;
+    }
+    
+    @Override
+    public Actor hit(float x, float y, boolean touchable) {
+        Actor hit = super.hit(x, y, touchable);
+        if (hit == null || !contains(x, y)) return null;
+        return hit;
+    }
+    
+    public boolean contains(Vector2 point) {
+        return contains(point.x, point.y);
+    }
+    
+    public boolean contains(float x, float y) {
+        float[] vertices = getVertices();
+        localToStageCoordinates(tmp.set(x, y));
+        boolean contains = false;
+        int j = vertices.length - VertexSize;
+        for (int i = 0; i < vertices.length; i += VertexSize) {
+            float yi = vertices[i + 1];
+            float yj = vertices[j + 1];
+            if ((yi < tmp.y && yj >= tmp.y) || (yj < tmp.y && yi >= tmp.y)) {
+                float xi = vertices[i];
+                if (xi + (tmp.y - yi) / (yj - yi) * (vertices[j] - xi) < tmp.x) contains = !contains;
+            }
+            j = i;
+        }
+        return contains;
     }
     
     @Override
