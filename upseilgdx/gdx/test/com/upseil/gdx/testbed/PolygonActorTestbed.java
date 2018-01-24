@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -100,18 +101,17 @@ public class PolygonActorTestbed extends TestbedApplication {
         groupedDiamond.setColor(Color.MAROON);
         groupedDiamond.setPosition(10, 0);
         
-        // FIXME Clicks only hit the group and not the contained polygons
-        // Also the click event is always fired and doesn't check if the coordinates were inside the polygons
         Group group = new Group();
         group.addActor(groupedBow);
         group.addActor(groupedDiamond);
         group.setName("Group");
+        group.setTouchable(Touchable.childrenOnly);
         group.setPosition(110, 30);
         group.setSize(Math.max(groupedBow.getWidth(), groupedDiamond.getWidth()),
                       Math.max(groupedBow.getHeight(), groupedDiamond.getHeight()));
         group.setOrigin(Align.center);
-        group.addAction(Actions.forever(Actions.rotateBy(360, 10)));
-        group.addAction(Actions.forever(Actions.sequence(Actions.scaleTo(0.5f, 0.5f, 2), Actions.scaleTo(1.5f, 1.5f, 2))));
+//        group.addAction(Actions.forever(Actions.rotateBy(360, 10)));
+//        group.addAction(Actions.forever(Actions.sequence(Actions.scaleTo(0.5f, 0.5f, 2), Actions.scaleTo(1.5f, 1.5f, 2))));
         stage.addActor(group);
         
         Gdx.input.setInputProcessor(stage);

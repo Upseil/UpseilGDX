@@ -206,7 +206,7 @@ public class PolygonActor extends ChangeNotifingActor {
     
     public boolean contains(float x, float y) {
         float[] vertices = getVertices();
-        localToStageCoordinates(tmp.set(x, y));
+        localToParentCoordinates(tmp.set(x, y));
         boolean contains = false;
         int j = vertices.length - VertexSize;
         for (int i = 0; i < vertices.length; i += VertexSize) {
