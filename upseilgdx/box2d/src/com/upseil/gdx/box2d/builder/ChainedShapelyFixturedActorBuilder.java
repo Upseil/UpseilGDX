@@ -99,10 +99,6 @@ public class ChainedShapelyFixturedActorBuilder extends AbstractFixtureBuilderBa
         }
         return this;
     }
-    
-    void setVertices(float[] vertices) {
-        this.vertices = vertices;
-    }
 
     @Override
     public ChainedShapelyFixturedActorBuilder withColor(Color color) {
@@ -114,6 +110,10 @@ public class ChainedShapelyFixturedActorBuilder extends AbstractFixtureBuilderBa
     @Override
     public ChainedShapelyFixturedActorBuilder withColor(String name) {
         return withColor(parent.getSkin().getColor(name));
+    }
+    
+    void setVertices(float[] vertices) {
+        this.vertices = vertices;
     }
 
 //- Overriding members for concrete return type -----------------------------------------

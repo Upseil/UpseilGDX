@@ -27,6 +27,7 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
         if (MathUtils.isEqual(lastVertices.get(componentIndex), x) &&
             MathUtils.isEqual(lastVertices.get(componentIndex + 1), y)) return;
         
+        // FIXME The bounds are not adjusted
         lastVertices.set(componentIndex, x);
         lastVertices.set(componentIndex + 1, y);
         changed = true;
@@ -47,7 +48,7 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
     }
     
     public FloatArray vertices() {
-        if (vertices == null) return lastVertices;
+        if (firstVertices == null) return lastVertices;
         if (!changed) return vertices;
         
         vertices.ensureCapacity(Math.max(0, (firstVertices.size + lastVertices.size) - vertices.size));
@@ -55,6 +56,26 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
         GDXCollections.revertedForEach(firstVertices, vertices::add);
         GDXCollections.forEach(lastVertices, vertices::add);
         return vertices;
+    }
+    
+    protected void normalizeVertices() {
+        float deltaX = bounds.width / -2 - bounds.x;
+        float deltaY = bounds.height / -2 - bounds.y;
+        
+        float[] vertices = lastVertices.items;
+        for (int i = 0; i < lastVertices.size; i += 2) {
+            vertices[i] = vertices[i] + deltaX;
+            vertices[i + 1] = vertices[i + 1] + deltaY;
+        }
+        
+        if (firstVertices != null) {
+            vertices = firstVertices.items;
+            for (int i = 0; i < firstVertices.size; i += 2) {
+                vertices[i] = vertices[i] + deltaX;
+                vertices[i + 1] = vertices[i + 1] + deltaY;
+            }
+        }
+        changed = true;
     }
     
 }

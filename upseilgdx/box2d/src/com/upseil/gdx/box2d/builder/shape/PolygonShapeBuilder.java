@@ -9,6 +9,11 @@ public interface PolygonShapeBuilder extends ShapeBuilder<PolygonShape> {
 
     PolygonShapeBuilder addVertix(float x, float y);
     
+    /**
+     * Adjusts all vertices so that the origin matches the shapes center.
+     */
+    PolygonShapeBuilder normalizeOriginToCenter();
+    
     default PolygonShapeBuilder addVertix(Vector2 vertix) {
         return addVertix(vertix.x, vertix.y);
     }

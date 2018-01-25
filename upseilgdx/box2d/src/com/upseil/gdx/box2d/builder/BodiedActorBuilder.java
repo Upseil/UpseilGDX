@@ -37,13 +37,14 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body,
     @Override
     public PooledPair<Body, Actor> build() {
         Body body = world.createBody(bodyDefinition);
+        
         Actor actor;
         float halfWidth = bounds.width / 2;
         float halfHeight = bounds.height / 2;
         
         if (fixtures.size > 1) {
             Group group = new Group();
-            boolean transform = false;
+            boolean transform = body.getType() == BodyType.DynamicBody;
             for (ChainedShapelyFixturedActorBuilder fixture : fixtures) {
                 PooledPair<FixtureDef, Actor> fixturedActor = fixture.build();
                 body.createFixture(fixturedActor.getA());
@@ -68,11 +69,9 @@ public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body,
             fixturedActor.free();
         }
 
-        Vector2 centerOfMass = body.getLocalCenter();
-        actor.setOrigin(halfWidth - centerOfMass.x, halfHeight - centerOfMass.y);
+        actor.setOrigin(halfWidth, halfHeight);
         actor.setSize(bounds.width, bounds.height);
-        actor.setPosition(body.getPosition().x - halfWidth + centerOfMass.x,
-                          body.getPosition().y - halfHeight + centerOfMass.y);
+        actor.setPosition(body.getPosition().x - halfWidth, body.getPosition().y - halfHeight);
         actor.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
         
         return pool.obtain().set(body, actor);

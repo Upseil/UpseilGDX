@@ -108,10 +108,10 @@ public class PolygonActor extends ChangeNotifingActor {
 
             float x = polygonVertices[i];
             float y = polygonVertices[i + 1];
-            minX = minX > x ? x : minX;
-            maxX = maxX < x ? x : maxX;
-            minY = minY > y ? y : minY;
-            maxY = maxY < y ? y : maxY;
+            if (minX > x) minX = x;
+            if (maxX < x) maxX = x;
+            if (minY > y) minY = y;
+            if (maxY < y) maxY = y;
         }
 
         polygonBounds = new Rectangle(minX, minY, maxX - minX, maxY - minY);

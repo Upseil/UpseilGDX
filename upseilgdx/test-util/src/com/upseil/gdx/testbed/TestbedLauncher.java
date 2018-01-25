@@ -15,7 +15,7 @@ public class TestbedLauncher {
     private static final String TestbedMarker = "Testbed";
     
     public static final Map<String, Class<? extends ApplicationListener>> Testbeds = new HashMap<>(); static {
-        addPlayground(PolygonActorTestbed.class);
+//        addPlayground(PolygonActorTestbed.class);
     }
 
     public static void addPlayground(Class<? extends ApplicationListener> clazz) {

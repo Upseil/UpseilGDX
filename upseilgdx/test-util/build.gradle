@@ -1,0 +1,16 @@
+// UpseilGDX Test Utilities
+
+dependencies {
+    compile project(":upseilgdx:util")
+    
+    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
+    compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxTarget"
+    compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxTarget"
+    compile "com.badlogicgames.gdx:gdx-platform:$gdxTarget:natives-desktop"
+    
+    compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
+}
+
+eclipse.project {
+    name = "UpseilGDX-Test-Util"
+}

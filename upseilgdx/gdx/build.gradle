@@ -6,11 +6,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonTarget"
     
     testCompile "junit:junit:$junitTarget"
-    testCompile project(":upseilgdx:util")
-    testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxTarget"
-    testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxTarget"
-    testCompile "com.badlogicgames.gdx:gdx:$gdxTarget"
-    testCompile "com.badlogicgames.gdx:gdx-platform:$gdxTarget:natives-desktop"
+    testCompile project(":upseilgdx:test-util")
 }
 
 sourceSets.test.java.srcDirs = [ "test/" ]

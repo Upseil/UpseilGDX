@@ -1,4 +1,4 @@
-// UpseilGDX - Artemis Extensions 
+// UpseilGDX - Box2D Extensions 
 
 dependencies {
     compile project(":upseilgdx:gdx")
@@ -9,6 +9,8 @@ dependencies {
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
     
     testCompile "junit:junit:$junitTarget"
+    testCompile project(":upseilgdx:test-util")
+    testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxTarget:natives-desktop"
 }
 
 sourceSets.test.java.srcDirs = [ "test/" ]

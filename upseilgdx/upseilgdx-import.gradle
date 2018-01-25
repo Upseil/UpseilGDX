@@ -2,6 +2,7 @@ include ":upseilgdx"
 project(":upseilgdx").projectDir = file("./")
 
 include ":upseilgdx:gdx"
+include ":upseilgdx:test-util"
 include ":upseilgdx:util"
 include ":upseilgdx:artemis"
 include ":upseilgdx:box2d"

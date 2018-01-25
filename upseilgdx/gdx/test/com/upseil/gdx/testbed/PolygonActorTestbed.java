@@ -18,6 +18,12 @@ import com.upseil.gdx.scene2d.PolygonActor;
 
 public class PolygonActorTestbed extends TestbedApplication {
     
+    public static void main(String[] args) {
+        configuration.width = 1920;
+        configuration.height = 1080;
+        launch(new PolygonActorTestbed());
+    }
+    
     private PolygonSpriteBatch stageBatch;
     private Stage stage;
     
@@ -79,7 +85,7 @@ public class PolygonActorTestbed extends TestbedApplication {
         pin.addAction(Actions.forever(Actions.sequence(Actions.scaleTo(0.5f, 0.5f, 2), Actions.scaleTo(1.5f, 1.5f, 2))));
         stage.addActor(pin);
         
-        vertices = new float[] {-10, 0, 0, 10, 10, 15, 25, 0, 0, -20};
+        vertices = new float[] {-10, 0,  0, 10,  10, 15,  25, 0,  0, -20};
         Actor polygon = new PolygonActor(vertices);
         polygon.setName("Polygon");
         polygon.setColor(Color.BLUE);
@@ -125,11 +131,11 @@ public class PolygonActorTestbed extends TestbedApplication {
     }
     
     @Override
-    public void render() {
+    protected void render(float deltaTime) {
         clearScreen();
         
         stage.draw();
-        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 0.5f));
+        stage.act(deltaTime);
     }
     
     @Override

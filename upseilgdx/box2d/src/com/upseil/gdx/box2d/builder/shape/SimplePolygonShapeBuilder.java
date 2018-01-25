@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.FloatArray;
 public class SimplePolygonShapeBuilder extends AbstractVertixBasedShapeBuilder<PolygonShape> implements PolygonShapeBuilder {
     
     private float radius;
+    private boolean normalize;
     
     public SimplePolygonShapeBuilder() {
         super(-1, 8);
@@ -28,7 +29,14 @@ public class SimplePolygonShapeBuilder extends AbstractVertixBasedShapeBuilder<P
     }
     
     @Override
+    public PolygonShapeBuilder normalizeOriginToCenter() {
+        normalize = true;
+        return this;
+    }
+    
+    @Override
     protected PolygonShape createShape() {
+        if (normalize) super.normalizeVertices();
         FloatArray vertices = vertices();
         if (vertices.size < 6) {
             throw new IllegalStateException("Only " + (vertices.size / 2) + " vertices have been defined, but at least 3 are necessary");

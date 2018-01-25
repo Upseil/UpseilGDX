@@ -32,6 +32,7 @@ public class ChainedFixturedActorBuilder extends AbstractShapelessFixtureBuilder
                 return this.parent;
             }
         };
+        polygonShapeBuilder.normalizeOriginToCenter();
         return polygonShapeBuilder;
     }
 
