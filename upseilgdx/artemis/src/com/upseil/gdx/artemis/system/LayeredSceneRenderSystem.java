@@ -9,7 +9,7 @@ import com.upseil.gdx.util.RequiresResize;
 
 public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingSystem implements RequiresResize {
     
-    protected ComponentMapper<Scene> sceneMapper;
+    private ComponentMapper<Scene> sceneMapper;
     
     private final B globalBatch;
 
