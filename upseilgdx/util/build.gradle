@@ -1,6 +1,13 @@
 // UpseilGDX Utilities
 // Independent from libGDX and artemis-odb
 
+dependencies {
+    testCompile "junit:junit:$junitTarget"
+}
+
+sourceSets.test.java.srcDirs = [ "test/" ]
+
+
 eclipse.project {
     name = "UpseilGDX-Util"
 }

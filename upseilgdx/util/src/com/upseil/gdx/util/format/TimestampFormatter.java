@@ -1,37 +1,80 @@
 package com.upseil.gdx.util.format;
 
-public interface TimestampFormatter extends LongFormatter {
+import com.upseil.gdx.util.function.LongObjectBiFunction;
 
-    public static final int secondsPerMinute = 60;
-    public static final int minutesPerHour = 60;
-    public static final int hoursPerDay = 24;
+public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<String, String> {
+
+    public static final int SecondsPerMinute = 60;
+    public static final int MinutesPerHour = 60;
+    public static final int HoursPerDay = 24;
     
-    public static final int secondsPerHour = secondsPerMinute * minutesPerHour;
-    public static final int secondsPerDay = secondsPerHour * hoursPerDay;
+    public static final int SecondsPerHour = SecondsPerMinute * MinutesPerHour;
+    public static final int SecondsPerDay = SecondsPerHour * HoursPerDay;
+
+    public static final TimeComponent DayComponent = new TimeComponent(SecondsPerDay * 1000);
+    public static final TimeComponent HourComponent = new TimeComponent(SecondsPerHour * 1000);
+    public static final TimeComponent MinuteComponent = new TimeComponent(SecondsPerMinute * 1000);
+    public static final TimeComponent SecondComponent = new TimeComponent(1000);
+    public static final TimeComponent MillisecondComponent = new TimeComponent(1);
     
-    public static final TimestampFormatter ddHHmmss = milliseconds -> {
-        long seconds = milliseconds / 1000;
-        byte[] components = new byte[4];
-        
-        components[0] = (byte) (seconds / secondsPerDay);
-        seconds = seconds % secondsPerDay;
-        components[1] = (byte) (seconds / secondsPerHour);
-        seconds = seconds % secondsPerHour;
-        components[2] = (byte) (seconds / secondsPerMinute);
-        seconds = seconds % secondsPerMinute;
-        components[3] = (byte) seconds;
-        
-        return format(components);
-    };
+    public static final String DefaultComponentSeparator = ":";
+
+    public static final TimestampFormatter ddHHMMSS = new TimeComponentsFormatter(DayComponent, HourComponent, MillisecondComponent, SecondComponent);
+    public static final TimestampFormatter HHMMSS = new TimeComponentsFormatter(HourComponent, MinuteComponent, SecondComponent);
+    public static final TimestampFormatter MMSS = new TimeComponentsFormatter(MinuteComponent, SecondComponent);
+    public static final TimestampFormatter SSLL = new TimeComponentsFormatter(SecondComponent, MillisecondComponent);
     
-    static String format(byte[] components) {
-        StringBuilder builder = new StringBuilder(components.length * 3 - 1); // n * 2 + n - 1
-        String separator = "";
-        for (byte component : components) {
+    @Override
+    public default String apply(long milliseconds) {
+        return apply(milliseconds, DefaultComponentSeparator);
+    }
+    
+    @Override
+    public String apply(long milliseconds, String separator);
+    
+    public default String format(byte[] components) {
+        return format(components, DefaultComponentSeparator);
+    }
+    
+    public default String format(byte[] components, String separator) {
+        StringBuilder builder = new StringBuilder(components.length * 2 + separator.length() * (components.length - 1));
+        byte component = components[0];
+        builder.append(component < 10 ? "0" : "").append(component);
+        for (int index = 1; index < components.length; index++) {
+            component = components[index];
             builder.append(separator).append(component < 10 ? "0" : "").append(component);
-            separator = ":";
         }
         return builder.toString();
+    }
+    
+    public static class TimeComponent {
+        
+        private final int millisecondsPerComponent;
+
+        public TimeComponent(int millisecondsPerComponent) {
+            this.millisecondsPerComponent = millisecondsPerComponent;
+        }
+
+        public int getMilliseconds() {
+            return millisecondsPerComponent;
+        }
+        
+        public long getMilliseconds(long value) {
+            return value * millisecondsPerComponent;
+        }
+        
+        public long getValue(long milliseconds) {
+            return milliseconds / millisecondsPerComponent;
+        }
+        
+        public long getRemainder(long milliseconds) {
+            return milliseconds % millisecondsPerComponent;
+        }
+
+        public long getRemainder(long milliseconds, long componentValue) {
+            return milliseconds - componentValue * millisecondsPerComponent;
+        }
+        
     }
     
 }
