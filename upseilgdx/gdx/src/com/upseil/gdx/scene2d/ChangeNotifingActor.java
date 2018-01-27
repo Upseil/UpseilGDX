@@ -4,6 +4,32 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 public abstract class ChangeNotifingActor extends Actor {
+    
+    private boolean monitorColor;
+    private Color previousColor;
+    
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        if (monitorColor) {
+            if (!previousColor.equals(getColor())) {
+                colorChanged();
+                previousColor.set(getColor());
+            }
+        }
+    }
+    
+    public boolean isMonitorColor() {
+        return monitorColor;
+    }
+
+    public void setMonitorColor(boolean monitorColor) {
+        this.monitorColor = monitorColor;
+        if (monitorColor) {
+            if (previousColor == null) previousColor = new Color();
+            previousColor.set(getColor());
+        }
+    }
 
     @Override
     public void setOriginX(float originX) {

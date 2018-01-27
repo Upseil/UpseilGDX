@@ -91,6 +91,7 @@ public class PolygonActor extends ChangeNotifingActor {
     public PolygonActor(PolygonRegion polygonRegion, PolygonSpriteBatch spriteBatch) {
         this.polygon = polygonRegion;
         setSpriteBatch(spriteBatch);
+        setMonitorColor(true);
         
         float[] polygonVertices = polygon.getVertices();
         float[] textureCoords = polygon.getTextureCoords();
