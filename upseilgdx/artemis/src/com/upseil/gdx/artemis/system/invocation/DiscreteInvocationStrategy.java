@@ -1,9 +1,10 @@
-package com.upseil.gdx.artemis.system;
+package com.upseil.gdx.artemis.system.invocation;
 
 import com.artemis.BaseSystem;
 import com.artemis.SystemInvocationStrategy;
 import com.artemis.utils.ImmutableBag;
 import com.badlogic.gdx.utils.Array;
+import com.upseil.gdx.artemis.system.LogicalSystem;
 
 public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
     
@@ -129,18 +130,6 @@ public class DiscreteInvocationStrategy extends SystemInvocationStrategy {
     
     public final boolean isPaused() {
         return isPaused && additionalDelta <= 0;
-    }
-
-    private class SystemHandle {
-        
-        private final BaseSystem system;
-        private final int disabledIndex;
-        
-        public SystemHandle(BaseSystem system, int disabledIndex) {
-            this.system = system;
-            this.disabledIndex = disabledIndex;
-        }
-        
     }
     
 }
