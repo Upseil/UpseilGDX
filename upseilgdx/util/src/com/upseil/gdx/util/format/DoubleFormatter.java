@@ -4,12 +4,13 @@ import java.util.function.DoubleFunction;
 
 public interface DoubleFormatter extends DoubleFunction<String> {
     
-    public enum Format { None, Abbreviation, Engineering, Percent, Roman }
+    public enum Format { None, Round, Simple, Abbreviation, Engineering, Percent, Roman }
     
-    static final DoubleFormatter RomanFormat = new RomanFormat();
-    static final DoubleFormatter NoFormat = value -> value + "";
+    public static final DoubleFormatter RomanFormat = new RomanFormat();
+    public static final DoubleFormatter NoFormat = value -> value + "";
+    public static final DoubleFormatter RoundedFormat = value -> (int) Math.round(value) + "";
     
-    static DoubleFormatter get(Format format) {
+    public static DoubleFormatter get(Format format) {
         switch (format) {
         case Abbreviation:
             return BigNumberFormat.Abbreviation;
@@ -19,13 +20,22 @@ public interface DoubleFormatter extends DoubleFunction<String> {
             return getPercentFormat(0);
         case Roman:
             return RomanFormat;
+        case Simple:
+            return getSimpleFormat(2);
+        case Round:
+            return RoundedFormat;
         case None:
             return NoFormat;
         }
         throw new IllegalArgumentException("No formatter for " + format + " is implemented.");
     }
 
-    static DoubleFormatter getPercentFormat(int decimals) {
+    public static DoubleFormatter getSimpleFormat(int decimals) {
+        return SimpleNumberFormat.get(decimals);
+    }
+
+    public static DoubleFormatter getPercentFormat(int decimals) {
+        if (decimals == 0) return RoundedFormat;
         return PercentFormat.get(decimals);
     }
     
