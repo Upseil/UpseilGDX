@@ -1,9 +1,8 @@
 package com.upseil.gdx.math;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.RandomXS128;
 
-public final class Random {
+public final class RandomUtil {
 
     private static final RandomXS128 random = new RandomXS128();
 
@@ -34,7 +33,7 @@ public final class Random {
 
     /** Returns true if a random value between 0 and 1 is less than the specified value. */
     public static boolean randomBoolean (float chance) {
-        return MathUtils.random() < chance;
+        return random() < chance;
     }
 
     /** Returns random number between 0.0 (inclusive) and 1.0 (exclusive). */
