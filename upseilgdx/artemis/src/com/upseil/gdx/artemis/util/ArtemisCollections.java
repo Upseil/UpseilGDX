@@ -7,6 +7,7 @@ import java.util.function.IntConsumer;
 import com.artemis.Component;
 import com.artemis.ComponentMapper;
 import com.artemis.utils.IntBag;
+import com.upseil.gdx.util.function.IntObjectConsumer;
 
 public class ArtemisCollections {
     
@@ -25,6 +26,15 @@ public class ArtemisCollections {
         int size = entities.size();
         for (int i = 0; i < size; i++) {
             consumer.accept(mapper.get(data[i]));
+        }
+    }
+    
+    public static <T extends Component> void forEachComponent(IntBag entities, ComponentMapper<T> mapper, IntObjectConsumer<T> consumer) {
+        int[] data = entities.getData();
+        int size = entities.size();
+        for (int i = 0; i < size; i++) {
+            int entityId = data[i];
+            consumer.accept(entityId, mapper.get(entityId));
         }
     }
     
