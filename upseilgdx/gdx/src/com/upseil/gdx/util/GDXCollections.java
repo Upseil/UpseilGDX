@@ -70,6 +70,12 @@ public class GDXCollections {
             consumer.accept(entry.key, entry.value);
         }
     }
+
+    public static <T> void forEachValue(IntMap<T> intMap, Consumer<T> consumer) {
+        for (T value : intMap.values()) {
+            consumer.accept(value);
+        }
+    }
     
     public static boolean isEmpty(Iterable<?> iterable) {
         if (iterable instanceof Collection) {
