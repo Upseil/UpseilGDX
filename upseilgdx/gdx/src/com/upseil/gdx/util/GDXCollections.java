@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Entry;
+import com.badlogic.gdx.utils.IntMap.Keys;
 import com.upseil.gdx.util.function.CharConsumer;
 import com.upseil.gdx.util.function.FloatConsumer;
 import com.upseil.gdx.util.function.IntObjectConsumer;
@@ -74,6 +75,13 @@ public class GDXCollections {
     public static <T> void forEachValue(IntMap<T> intMap, Consumer<T> consumer) {
         for (T value : intMap.values()) {
             consumer.accept(value);
+        }
+    }
+
+    public static <T> void forEachKey(IntMap<T> intMap, IntConsumer consumer) {
+        Keys keys = intMap.keys();
+        while (keys.hasNext) {
+            consumer.accept(keys.next());
         }
     }
     

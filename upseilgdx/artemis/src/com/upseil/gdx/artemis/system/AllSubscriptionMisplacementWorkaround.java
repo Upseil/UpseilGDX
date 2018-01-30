@@ -1,12 +1,18 @@
 package com.upseil.gdx.artemis.system;
 
 import com.artemis.Aspect;
-import com.artemis.BaseEntitySystem;
+import com.artemis.BaseSystem;
+import com.artemis.World;
 
-public class AllSubscriptionMisplacementWorkaround extends BaseEntitySystem {
+public class AllSubscriptionMisplacementWorkaround extends BaseSystem {
     
     public AllSubscriptionMisplacementWorkaround() {
-        super(Aspect.all());
+    }
+    
+    @Override
+    protected void setWorld(World world) {
+        super.setWorld(world);
+        world.getAspectSubscriptionManager().get(Aspect.all());
     }
     
     @Override
