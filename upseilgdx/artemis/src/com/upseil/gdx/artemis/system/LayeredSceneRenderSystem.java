@@ -2,11 +2,14 @@ package com.upseil.gdx.artemis.system;
 
 import com.artemis.Aspect;
 import com.artemis.Aspect.Builder;
+import com.artemis.annotations.SkipWire;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.upseil.gdx.artemis.component.Layer;
 import com.upseil.gdx.artemis.component.Scene;
 import com.upseil.gdx.util.RequiresResize;
 
+@SkipWire // Generic typing seems to break wiring in GWT
 public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingSystem implements RequiresResize {
     
     private ComponentMapper<Scene> sceneMapper;
@@ -24,6 +27,12 @@ public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingS
     public LayeredSceneRenderSystem(Builder aspect, B batch) {
         super(aspect);
         globalBatch = batch;
+    }
+    
+    @Override
+    protected void initialize() {
+        layerMapper = world.getMapper(Layer.class);
+        sceneMapper = world.getMapper(Scene.class);
     }
 
     @Override
@@ -53,7 +62,7 @@ public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingS
     }
     
     public B getGlobalBatch() {
-        return globalBatch;
+        return  globalBatch;
     }
     
     @Override
