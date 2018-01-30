@@ -4,7 +4,7 @@ import java.util.function.DoubleFunction;
 
 public interface DoubleFormatter extends DoubleFunction<String> {
     
-    public enum Format { None, Round, Simple, Abbreviation, Engineering, Percent, Roman }
+    public enum Format { None, Rounded, Simple, Abbreviation, Engineering, Percent, Roman }
     
     public static final DoubleFormatter RomanFormat = new RomanFormat();
     public static final DoubleFormatter NoFormat = value -> value + "";
@@ -22,7 +22,7 @@ public interface DoubleFormatter extends DoubleFunction<String> {
             return RomanFormat;
         case Simple:
             return getSimpleFormat(2);
-        case Round:
+        case Rounded:
             return RoundedFormat;
         case None:
             return NoFormat;
