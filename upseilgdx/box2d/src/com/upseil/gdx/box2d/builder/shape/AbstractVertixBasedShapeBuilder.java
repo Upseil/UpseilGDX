@@ -1,6 +1,7 @@
 package com.upseil.gdx.box2d.builder.shape;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.utils.FloatArray;
 import com.upseil.gdx.util.GDXCollections;
@@ -58,9 +59,9 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
         return vertices;
     }
     
-    protected void normalizeVertices() {
-        float deltaX = bounds.width / -2 - bounds.x;
-        float deltaY = bounds.height / -2 - bounds.y;
+    protected void normalizeVertices(Vector2 offset) {
+        float deltaX = bounds.width / -2 - bounds.x + offset.x;
+        float deltaY = bounds.height / -2 - bounds.y + offset.y;
         
         float[] vertices = lastVertices.items;
         for (int i = 0; i < lastVertices.size; i += 2) {
@@ -75,6 +76,9 @@ public abstract class AbstractVertixBasedShapeBuilder<T extends Shape> extends A
                 vertices[i + 1] = vertices[i + 1] + deltaY;
             }
         }
+        
+        bounds.x += deltaX;
+        bounds.y += deltaY;
         changed = true;
     }
     

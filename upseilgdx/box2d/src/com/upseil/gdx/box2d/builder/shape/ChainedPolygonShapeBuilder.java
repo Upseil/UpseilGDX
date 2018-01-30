@@ -19,6 +19,12 @@ public abstract class ChainedPolygonShapeBuilder<P> extends SimplePolygonShapeBu
     }
     
 //- Overriding members for concrete return type -----------------------------------------
+    
+    @Override
+    public ChainedPolygonShapeBuilder<P> at(float centerX, float centerY) {
+        super.at(centerX, centerY);
+        return this;
+    }
 
     @Override
     public ChainedPolygonShapeBuilder<P> addVertix(float x, float y) {

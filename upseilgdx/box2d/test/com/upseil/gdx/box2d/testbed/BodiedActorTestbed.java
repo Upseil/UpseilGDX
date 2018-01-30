@@ -85,12 +85,11 @@ public class BodiedActorTestbed extends ArtemisTestbedApplication {
         vertices = new float[] { -3 - 1.5f, 0 - 1.5f,  0 - 1.5f, 3 - 1.5f,  3 - 1.5f, 4.5f - 1.5f,  7.5f - 1.5f, 0 - 1.5f,  0 - 1.5f, -6 - 1.5f };
         createRotatedPolygons(vertices, 10, 15, 60);
 
-        vertices = new float[] { -20, 5,  -3, 2.5f,  3, 2.5f,  20, 5,  0, -5 };
+        vertices = new float[] {-10, 0,  0, 10,  10, 0,  0, -20};
         BodiedActorBuilder builder = Bodies.newBodiedActor(physicsWorld);
-        builder.withDynamicBody().at(110, 30)//.withAngularVelocityInDegrees(angularVelocity)
-            .beginFixture().withPolygonShapeAsActor().withVertices(vertices).endShape().withDensity(0.5f).endFixture();
-        vertices = new float[] {-10, 0, 0, 10, 10, 0, 0, -20};
-        builder.beginFixture().withPolygonShapeAsActor().withVertices(vertices).endShape().withDensity(0.5f).endFixture();
+        builder.withDynamicBody().at(110, 30).withAngularVelocityInDegrees(angularVelocity)
+              .beginFixture().withPolygonShapeAsActor().withVertices(vertices).endShape().withDensity(0.5f).endFixture()
+              .beginFixture().withPolygonShapeAsActor().at(0, -12.5f).withVertices(new float[] {0,0, 20,0, 20,5, 0,5}).endShape().withDensity(0.5f).endFixture();
         createBodiedActor(builder.build());
         builder.dispose();
     }

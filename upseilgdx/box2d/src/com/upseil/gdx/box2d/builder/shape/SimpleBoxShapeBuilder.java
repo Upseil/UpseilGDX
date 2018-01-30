@@ -40,7 +40,7 @@ public class SimpleBoxShapeBuilder extends AbstractShapeBuilder<PolygonShape> im
 
     @Override
     public BoxShapeBuilder at(float centerX, float centerY) {
-        if (!bounds.getCenter(tmpVector).epsilonEquals(centerX, centerY, MathUtils.FLOAT_ROUNDING_ERROR)) {
+        if (!bounds.getCenter(tmpVector).epsilonEquals(centerX, centerY)) {
             bounds.setCenter(centerX, centerY);
             changed = true;
         }
