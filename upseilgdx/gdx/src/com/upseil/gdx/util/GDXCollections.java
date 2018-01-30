@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Entry;
 import com.badlogic.gdx.utils.IntMap.Keys;
+import com.badlogic.gdx.utils.IntSet;
+import com.badlogic.gdx.utils.IntSet.IntSetIterator;
 import com.upseil.gdx.util.function.CharConsumer;
 import com.upseil.gdx.util.function.FloatConsumer;
 import com.upseil.gdx.util.function.IntObjectConsumer;
@@ -18,6 +20,8 @@ import com.upseil.gdx.util.function.IntObjectConsumer;
 public class GDXCollections {
     
     private GDXCollections() { }
+    
+    // Primitive Arrays ---------------------------------------------------------------------------
     
     public static void forEach(IntArray array, IntConsumer consumer) {
         int[] data = array.items;
@@ -50,6 +54,8 @@ public class GDXCollections {
         }
     }
     
+    // Object Array ------------------------------------------------------------------------------
+    
     public static <T> void forEach(Array<T> array, Consumer<T> consumer) {
         T[] data = array.items;
         int size = array.size;
@@ -65,6 +71,8 @@ public class GDXCollections {
             consumer.accept(i, data[i]);
         }
     }
+    
+    // IntMap -------------------------------------------------------------------------------------
 
     public static <T> void forEach(IntMap<T> intMap, IntObjectConsumer<T> consumer) {
         for (Entry<T> entry : intMap.entries()) {
@@ -84,6 +92,17 @@ public class GDXCollections {
             consumer.accept(keys.next());
         }
     }
+    
+    // IntSet -------------------------------------------------------------------------------------
+    
+    public static void forEach(IntSet set, IntConsumer consumer) {
+        IntSetIterator iterator = set.iterator();
+        while (iterator.hasNext) {
+            consumer.accept(iterator.next());
+        }
+    }
+    
+    // Generic Utilities --------------------------------------------------------------------------
     
     public static boolean isEmpty(Iterable<?> iterable) {
         if (iterable instanceof Collection) {

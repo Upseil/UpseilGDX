@@ -33,7 +33,7 @@ public class PolygonActor extends ChangeNotifingActor {
     }
     
     private PolygonRegion polygon;
-    private float[] vertices;
+    private float[] packedVertices;
     private boolean dirty;
     private final Rectangle polygonBounds;
     
@@ -95,7 +95,7 @@ public class PolygonActor extends ChangeNotifingActor {
         
         float[] polygonVertices = polygon.getVertices();
         float[] textureCoords = polygon.getTextureCoords();
-        vertices = new float[(polygonVertices.length / 2) * VertexSize];
+        packedVertices = new float[(polygonVertices.length / 2) * VertexSize];
         
         float colorFloat = getColor().toFloatBits();
         float minX = Float.MAX_VALUE;
@@ -103,9 +103,9 @@ public class PolygonActor extends ChangeNotifingActor {
         float maxX = -Float.MAX_VALUE;
         float maxY = -Float.MAX_VALUE;
         for (int i = 0, v = 2; i < polygonVertices.length; i += 2, v += VertexSize) {
-            vertices[v] = colorFloat;
-            vertices[v + 1] = textureCoords[i];
-            vertices[v + 2] = textureCoords[i + 1];
+            packedVertices[v] = colorFloat;
+            packedVertices[v + 1] = textureCoords[i];
+            packedVertices[v + 2] = textureCoords[i + 1];
 
             float x = polygonVertices[i];
             float y = polygonVertices[i + 1];
@@ -146,7 +146,7 @@ public class PolygonActor extends ChangeNotifingActor {
             }
         }
         
-        float[] vertices = getVertices();
+        float[] vertices = getPackedVertices();
         short[] triangles = polygon.getTriangles();
         spriteBatch.draw(polygon.getRegion().getTexture(), vertices, 0, vertices.length, triangles, 0, triangles.length);
         
@@ -156,8 +156,8 @@ public class PolygonActor extends ChangeNotifingActor {
         }
     }
     
-    private float[] getVertices() {
-        if (!dirty) return vertices;
+    private float[] getPackedVertices() {
+        if (!dirty) return packedVertices;
         
         // FIXME Changed Size and Origin breaks polygon positioning
         
@@ -186,12 +186,12 @@ public class PolygonActor extends ChangeNotifingActor {
         for (int i = 0, v = 0; i < polygonVertices.length; i += 2, v += 5) {
             tmpX = scaleX * (polygonVertices[i] + transformationOriginX);
             tmpY = scaleY * (polygonVertices[i + 1] + transformationOriginY);
-            vertices[v] = cos * tmpX - sin * tmpY + worldOriginX;
-            vertices[v + 1] = sin * tmpX + cos * tmpY + worldOriginY;
+            packedVertices[v] = cos * tmpX - sin * tmpY + worldOriginX;
+            packedVertices[v + 1] = sin * tmpX + cos * tmpY + worldOriginY;
         }
         
         dirty = false;
-        return vertices;
+        return packedVertices;
     }
     
     @Override
@@ -206,7 +206,7 @@ public class PolygonActor extends ChangeNotifingActor {
     }
     
     public boolean contains(float x, float y) {
-        float[] vertices = getVertices();
+        float[] vertices = getPackedVertices();
         localToParentCoordinates(tmp.set(x, y));
         boolean contains = false;
         int j = vertices.length - VertexSize;
@@ -220,6 +220,28 @@ public class PolygonActor extends ChangeNotifingActor {
             j = i;
         }
         return contains;
+    }
+
+    @Override
+    protected void positionChanged() {
+        if (!dirty) {
+            float deltaX = getX() - previousX;
+            float deltaY = getY() - previousY;
+            for (int v = 0; v < packedVertices.length; v += VertexSize) {
+                packedVertices[v] += deltaX;
+                packedVertices[v + 1] += deltaY;
+            }
+        }
+        previousX = getX();
+        previousY = getY();
+    }
+    
+    @Override
+    protected void colorChanged() {
+        float colorFloat = getColor().toFloatBits();
+        for (int v = 2; v < packedVertices.length; v += VertexSize) {
+            packedVertices[v] = colorFloat;
+        }
     }
     
     @Override
@@ -250,27 +272,17 @@ public class PolygonActor extends ChangeNotifingActor {
         dirty = true; // Prevents vertex repositioning, since the positionChanged() is called before sizeChanged()
         super.setBounds(x, y, width, height);
     }
-
-    @Override
-    protected void positionChanged() {
-        if (!dirty) {
-            float deltaX = getX() - previousX;
-            float deltaY = getY() - previousY;
-            for (int v = 0; v < vertices.length; v += VertexSize) {
-                vertices[v] += deltaX;
-                vertices[v + 1] += deltaY;
-            }
-        }
-        previousX = getX();
-        previousY = getY();
+    
+    public float[] getPolygonVertices() {
+        return polygon.getVertices();
     }
     
-    @Override
-    protected void colorChanged() {
-        float colorFloat = getColor().toFloatBits();
-        for (int v = 2; v < vertices.length; v += VertexSize) {
-            vertices[v] = colorFloat;
-        }
+    public short[] getPolygonTriangles() {
+        return polygon.getTriangles();
+    }
+    
+    public Rectangle getPolygonBounds() {
+        return polygonBounds;
     }
     
 }

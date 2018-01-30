@@ -16,7 +16,7 @@ public class ChainedShapelyFixtureBuilder extends ShapelyFixtureBuilder implemen
 
     @Override
     public BodyBuilder endFixture() {
-        return parent;
+        return parent.endFixture(this);
     }
 
 //- Overriding members for concrete return type -----------------------------------------

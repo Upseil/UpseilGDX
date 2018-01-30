@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -28,6 +30,7 @@ import com.upseil.gdx.artemis.system.ClearScreenSystem;
 import com.upseil.gdx.artemis.system.LayeredInputSystem;
 import com.upseil.gdx.artemis.system.LayeredSceneRenderSystem;
 import com.upseil.gdx.box2d.builder.BodiedActorBuilder;
+import com.upseil.gdx.box2d.builder.BodyBuilder;
 import com.upseil.gdx.box2d.component.BodyComponent;
 import com.upseil.gdx.box2d.component.Box2DWorld;
 import com.upseil.gdx.box2d.system.Box2DDebugRenderer;
@@ -85,6 +88,7 @@ public class BodiedActorTestbed extends ArtemisTestbedApplication {
         vertices = new float[] { -3 - 1.5f, 0 - 1.5f,  0 - 1.5f, 3 - 1.5f,  3 - 1.5f, 4.5f - 1.5f,  7.5f - 1.5f, 0 - 1.5f,  0 - 1.5f, -6 - 1.5f };
         createRotatedPolygons(vertices, 10, 15, 60);
 
+        // FIXME Width too big
         vertices = new float[] {-10, 0,  0, 10,  10, 0,  0, -20};
         BodiedActorBuilder builder = Bodies.newBodiedActor(physicsWorld);
         builder.withDynamicBody().at(110, 30).withAngularVelocityInDegrees(angularVelocity)
@@ -92,6 +96,32 @@ public class BodiedActorTestbed extends ArtemisTestbedApplication {
               .beginFixture().withPolygonShapeAsActor().at(0, -12.5f).withVertices(new float[] {0,0, 20,0, 20,5, 0,5}).endShape().withDensity(0.5f).endFixture();
         createBodiedActor(builder.build());
         builder.dispose();
+        
+        // Workflow to create a arbitrary non-intersecting bodied polygon
+        vertices = new float[] { -3, 0,  0, 3,  3, 0,  1.5f, -1.5f,  0, -6,  -1.5f, -1.5f };
+        PolygonActor actor = new PolygonActor(vertices);
+        actor.setOrigin(Align.center);
+        
+        Rectangle polygonBounds = actor.getPolygonBounds();
+        short[] triangles = actor.getPolygonTriangles();
+        float deltaX = polygonBounds.width / -2 - polygonBounds.x;
+        float deltaY = polygonBounds.height / -2 - polygonBounds.y;
+        
+        BodyBuilder bodyBuilder = Bodies.newBody(physicsWorld);
+        bodyBuilder.withDynamicBody().at(110, 60).withLinearVelocity(-5, 0).withAngularVelocityInDegrees(angularVelocity);
+        for (int index = 0; index < triangles.length; index += 3) {
+            int vertix1 = triangles[index] * 2;
+            int vertix2 = triangles[index + 1] * 2;
+            int vertix3 = triangles[index + 2] * 2;
+            
+            bodyBuilder.beginFixture().withPolygonShape()
+                .addVertix(vertices[vertix1] + deltaX, vertices[vertix1 + 1] + deltaY)
+                .addVertix(vertices[vertix2] + deltaX, vertices[vertix2 + 1] + deltaY)
+                .addVertix(vertices[vertix3] + deltaX, vertices[vertix3 + 1] + deltaY)
+            .endShape().withDensity(0.5f).endFixture();
+        }
+        createBodiedActor(bodyBuilder.build(), actor);
+        bodyBuilder.dispose();
     }
     
     private void createRotatedPolygons(float[] vertices, float startX, float stepX, float y) {
@@ -176,9 +206,10 @@ public class BodiedActorTestbed extends ArtemisTestbedApplication {
     }
 
     private void createBodiedActor(PooledPair<Body, Actor> bodiedActor) {
-        Body body = bodiedActor.getA();
-        Actor actor = bodiedActor.getB();
-        
+        createBodiedActor(bodiedActor.getA(), bodiedActor.getB());
+    }
+
+    private void createBodiedActor(Body body, Actor actor) {
         Entity entity = getWorld().createEntity();
         EntityEdit entityEdit = entity.edit();
         entityEdit.create(BodyComponent.class).set(body);
