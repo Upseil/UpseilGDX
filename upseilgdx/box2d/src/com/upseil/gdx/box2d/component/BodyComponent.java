@@ -16,12 +16,23 @@ public class BodyComponent extends PooledComponent {
     private Body body;
     private Array<Action<Body, ?>> actions;
     
+    private boolean destroyBodyOnReset;
+    
     public BodyComponent() {
         actions = new Array<>(0);
+        destroyBodyOnReset = true;
     }
     
     public Body get() {
         return body;
+    }
+
+    public boolean destroyBodyOnReset() {
+        return destroyBodyOnReset;
+    }
+
+    public void setDestroyBodyOnReset(boolean destroyBodyOnReset) {
+        this.destroyBodyOnReset = destroyBodyOnReset;
     }
 
     public void set(Body body) {
@@ -124,7 +135,9 @@ public class BodyComponent extends PooledComponent {
     @Override
     protected void reset() {
         clearActions();
-        body.getWorld().destroyBody(body);
+        if (destroyBodyOnReset) {
+            body.getWorld().destroyBody(body);
+        }
         body = null;
     }
     
