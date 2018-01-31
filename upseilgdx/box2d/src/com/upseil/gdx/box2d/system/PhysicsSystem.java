@@ -206,7 +206,7 @@ public class PhysicsSystem extends BaseSystem implements ContactListener {
         int entityA = getEntityForBody(fixtureA.getBody());
         Fixture fixtureB = contact.getFixtureB();
         int entityB = getEntityForBody(fixtureB.getBody());
-        
+
         if (entityA != -1 && postSolveContactMapper.has(entityA)) {
             schedulePostSolveEvent(entityA, fixtureA, entityB, fixtureB, contact, impulse);
         }

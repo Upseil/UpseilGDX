@@ -5,9 +5,9 @@ import java.util.function.Consumer;
 import com.upseil.gdx.util.function.BooleanFunction;
 
 @FunctionalInterface
-public interface ContactEventHandler<C extends ContactEvent<C>> extends Consumer<C> {
+public interface ContactEventHandler<E extends ContactEvent<E>> extends Consumer<E> {
     
-    default ContactEventHandler<C> withCondition(BooleanFunction<C> condition) {
+    default ContactEventHandler<E> withCondition(BooleanFunction<E> condition) {
         return context -> { if (condition.apply(context)) this.accept(context); };
     }
     
