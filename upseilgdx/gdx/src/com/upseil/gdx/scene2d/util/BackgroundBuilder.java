@@ -10,6 +10,8 @@ import com.upseil.gdx.config.RawConfig;
 
 public class BackgroundBuilder extends AbstractDrawableBuilder {
     
+    private static final Color tmpColor = new Color();
+    
     private static String textureName;
     private static String namePrefix;
     
@@ -65,6 +67,14 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     
     public static Drawable byColor(Skin skin, Color color, double alpha) {
         return get(skin).color(color).alpha(alpha).build();
+    }
+
+    public static Drawable byGrayscale(Skin skin, float grayscale) {
+        return get(skin).color(tmpColor.set(grayscale, grayscale, grayscale, 1)).build();
+    }
+
+    public static Drawable byGrayscale(Skin skin, float grayscale, double alpha) {
+        return get(skin).color(tmpColor.set(grayscale, grayscale, grayscale, 1)).alpha(alpha).build();
     }
     
     public static Drawable byAlpha(Skin skin, double alpha) {
