@@ -1,6 +1,7 @@
 package com.upseil.gdx.box2d.component;
 
 import com.artemis.PooledComponent;
+import com.artemis.annotations.DelayedComponentRemoval;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import com.upseil.gdx.action.Action;
 import com.upseil.gdx.util.GDXCollections;
 
+@DelayedComponentRemoval
 public class BodyComponent extends PooledComponent {
     
     private Body body;
