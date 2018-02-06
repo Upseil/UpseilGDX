@@ -1,7 +1,6 @@
 package com.upseil.gdx.box2d.component;
 
 import com.artemis.PooledComponent;
-import com.artemis.annotations.DelayedComponentRemoval;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -10,11 +9,10 @@ import com.badlogic.gdx.utils.Array;
 import com.upseil.gdx.action.Action;
 import com.upseil.gdx.util.GDXCollections;
 
-@DelayedComponentRemoval
 public class BodyComponent extends PooledComponent {
     
     private Body body;
-    private Array<Action<Body, ?>> actions;
+    private final Array<Action<Body, ?>> actions;
     
     private boolean destroyBodyOnReset;
     
@@ -47,7 +45,6 @@ public class BodyComponent extends PooledComponent {
                 if (realIndex != -1) {
                     actions.removeIndex(realIndex);
                     action.free();
-                    action.setState(null);
                     index--;
                 }
             }
@@ -59,26 +56,24 @@ public class BodyComponent extends PooledComponent {
         actions.add(action);
     }
     
-    public void removeAction(Action<Body, ?> action) {
+    public boolean removeAction(Action<Body, ?> action) {
         if (actions.removeValue(action, true)) {
             action.free();
-            action.setState(null);
+            return true;
         }
+        return false;
     }
 
-    public Array<Action<Body, ?>> getActions () {
+    public Array<Action<Body, ?>> getActions() {
         return actions;
     }
 
-    public boolean hasActions () {
+    public boolean hasActions() {
         return actions.size > 0;
     }
 
-    public void clearActions () {
-        GDXCollections.forEach(actions, action -> {
-            action.free();
-            action.setState(null);
-        });
+    public void clearActions() {
+        GDXCollections.forEach(actions, Action::free);
         actions.clear();
     }
 
