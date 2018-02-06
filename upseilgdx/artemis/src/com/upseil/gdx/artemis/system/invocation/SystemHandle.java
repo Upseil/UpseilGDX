@@ -4,8 +4,8 @@ import com.artemis.BaseSystem;
 
 public class SystemHandle {
     
-    final BaseSystem system;
-    final int disabledIndex;
+    private final BaseSystem system;
+    private final int disabledIndex;
     
     public SystemHandle(BaseSystem system, int disabledIndex) {
         this.system = system;
@@ -18,6 +18,10 @@ public class SystemHandle {
 
     public int getDisabledIndex() {
         return disabledIndex;
+    }
+
+    public void process() {
+        system.process();
     }
     
 }

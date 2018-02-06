@@ -17,6 +17,10 @@ public class PausableInvocationStrategy extends InvocationStrategy {
                 stepTime = 0;
             }
         }
+        processSystems();
+    }
+
+    protected void processSystems() {
         super.process();
     }
     

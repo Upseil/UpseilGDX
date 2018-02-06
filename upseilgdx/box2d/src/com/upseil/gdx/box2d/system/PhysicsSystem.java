@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.upseil.gdx.action.Action;
 import com.upseil.gdx.artemis.component.ActorComponent;
+import com.upseil.gdx.artemis.system.RequiresStepping;
 import com.upseil.gdx.artemis.util.ArtemisCollections;
 import com.upseil.gdx.box2d.action.FireBeginContactEvent;
 import com.upseil.gdx.box2d.action.FireContactEvent;
@@ -37,7 +38,7 @@ import com.upseil.gdx.box2d.event.PreSolveEvent;
 import com.upseil.gdx.box2d.event.SimpleContactEvent;
 import com.upseil.gdx.pool.PooledPools;
 
-public class PhysicsSystem extends BaseSystem implements ContactListener {
+public class PhysicsSystem extends BaseSystem implements ContactListener, RequiresStepping {
 
     private ComponentMapper<Box2DWorld> worldMapper;
     private ComponentMapper<BodyComponent> bodyMapper;

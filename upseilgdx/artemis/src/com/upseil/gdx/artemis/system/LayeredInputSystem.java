@@ -110,6 +110,11 @@ public class LayeredInputSystem extends LayeredEntitySystem implements InputProc
         }
         return false;
     }
+    
+    @Override
+    protected boolean checkProcessing() {
+        return false;
+    }
 
     @Override
     protected void processSystem() { }

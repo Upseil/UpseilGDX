@@ -1,7 +1,6 @@
 package com.upseil.gdx.artemis.system;
 
 import com.artemis.Aspect;
-import com.artemis.BaseSystem;
 import com.artemis.Entity;
 import com.artemis.EntitySubscription.SubscriptionListener;
 import com.artemis.annotations.SkipWire;
@@ -11,7 +10,7 @@ import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectIntMap;
 
 @SkipWire // Generic typing seems to break wiring in GWT
-public class TagManager<TagType> extends BaseSystem {
+public class TagManager<TagType> extends PassiveSystem {
     
     private final ObjectIntMap<String> entitiesByTag;
     private final IntMap<String> tagsByEntity;
@@ -106,8 +105,5 @@ public class TagManager<TagType> extends BaseSystem {
     public Array<String> getTags() {
         return entitiesByTag.keys().toArray();
     }
-    
-    @Override
-    protected void processSystem() { }
     
 }
