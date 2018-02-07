@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import com.upseil.gdx.box2d.builder.base.AbstractBodyBuilderBase;
 import com.upseil.gdx.box2d.util.Fixtures;
-import com.upseil.gdx.pool.PooledPair;
+import com.upseil.gdx.pool.pair.PooledPair;
 
 public class BodiedActorBuilder extends AbstractBodyBuilderBase<PooledPair<Body, Actor>, PooledPair<FixtureDef, Actor>> {
     

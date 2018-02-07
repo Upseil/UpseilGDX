@@ -9,8 +9,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.upseil.gdx.box2d.builder.BodiedActorBuilder;
 import com.upseil.gdx.box2d.builder.BodyBuilder;
 import com.upseil.gdx.box2d.builder.BodyDefinitionBuilder;
-import com.upseil.gdx.pool.PairPool;
-import com.upseil.gdx.pool.PooledPair;
+import com.upseil.gdx.pool.pair.PairPool;
+import com.upseil.gdx.pool.pair.PooledPair;
 
 public final class Bodies {
     

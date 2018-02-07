@@ -1,27 +1,26 @@
-package com.upseil.gdx.pool;
+package com.upseil.gdx.pool.pair;
 
 import com.badlogic.gdx.utils.Pool;
-import com.upseil.gdx.util.Pair;
+import com.upseil.gdx.pool.Pooled;
+import com.upseil.gdx.util.IntPair;
 
-public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A, B>> {
+public class PooledIntPair<T> extends IntPair<T> implements Pooled<PooledIntPair<T>> {
 
-    private Pool<PooledPair<A, B>> pool;
+    private Pool<PooledIntPair<T>> pool;
 
     @Override
-    public Pool<PooledPair<A, B>> getPool() {
+    public Pool<PooledIntPair<T>> getPool() {
         return pool;
     }
 
     @Override
-    public void setPool(Pool<PooledPair<A, B>> pool) {
+    public void setPool(Pool<PooledIntPair<T>> pool) {
         this.pool = pool;
     }
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void free() {
-        if (a instanceof Pooled) {
-            ((Pooled<?>) a).free();
-        }
+        a = 0;
         if (b instanceof Pooled) {
             ((Pooled<?>) b).free();
         }
@@ -33,23 +32,23 @@ public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A,
     @Override
     public void reset() {
         pool = null;
-        set(null, null);
+        set(0, null);
     }
 
     @Override
-    public PooledPair<A, B> set(A a, B b) {
+    public PooledIntPair<T> set(int a, T b) {
         super.set(a, b);
         return this;
     }
 
     @Override
-    public PooledPair<A, B> setA(A a) {
+    public PooledIntPair<T> setA(int a) {
         super.setA(a);
         return this;
     }
 
     @Override
-    public PooledPair<A, B> setB(B b) {
+    public PooledIntPair<T> setB(T b) {
         super.setB(b);
         return this;
     }

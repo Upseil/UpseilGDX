@@ -6,7 +6,7 @@ import com.upseil.gdx.box2d.builder.base.AbstractShapelessFixtureBuilderBase;
 import com.upseil.gdx.box2d.builder.shape.ChainedPolygonShapeBuilder;
 import com.upseil.gdx.box2d.builder.shape.ShapeBuilder;
 import com.upseil.gdx.box2d.util.Fixtures;
-import com.upseil.gdx.pool.PairPool;
+import com.upseil.gdx.pool.pair.PairPool;
 
 public class ChainedFixturedActorBuilder extends AbstractShapelessFixtureBuilderBase<ChainedShapelyFixturedActorBuilder> {
     

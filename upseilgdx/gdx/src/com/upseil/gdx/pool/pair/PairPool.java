@@ -1,4 +1,6 @@
-package com.upseil.gdx.pool;
+package com.upseil.gdx.pool.pair;
+
+import com.upseil.gdx.pool.PooledPool;
 
 public class PairPool<A, B> extends PooledPool<PooledPair<A, B>> {
     

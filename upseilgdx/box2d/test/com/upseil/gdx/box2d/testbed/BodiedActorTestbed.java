@@ -36,7 +36,7 @@ import com.upseil.gdx.box2d.component.Box2DWorld;
 import com.upseil.gdx.box2d.system.Box2DDebugRenderer;
 import com.upseil.gdx.box2d.system.PhysicsSystem;
 import com.upseil.gdx.box2d.util.Bodies;
-import com.upseil.gdx.pool.PooledPair;
+import com.upseil.gdx.pool.pair.PooledPair;
 import com.upseil.gdx.scene2d.PolygonActor;
 import com.upseil.gdx.scene2d.util.TextureDrawable;
 import com.upseil.gdx.testbed.ArtemisTestbedApplication;
