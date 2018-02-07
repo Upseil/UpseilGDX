@@ -7,7 +7,7 @@ import com.upseil.gdx.event.EventType;
 public class EventComponent extends PooledComponent {
 	
 	private Event<?> event;
-	private boolean fireImmediate;
+	private boolean immediate;
 	
 	public Event<?> get() {
 		return event;
@@ -21,12 +21,12 @@ public class EventComponent extends PooledComponent {
 		return event.getType();
 	}
 	
-	public boolean isFireImmediate() {
-        return fireImmediate;
+	public boolean isImmediate() {
+        return immediate;
     }
 
-    public void setFireImmediate(boolean fireImmediate) {
-        this.fireImmediate = fireImmediate;
+    public void setImmediate(boolean immediate) {
+        this.immediate = immediate;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class EventComponent extends PooledComponent {
 	protected void reset() {
 		event.free();
 		event = null;
-		fireImmediate = false;
+		immediate = false;
 	}
 
 }

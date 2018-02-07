@@ -38,7 +38,7 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
 	@Override
 	protected void inserted(int entityId) {
         EventComponent event = mapper.get(entityId);
-        if (event.isFireImmediate()) {
+        if (event.isImmediate()) {
             forwardToHandlers(entityId, event);
         } else {
             events.add(pairPool.obtain().set(entityId, event));
@@ -91,16 +91,16 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
         }
     }
     
-    public static EventComponent fire(World world, Event<?> event) {
+    public static EventComponent schedule(World world, Event<?> event) {
         EventComponent eventComponent = world.createEntity().edit().create(EventComponent.class);
         eventComponent.set(event);
         return eventComponent;
     }
     
-    public static EventComponent fireImmediate(World world, Event<?> event) {
+    public static EventComponent fire(World world, Event<?> event) {
         EventComponent eventComponent = world.createEntity().edit().create(EventComponent.class);
         eventComponent.set(event);
-        eventComponent.setFireImmediate(true);
+        eventComponent.setImmediate(true);
         return eventComponent;
     }
 
