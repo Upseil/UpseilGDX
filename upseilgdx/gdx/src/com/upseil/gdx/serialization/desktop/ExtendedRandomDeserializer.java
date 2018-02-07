@@ -57,6 +57,7 @@ public class ExtendedRandomDeserializer extends StdDeserializer<ExtendedRandom> 
             throw new JsonParseException(p, "Unexpected field name " + fieldName + ". Expected seed0 or seed1.");
         }
         
+        p.nextToken();
         long seed = _parseLongPrimitive(p, ctxt);
         if (isSeed0) seed0 = seed;
         else         seed1 = seed;
