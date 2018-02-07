@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.IntFloatMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.upseil.gdx.math.ExtendedRandom;
 import com.upseil.gdx.serialization.CompressingMapper;
 
 public class DesktopSavegameMapper<T> extends CompressingMapper<T> {
@@ -28,6 +29,8 @@ public class DesktopSavegameMapper<T> extends CompressingMapper<T> {
             module.addDeserializer(IntFloatMap.class, new IntFloatMapDeserializer());
             module.addSerializer(new ArraySerializer());
             module.addDeserializer(Array.class, new ArrayDeserializer());
+            module.addSerializer(ExtendedRandom.class, new ExtendedRandomSerializer());
+            module.addDeserializer(ExtendedRandom.class, new ExtendedRandomDeserializer());
             defaultMapper.registerModule(module);
         }
         return defaultMapper;
