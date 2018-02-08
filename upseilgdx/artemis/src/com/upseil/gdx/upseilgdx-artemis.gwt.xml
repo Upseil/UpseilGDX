@@ -4,6 +4,8 @@
 	<source path="artemis" />
 	
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.artemis.scene2d.action" />
+    <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.artemis.event" />
+    <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.artemis.component.EventComponent" />
 	
 	<extend-configuration-property name="artemis.reflect.include" value="com.badlogic.gdx.utils.I18NBundle" />
 	<extend-configuration-property name="artemis.reflect.include" value="com.badlogic.gdx.scenes.scene2d.ui.Skin" />

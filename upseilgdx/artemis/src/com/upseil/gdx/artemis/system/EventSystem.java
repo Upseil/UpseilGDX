@@ -50,13 +50,13 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
 
 	@Override
 	protected void processSystem() {
-	    GDXCollections.<PooledIntPair<EventComponent>>forEach(events, this::forwardToHandlers);
+	    GDXCollections.forEach(events, this::fireScheduledEvent);
 	    events.clear();
 	    GDXCollections.forEach(eventsToDelete, world::delete);
 	    eventsToDelete.clear();
 	}
 
-    private void forwardToHandlers(PooledIntPair<EventComponent> eventWithId) {
+    private void fireScheduledEvent(PooledIntPair<EventComponent> eventWithId) {
         forwardToHandlers(eventWithId.getA(), eventWithId.getB());
         pairPool.free(eventWithId);
     }
