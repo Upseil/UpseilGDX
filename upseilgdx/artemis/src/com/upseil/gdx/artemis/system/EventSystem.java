@@ -63,17 +63,19 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
 
     private void forwardToHandlers(int entityId, EventComponent event) {
         if (event.get() == null) return; // Already deleted
-        
+        forwardToHandlers(entityId, event.get());
+    }
+
+    private void forwardToHandlers(int entityId, Event<?> event) {
         for (EventHandler<?> handler : handlers.get(event.getType())) {
             forwardEvent(event, handler);
         }
-        eventsToDelete.add(entityId);
+        if (entityId != -1) eventsToDelete.add(entityId);
     }
     
     @SuppressWarnings("unchecked")
-    private <T extends Event<T>> void forwardEvent(EventComponent event, EventHandler<T> handler) {
-        T actualEvent = (T) event.get();
-        handler.accept(actualEvent);
+    private <T extends Event<T>> void forwardEvent(Event<?> event, EventHandler<T> handler) {
+        handler.accept((T) event);
     }
     
     public <T extends Event<T>> void registerHandler(EventType<T> type, EventHandler<T> handler) {
@@ -97,11 +99,15 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
         return eventComponent;
     }
     
-    public static EventComponent fire(World world, Event<?> event) {
+    public static EventComponent scheduleImmediate(World world, Event<?> event) {
         EventComponent eventComponent = world.createEntity().edit().create(EventComponent.class);
         eventComponent.set(event);
         eventComponent.setImmediate(true);
         return eventComponent;
+    }
+    
+    public static void fire(World world, Event<?> event) {
+        world.getSystem(EventSystem.class).forwardToHandlers(-1, event);
     }
 
 }

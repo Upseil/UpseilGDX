@@ -28,6 +28,7 @@ public abstract class ArtemisApplicationAdapter extends AbstractApplicationAdapt
     protected abstract World createWorld();
     
     public void reset() {
+        world.dispose();
         resetWorld();
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
