@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 public class ArraySerializer extends StdSerializer<Array<Object>> implements ContextualSerializer {
     private static final long serialVersionUID = -8210849736817031467L;
 
-    protected ArraySerializer() {
+    public ArraySerializer() {
         super(TypeFactory.defaultInstance().constructCollectionLikeType(Array.class, Object.class));
     }
 

@@ -6,6 +6,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonTarget"
     
     testCompile "junit:junit:$junitTarget"
+    testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
     testCompile project(":upseilgdx:test-util")
 }
 

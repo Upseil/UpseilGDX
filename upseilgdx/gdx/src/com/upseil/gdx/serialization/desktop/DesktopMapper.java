@@ -12,9 +12,17 @@ public class DesktopMapper<T> implements Mapper<T> {
     
     private final ObjectMapper mapper;
     private final JavaType type;
-
+    
+    public DesktopMapper(Class<T> type) {
+        this(Jackson.Mappers.Default(), type);
+    }
+    
     public DesktopMapper(ObjectMapper mapper, Class<T> type) {
         this(mapper, TypeFactory.defaultInstance().constructType(type));
+    }
+    
+    public DesktopMapper(JavaType type) {
+        this(Jackson.Mappers.Default(), type);
     }
 
     public DesktopMapper(ObjectMapper mapper, JavaType type) {

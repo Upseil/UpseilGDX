@@ -3,6 +3,7 @@
 
 dependencies {
     testCompile "junit:junit:$junitTarget"
+    testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
 }
 
 sourceSets.test.java.srcDirs = [ "test/" ]

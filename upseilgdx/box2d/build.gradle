@@ -9,6 +9,7 @@ dependencies {
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
     
     testCompile "junit:junit:$junitTarget"
+    testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
     testCompile project(":upseilgdx:test-util")
     testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxTarget:natives-desktop"
 }

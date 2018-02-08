@@ -7,6 +7,10 @@ import com.upseil.gdx.serialization.Writer;
 public class DesktopWriter<T> implements Writer<T> {
     
     private final ObjectMapper mapper;
+    
+    public DesktopWriter() {
+        this(Jackson.Mappers.Default());
+    }
 
     public DesktopWriter(ObjectMapper mapper) {
         this.mapper = mapper;

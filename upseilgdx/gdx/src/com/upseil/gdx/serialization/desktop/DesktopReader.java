@@ -12,8 +12,16 @@ public class DesktopReader<T> implements Reader<T> {
     private final ObjectMapper mapper;
     private final JavaType type;
 
+    public DesktopReader(Class<T> type) {
+        this(Jackson.Mappers.Default(), type);
+    }
+
     public DesktopReader(ObjectMapper mapper, Class<T> type) {
         this(mapper, TypeFactory.defaultInstance().constructType(type));
+    }
+    
+    public DesktopReader(JavaType type) {
+        this(Jackson.Mappers.Default(), type);
     }
 
     public DesktopReader(ObjectMapper mapper, JavaType type) {

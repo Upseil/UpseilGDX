@@ -3,6 +3,8 @@
 dependencies {
     compile project(":upseilgdx:util")
     
+    compile "org.hamcrest:java-hamcrest:$hamcrestTarget"
+    
     compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxTarget"
     compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxTarget"
