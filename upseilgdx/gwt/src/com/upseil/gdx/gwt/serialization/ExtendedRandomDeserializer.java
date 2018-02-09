@@ -30,6 +30,7 @@ public class ExtendedRandomDeserializer extends JsonDeserializer<ExtendedRandom>
         if (firstToken != JsonToken.BEGIN_OBJECT) {
             throw ctx.traceError("Can't deserialize a " + ExtendedRandomDeserializer.class.getName() + " out of " + firstToken + " token", reader);
         }
+        reader.beginObject();
 
         seed0 = -1;
         seed1 = -1;
@@ -40,6 +41,7 @@ public class ExtendedRandomDeserializer extends JsonDeserializer<ExtendedRandom>
         if (reader.peek() != JsonToken.END_OBJECT) {
             ctx.traceError("Expected " + JsonToken.END_OBJECT + " but got " + reader.peek());
         }
+        reader.endObject();
         
         return new ExtendedRandomXS128(seed0, seed1);
     }

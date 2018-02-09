@@ -1,5 +1,6 @@
 package com.upseil.gdx.serialization;
 
+import com.badlogic.gdx.Gdx;
 import com.upseil.gdx.lzstring.LZString;
 
 public abstract class CompressingMapper<T> implements Mapper<T> {
@@ -7,11 +8,12 @@ public abstract class CompressingMapper<T> implements Mapper<T> {
     private boolean compressing = true;
     
     @Override
-    public String write(T game) {
+    public String write(T object) {
         try {
-            String uncompressedData = writeUncompressed(game);
+            String uncompressedData = writeUncompressed(object);
             return compressing ? LZString.compressToBase64(uncompressedData) : uncompressedData;
         } catch (Throwable e) {
+            Gdx.app.error("Serialization", "Error writing the object", e);
             return null;
         }
     }
@@ -24,6 +26,7 @@ public abstract class CompressingMapper<T> implements Mapper<T> {
             String uncompressedData = compressing ? LZString.decompressFromBase64(data) : data;
             return readUncompressed(uncompressedData);
         } catch (Throwable e) {
+            Gdx.app.error("Serialization", "Error reading the data", e);
             return null;
         }
     }
