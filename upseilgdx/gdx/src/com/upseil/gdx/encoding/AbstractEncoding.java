@@ -7,23 +7,12 @@ import com.badlogic.gdx.utils.BufferUtils;
 
 public abstract class AbstractEncoding<T> implements Encoding<T> {
     
-    public static final Charset DefaultCharset = Charset.forName("ISO_8859_1");
+    public static final Charset DefaultCharset = Charset.forName("UTF-8");
     
     protected final ByteBuffer buffer;
-    private final Charset charset;
     
     protected AbstractEncoding(int bufferSize) {
-        this(bufferSize, DefaultCharset);
-    }
-    
-    protected AbstractEncoding(int bufferSize, Charset charset) {
         buffer = BufferUtils.newByteBuffer(bufferSize);
-        this.charset = charset;
-    }
-
-    @Override
-    public String toBase64(T t) {
-        return LZString.compressToBase64(new String(toBytes(t), charset));
     }
     
     @Override
@@ -53,11 +42,6 @@ public abstract class AbstractEncoding<T> implements Encoding<T> {
     }
     
     protected abstract T readFromBuffer();
-
-    @Override
-    public T fromBase64(String string) {
-        return fromBytes(LZString.decompressFromBase64(string).getBytes(charset));
-    }
     
     @Override
     public int size() {
