@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Collectors;
 
-import com.upseil.gdx.lzstring.LZString;
+import com.upseil.gdx.encoding.LZString;
 
 public class LZStringTestbed {
     

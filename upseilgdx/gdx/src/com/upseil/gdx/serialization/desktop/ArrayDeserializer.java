@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -39,7 +40,7 @@ public class ArrayDeserializer extends JsonDeserializer<Array<Object>> implement
 
     @Override
     public Array<Object> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-        if (p.currentToken() == JsonToken.VALUE_NULL) {
+        if (p.currentTokenId() == JsonTokenId.ID_NULL) {
             return null;
         }
         

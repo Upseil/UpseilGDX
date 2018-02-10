@@ -5,13 +5,13 @@ import com.github.nmorel.gwtjackson.client.JsonSerializationContext;
 import com.github.nmorel.gwtjackson.client.ObjectMapper;
 import com.upseil.gdx.serialization.CompressingMapper;
 
-public class HtmlSavegameMapper<T> extends CompressingMapper<T> {
+public class HtmlCompressingMapper<T> extends CompressingMapper<T> {
     
     private final ObjectMapper<T> mapper;
     private final JsonSerializationContext serializationContext;
     private final JsonDeserializationContext deserializationContext;
 
-    public HtmlSavegameMapper(ObjectMapper<T> mapper, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
+    public HtmlCompressingMapper(ObjectMapper<T> mapper, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
         this.mapper = mapper;
         this.serializationContext = serializationContext;
         this.deserializationContext = deserializationContext;

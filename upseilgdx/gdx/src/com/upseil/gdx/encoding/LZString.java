@@ -28,7 +28,7 @@
  *  - Removed the unused variable
  */
 
-package com.upseil.gdx.lzstring;
+package com.upseil.gdx.encoding;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.CharArray;

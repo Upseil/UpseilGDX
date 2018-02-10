@@ -1,7 +1,7 @@
 package com.upseil.gdx.serialization;
 
 import com.badlogic.gdx.Gdx;
-import com.upseil.gdx.lzstring.LZString;
+import com.upseil.gdx.encoding.LZString;
 
 public abstract class CompressingMapper<T> implements Mapper<T> {
     
