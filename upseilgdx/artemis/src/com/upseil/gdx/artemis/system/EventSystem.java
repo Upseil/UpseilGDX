@@ -10,14 +10,17 @@ import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.upseil.gdx.artemis.component.EventComponent;
+import com.upseil.gdx.artemis.event.ResizeEvent;
 import com.upseil.gdx.event.Event;
 import com.upseil.gdx.event.EventHandler;
 import com.upseil.gdx.event.EventType;
+import com.upseil.gdx.pool.PooledPools;
 import com.upseil.gdx.pool.pair.IntPairPool;
 import com.upseil.gdx.pool.pair.PooledIntPair;
 import com.upseil.gdx.util.GDXCollections;
+import com.upseil.gdx.util.RequiresResize;
 
-public class EventSystem extends BaseEntitySystem implements RequiresStepping {
+public class EventSystem extends BaseEntitySystem implements RequiresStepping, RequiresResize {
 	
 	private ComponentMapper<EventComponent> mapper;
 	
@@ -90,6 +93,13 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping {
     public void unregisterHandler(EventHandler<?> handler) {
         for (ObjectSet<EventHandler<?>> typeHandlers : handlers.values()) {
             typeHandlers.remove(handler);
+        }
+    }
+    
+    @Override
+    public void resize(int width, int height) {
+        if (handlers.containsKey(ResizeEvent.Type)) {
+            schedule(world, PooledPools.obtain(ResizeEvent.class).set(width, height));
         }
     }
     
