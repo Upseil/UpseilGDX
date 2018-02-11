@@ -2,10 +2,13 @@ package com.upseil.gdx.scene2d.action;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CenterRelativeToActorAction extends Action {
+    
+    private static final Vector2 tempVector = new Vector2();
     
     private int xDirection;
     private int yDirection;
@@ -14,6 +17,8 @@ public class CenterRelativeToActorAction extends Action {
     private float maxSpacing;
     
     private Rectangle bounds = new Rectangle(-1, -1, -1, -1);
+    private boolean keepInDisplayBounds;
+    private boolean keepInStageBounds;
     
     private float x;
     private float y;
@@ -26,11 +31,20 @@ public class CenterRelativeToActorAction extends Action {
     private float targetHeight;
     
     private void prepare() {
+        if (keepInDisplayBounds) {
+            bounds.set(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
+        if (keepInStageBounds) {
+            Viewport viewport = actor.getStage().getViewport();
+            bounds.set(viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
+        }
+        
         width = actor.getWidth();
         height = actor.getHeight();
         
-        targetX = target.getX();
-        targetY = target.getY();
+        target.localToStageCoordinates(tempVector.set(0, 0));
+        targetX = tempVector.x;
+        targetY = tempVector.y;
         targetWidth = target.getWidth();
         targetHeight = target.getHeight();
     }
@@ -39,13 +53,13 @@ public class CenterRelativeToActorAction extends Action {
     public boolean act(float delta) {
         prepare();
         
-        float widthAdjustment = (targetWidth - width) / 2;
-        float heightAdjustment = (targetHeight - height) / 2;
-        float deltaX = widthAdjustment - xDirection * xDirection * widthAdjustment + xDirection * (maxSpacing + targetWidth);
-        float deltaY = heightAdjustment - yDirection * yDirection * heightAdjustment + yDirection * (maxSpacing + targetHeight);
+        float widthAdjustment = xDirection == 0 ? (targetWidth - width) / 2 : 0;
+        float heightAdjustment = yDirection == 0 ? (targetHeight - height) / 2 : 0;
+        float deltaX = maxSpacing + (xDirection > 0 ? targetWidth : width);
+        float deltaY = maxSpacing + (yDirection > 0 ? targetHeight : height);
         
-        x = targetX + deltaX;
-        y = targetY + deltaY;
+        x = targetX + widthAdjustment + xDirection * deltaX;
+        y = targetY + heightAdjustment + yDirection * deltaY;
         keepInBounds();
         
         actor.setPosition(Math.round(x), Math.round(y));
@@ -84,7 +98,7 @@ public class CenterRelativeToActorAction extends Action {
             if (shiftLeft > bounds.x) x = shiftLeft;
             else /*shift right*/      x = targetX + targetWidth + minSpacing;
         } else { // Shifting vertically
-            float shiftDown = targetY - height -minSpacing;
+            float shiftDown = targetY - height - minSpacing;
             if (shiftDown > bounds.y) y = shiftDown;
             else /*shift up*/         y = targetY + targetHeight + minSpacing;
         }
@@ -128,22 +142,27 @@ public class CenterRelativeToActorAction extends Action {
     
     public CenterRelativeToActorAction keepInBounds(Rectangle bounds) {
         this.bounds.set(bounds);
+        keepInDisplayBounds = false;
+        keepInStageBounds = false;
         return this;
     }
 
     public CenterRelativeToActorAction keepInBounds(float x, float y, float width, float height) {
         bounds.set(x, y, width, height);
+        keepInDisplayBounds = false;
+        keepInStageBounds = false;
         return this;
     }
 
     public CenterRelativeToActorAction keepInDisplayBounds() {
-        bounds.set(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        keepInDisplayBounds = true;
+        keepInStageBounds = false;
         return this;
     }
 
     public CenterRelativeToActorAction keepInStageBounds() {
-        Viewport viewport = target.getStage().getViewport();
-        bounds.set(viewport.getScreenX(), viewport.getScreenY(), viewport.getScreenWidth(), viewport.getScreenHeight());
+        keepInDisplayBounds = false;
+        keepInStageBounds = true;
         return this;
     }
     
@@ -155,6 +174,8 @@ public class CenterRelativeToActorAction extends Action {
         minSpacing = 0;
         maxSpacing = 0;
         bounds.set(-1, -1, -1, -1);
+        keepInDisplayBounds = false;
+        keepInStageBounds = false;
     }
     
 }
