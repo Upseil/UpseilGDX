@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.upseil.gdx.scene2d.action.CenterOnDisplayBoundsAction;
 import com.upseil.gdx.scene2d.action.CenterRelativeToActorAction;
+import com.upseil.gdx.scene2d.action.PositionOverActorAction;
 
 public class AbstractDialog extends Dialog {
 
@@ -21,6 +22,9 @@ public class AbstractDialog extends Dialog {
     protected static final Object notNull = new Object();
     
     private Actor anchor;
+    
+    private int alignment;
+    
     private float anchorSpacing;
     private int position;
     
@@ -40,29 +44,32 @@ public class AbstractDialog extends Dialog {
         anchor = null;
     }
     
+    public void over(Actor anchor, int alignment) {
+        setAnchor(anchor, 0);
+        this.alignment = alignment;
+        position = -1;
+    }
+    
     public void leftFrom(Actor anchor, float spacing) {
-        setAnchor(anchor, spacing);
-        position = Left;
+        positionRelativeTo(anchor, spacing, Left);
     }
     
     public void above(Actor anchor, float spacing) {
-        setAnchor(anchor, spacing);
-        position = Above;
+        positionRelativeTo(anchor, spacing, Above);
     }
     
     public void rightFrom(Actor anchor, float spacing) {
-        setAnchor(anchor, spacing);
-        position = Right;
+        positionRelativeTo(anchor, spacing, Right);
     }
     
     public void below(Actor anchor, float spacing) {
-        setAnchor(anchor, spacing);
-        position = Below;
+        positionRelativeTo(anchor, spacing, Below);
     }
     
     public void positionRelativeTo(Actor anchor, float spacing, int position) {
         setAnchor(anchor, spacing);
         this.position = position;
+        alignment = -1;
     }
 
     private void setAnchor(Actor anchor, float spacing) {
@@ -77,19 +84,26 @@ public class AbstractDialog extends Dialog {
     
     public AbstractDialog show(Stage stage, Action action) {
         super.show(stage, action);
-        Action positioningAction;
-        if (anchor == null) {
-            positioningAction = Actions.action(CenterOnDisplayBoundsAction.class);
-        } else {
-            CenterRelativeToActorAction relativeAction = Actions.action(CenterRelativeToActorAction.class);
-            relativeAction.setTarget(anchor);
-            relativeAction.keepInStageBounds().spacing(anchorSpacing);
-            if (position == Left) relativeAction.left();
-            if (position == Above) relativeAction.top();
-            if (position == Right) relativeAction.right();
-            if (position == Below) relativeAction.bottom();
-            positioningAction = relativeAction;
+        Action positioningAction = null;
+        if (anchor != null) {
+            if (position != -1) {
+                CenterRelativeToActorAction relativeAction = Actions.action(CenterRelativeToActorAction.class);
+                relativeAction.setTarget(anchor);
+                relativeAction.keepInStageBounds().spacing(anchorSpacing);
+                if (position == Left) relativeAction.left();
+                if (position == Above) relativeAction.top();
+                if (position == Right) relativeAction.right();
+                if (position == Below) relativeAction.bottom();
+                positioningAction = relativeAction;
+            }
+            if (alignment != -1) {
+                PositionOverActorAction overAction = Actions.action(PositionOverActorAction.class);
+                overAction.setTarget(anchor);
+                overAction.keepInStageBounds().setAlignment(alignment);
+                positioningAction = overAction;
+            }
         }
+        positioningAction = positioningAction != null ? positioningAction : Actions.action(CenterOnDisplayBoundsAction.class);
         addAction(positioningAction);
         return this;
     }
