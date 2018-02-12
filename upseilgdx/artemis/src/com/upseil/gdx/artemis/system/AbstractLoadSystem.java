@@ -11,7 +11,7 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     private final Preferences saveStore;
     private final String autoSaveSlot;
     
-    private T savegame;
+    private String dataToLoad;
     private boolean isScheduled;
     
     public AbstractLoadSystem(Reader<T> mapper, String saveStoreName, String autoSaveSlot) {
@@ -22,8 +22,10 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
 
     @Override
     protected void initialize() {
-        savegame = mapper.read(saveStore.getString(autoSaveSlot, null));
-        isScheduled = savegame != null;
+    	String data = saveStore.getString(autoSaveSlot);
+    	if (data != null && !data.isEmpty()) {
+			importGame(data);
+		}
     }
     
     public void loadFromAutoSlot() {
@@ -31,11 +33,11 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     }
     
     protected void scheduleLoad(String slotName) {
-        importGame(saveStore.getString(autoSaveSlot, null));
+    	importGame(saveStore.getString(slotName));
     }
     
     public void importGame(String data) {
-        savegame = mapper.read(data);
+        dataToLoad = data;
         isScheduled = true;
     }
     
@@ -46,13 +48,14 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
 
     @Override
     protected void processSystem() {
+    	T savegame = mapper.read(dataToLoad);
         if (savegame == null) {
             onLoadingFailed();
         } else {
             loadGame(savegame);
         }
         
-        savegame = null;
+        dataToLoad = null;
         isScheduled = false;
     }
 

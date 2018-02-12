@@ -56,6 +56,14 @@ public class DividerBuilder extends AbstractDrawableBuilder {
         this.color = color;
         return this;
     }
+
+	public DividerBuilder horizontal() {
+		return orientation(Orientation.Horizontal);
+	}
+
+	public DividerBuilder vertical() {
+		return orientation(Orientation.Vertical);
+	}
     
     public DividerBuilder orientation(Orientation orientation) {
         this.orientation = orientation;

@@ -12,7 +12,7 @@ import com.upseil.gdx.scene2d.action.CenterOnDisplayBoundsAction;
 import com.upseil.gdx.scene2d.action.CenterRelativeToActorAction;
 import com.upseil.gdx.scene2d.action.PositionOverActorAction;
 
-public class AbstractDialog extends Dialog {
+public abstract class AbstractDialog extends Dialog {
 
     public static final int Left = 0;
     public static final int Above = 1;
@@ -83,6 +83,7 @@ public class AbstractDialog extends Dialog {
     }
     
     public AbstractDialog show(Stage stage, Action action) {
+    	beforeShow();
         super.show(stage, action);
         Action positioningAction = null;
         if (anchor != null) {
@@ -108,7 +109,9 @@ public class AbstractDialog extends Dialog {
         return this;
     }
     
-    public void hide() {
+    protected void beforeShow() { }
+
+	public void hide() {
         hide(Actions.fadeOut(0.4f, Interpolation.fade));
     }
     
