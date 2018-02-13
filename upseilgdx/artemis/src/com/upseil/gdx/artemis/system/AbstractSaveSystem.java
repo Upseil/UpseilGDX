@@ -10,8 +10,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.upseil.gdx.artemis.ArtemisApplicationAdapter;
-import com.upseil.gdx.config.AbstractConfig;
-import com.upseil.gdx.config.RawConfig;
+import com.upseil.gdx.artemis.config.SaveConfig;
 import com.upseil.gdx.serialization.Writer;
 
 public abstract class AbstractSaveSystem<T> extends BaseSystem {
@@ -34,7 +33,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     private final Array<Consumer<String>> exportCallbacks;
     private final ObjectSet<String> slotsToSave;
     
-    public AbstractSaveSystem(Writer<T> mapper, Clipboard systemAccessClipboard, AbstractSaveSystem.Config config) {
+    public AbstractSaveSystem(Writer<T> mapper, Clipboard systemAccessClipboard, SaveConfig config) {
         this.mapper = mapper;
         this.systemAccessClipboard = systemAccessClipboard;
         
@@ -248,43 +247,6 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         if (!areSaveTimesSupported()) {
             throw new UnsupportedOperationException("The given config didn't support save times");
         }
-    }
-
-    // TODO Overhaul Config
-    public static class Config extends AbstractConfig {
-
-        public Config(RawConfig rawConfig) {
-            super(rawConfig);
-        }
-        
-        public String getSaveStoreName() {
-            return getRawConfig().getString("saveStoreName");
-        }
-        
-        public float getAutoSaveInterval() {
-            return getRawConfig().getFloat("autoSaveInterval");
-        }
-        
-        public String getAutoSaveSlot() {
-            return getRawConfig().getString("autoSaveSlot");
-        }
-        
-        public int getSaveSlots() {
-            return getRawConfig().getInt("saveSlots");
-        }
-        
-        public String getSaveSlotPrefix() {
-            return getRawConfig().getString("slot");
-        }
-        
-        public String getTimeSuffix() {
-            return getRawConfig().getString("timeSuffix");
-        }
-        
-        public String getNameSuffix() {
-            return getRawConfig().getString("nameSuffix");
-        }
-        
     }
     
 }

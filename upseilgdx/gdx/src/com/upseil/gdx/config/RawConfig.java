@@ -67,34 +67,37 @@ public class RawConfig {
     
     public float getFloat(String key) {
         JsonValue node = getNode(key);
-        return node.asFloat();
+        return node == null ? 0 : node.asFloat();
     }
     
     public double getDouble(String key) {
         JsonValue node = getNode(key);
-        return node.asDouble();
+        return node == null ? 0 : node.asDouble();
     }
     
     public int getInt(String key) {
         JsonValue node = getNode(key);
-        return node.asInt();
+        return node == null ? 0 : node.asInt();
     }
 
     public boolean getBoolean(String key) {
-        return getNode(key).asBoolean();
-    }
-    
-    public DoubleBasedExpression getExpression(String key) {
-        return new DoubleBasedExpression(getString(key));
-    }
-    
-    public <T extends Enum<T>> T getEnum(String key, Class<T> type) {
-        return Enum.valueOf(type, getString(key));
+        JsonValue node = getNode(key);
+        return node == null ? false : node.asBoolean();
     }
     
     public String getString(String key) {
         JsonValue node = getNode(key);
-        return node.asString();
+        return node == null ? null : node.asString();
+    }
+    
+    public DoubleBasedExpression getExpression(String key) {
+        String expression = getString(key);
+        return expression == null ? null : new DoubleBasedExpression(expression);
+    }
+    
+    public <T extends Enum<T>> T getEnum(String key, Class<T> type) {
+        String name = getString(key);
+        return name == null ? null : Enum.valueOf(type, name);
     }
     
     public boolean hasNode(String key) {

@@ -134,31 +134,31 @@ public class BorderBuilder extends AbstractDrawableBuilder {
         }
         
         public String getTexturePrefix() {
-            return getRawConfig().getString("texturePrefix");
+            return getString("texturePrefix");
         }
         
         public String getNamePrefix() {
-            return getRawConfig().getString("namePrefix");
+            return getString("namePrefix");
         }
         
         public String getSlimSuffix() {
-            return getRawConfig().getString("slimSuffix");
+            return getString("slimSuffix");
         }
         
         public String getTopSuffix() {
-            return getRawConfig().getString("topSuffix");
+            return getString("topSuffix");
         }
         
         public String getLeftSuffix() {
-            return getRawConfig().getString("leftSuffix");
+            return getString("leftSuffix");
         }
         
         public String getBottomSuffix() {
-            return getRawConfig().getString("bottomSuffix");
+            return getString("bottomSuffix");
         }
         
         public String getRightSuffix() {
-            return getRawConfig().getString("rightSuffix");
+            return getString("rightSuffix");
         }
         
     }

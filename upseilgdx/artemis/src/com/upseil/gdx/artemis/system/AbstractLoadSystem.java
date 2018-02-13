@@ -3,6 +3,7 @@ package com.upseil.gdx.artemis.system;
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.upseil.gdx.artemis.config.SaveConfig;
 import com.upseil.gdx.serialization.Reader;
 
 public abstract class AbstractLoadSystem<T> extends BaseSystem {
@@ -17,7 +18,7 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     private final int saveSlots;
     private final String saveSlotPrefix;
     
-    public AbstractLoadSystem(Reader<T> mapper, AbstractSaveSystem.Config config) {
+    public AbstractLoadSystem(Reader<T> mapper, SaveConfig config) {
         this.mapper = mapper;
         
         saveStore = Gdx.app.getPreferences(config.getSaveStoreName());

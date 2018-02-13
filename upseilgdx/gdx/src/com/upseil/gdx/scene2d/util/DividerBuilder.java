@@ -110,19 +110,19 @@ public class DividerBuilder extends AbstractDrawableBuilder {
         }
         
         public String getTexturePrefix() {
-            return getRawConfig().getString("texturePrefix");
+            return getString("texturePrefix");
         }
         
         public String getTextureName() {
-            return getRawConfig().getString("textureName");
+            return getString("textureName");
         }
         
         public String getDividerName() {
-            return getRawConfig().getString("dividerName");
+            return getString("dividerName");
         }
         
         public String getSlimSuffix() {
-            return getRawConfig().getString("slimSuffix");
+            return getString("slimSuffix");
         }
         
     }

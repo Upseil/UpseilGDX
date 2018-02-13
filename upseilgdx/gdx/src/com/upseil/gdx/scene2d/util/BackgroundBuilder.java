@@ -201,35 +201,35 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
         }
         
         public String getTextureName() {
-            return getRawConfig().getString("textureName");
+            return getString("textureName");
         }
         
         public String getNamePrefix() {
-            return getRawConfig().getString("namePrefix");
+            return getString("namePrefix");
         }
         
         public String getRedPrefix() {
-            return getRawConfig().getString("redPrefix");
+            return getString("redPrefix");
         }
         
         public String getGreenPrefix() {
-            return getRawConfig().getString("greenPrefix");
+            return getString("greenPrefix");
         }
         
         public String getBluePrefix() {
-            return getRawConfig().getString("bluePrefix");
+            return getString("bluePrefix");
         }
         
         public String getAlphaPrefix() {
-            return getRawConfig().getString("alphaPrefix");
+            return getString("alphaPrefix");
         }
         
         public String getDefaultAlphaBase() {
-            return getRawConfig().getString("defaultAlphaBase");
+            return getString("defaultAlphaBase");
         }
         
         public String getComponentSeparator() {
-            return getRawConfig().getString("componentSeparator");
+            return getString("componentSeparator");
         }
         
     }
