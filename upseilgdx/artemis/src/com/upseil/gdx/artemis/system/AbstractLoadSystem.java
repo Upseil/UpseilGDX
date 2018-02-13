@@ -8,16 +8,22 @@ import com.upseil.gdx.serialization.Reader;
 public abstract class AbstractLoadSystem<T> extends BaseSystem {
     
     private final Reader<T> mapper;
-    private final Preferences saveStore;
-    private final String autoSaveSlot;
     
     private String dataToLoad;
     private boolean isScheduled;
+
+    private final Preferences saveStore;
+    private final String autoSaveSlot;
+    private final int saveSlots;
+    private final String saveSlotPrefix;
     
-    public AbstractLoadSystem(Reader<T> mapper, String saveStoreName, String autoSaveSlot) {
+    public AbstractLoadSystem(Reader<T> mapper, AbstractSaveSystem.Config config) {
         this.mapper = mapper;
-        saveStore = Gdx.app.getPreferences(saveStoreName);
-        this.autoSaveSlot = autoSaveSlot;
+        
+        saveStore = Gdx.app.getPreferences(config.getSaveStoreName());
+        autoSaveSlot = config.getAutoSaveSlot();
+        saveSlots = config.getSaveSlots();
+        saveSlotPrefix = config.getSaveSlotPrefix();
     }
 
     @Override
@@ -30,6 +36,11 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     
     public void loadFromAutoSlot() {
         scheduleLoad(autoSaveSlot);
+    }
+    
+    public void loadFromSlot(int slotNumber) {
+        ensureSaveSlotsAreSupported();
+        scheduleLoad(getSlotKey(slotNumber));
     }
     
     protected void scheduleLoad(String slotName) {
@@ -62,5 +73,23 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     protected void onLoadingFailed() { }
 
     protected abstract void loadGame(T savegame);
+
+    public boolean areSaveSlotsSupported() {
+        return saveSlots > 0 && saveSlotPrefix != null && !saveSlotPrefix.isEmpty();
+    }
+    
+    public int getSaveSlots() {
+        return saveSlots;
+    }
+    
+    private String getSlotKey(int slotNumber) {
+        return saveSlotPrefix + slotNumber;
+    }
+
+    private void ensureSaveSlotsAreSupported() {
+        if (!areSaveSlotsSupported()) {
+            throw new UnsupportedOperationException("The given config didn't support save slots");
+        }
+    }
     
 }
