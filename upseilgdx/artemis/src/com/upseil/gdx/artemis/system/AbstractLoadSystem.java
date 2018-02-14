@@ -24,7 +24,7 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
         saveStore = Gdx.app.getPreferences(config.getSaveStoreName());
         autoSaveSlot = config.getAutoSaveSlot();
         saveSlots = config.getSaveSlots();
-        saveSlotPrefix = config.getSaveSlotPrefix();
+        saveSlotPrefix = config.getSlotPrefix();
     }
 
     @Override

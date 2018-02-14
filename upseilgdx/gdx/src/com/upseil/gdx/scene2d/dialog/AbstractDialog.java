@@ -5,8 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.utils.Align;
 import com.upseil.gdx.scene2d.action.CenterOnDisplayBoundsAction;
 import com.upseil.gdx.scene2d.action.CenterRelativeToActorAction;
@@ -117,6 +120,28 @@ public abstract class AbstractDialog extends Dialog {
     
     public void hide(Action action) {
         super.hide(action);
+    }
+    
+    public AbstractDialog button(String text, float minWidth) {
+        return button(text, minWidth, null);
+    }
+    
+    public AbstractDialog button(String text, float minWidth, Object object) {
+        return button(new TextButton(text, getSkin()), minWidth, object);
+    }
+    
+    public AbstractDialog button(String text, float minWidth, Object object, TextButtonStyle style) {
+        return button(new TextButton(text, style), minWidth, object);
+    }
+    
+    public AbstractDialog button(Button button, float minWidth) {
+        return button(button, minWidth, null);
+    }
+    
+    public AbstractDialog button(Button button, float minWidth, Object object) {
+        getButtonTable().add(button).minWidth(minWidth);
+        setObject(button, object);
+        return this;
     }
     
 }

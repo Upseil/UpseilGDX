@@ -25,8 +25,8 @@ public class SaveConfig extends AbstractConfig {
         return getInt("saveSlots");
     }
     
-    public String getSaveSlotPrefix() {
-        return getString("slot");
+    public String getSlotPrefix() {
+        return getString("slotPrefix");
     }
     
     public String getTimeSuffix() {

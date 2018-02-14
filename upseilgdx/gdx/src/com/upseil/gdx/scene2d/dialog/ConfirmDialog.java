@@ -1,37 +1,24 @@
 package com.upseil.gdx.scene2d.dialog;
 
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-public class ConfirmDialog extends AbstractDialog {
+public class ConfirmDialog extends MessageDialog {
     
-    private final Label messageLabel;
     private final Runnable action;
 
+    public ConfirmDialog(String message, String cancelText, String confirmText, Skin skin, Runnable action) {
+        this("", message, cancelText, confirmText, skin, action);
+    }
+
     public ConfirmDialog(String title, String message, String cancelText, String confirmText, Skin skin, Runnable action) {
-        super(title, skin, true);
+        super(title, message, cancelText, skin);
         setMovable(false);
         this.action = action;
         
-        messageLabel = new Label(message, skin);
-        if (message != null) {
-            text(messageLabel);
-        }
-        
-        button(cancelText);
         key(Keys.ESCAPE, null);
-        button(confirmText, notNull);
+        button(confirmText, MinButtonWidth, notNull);
         key(Keys.ENTER, notNull);
-    }
-    
-    public Label getMessageLabel() {
-        return messageLabel;
-    }
-    
-    public Cell<Label> getMessageLabelCell() {
-        return getContentTable().getCell(messageLabel);
     }
     
     @Override

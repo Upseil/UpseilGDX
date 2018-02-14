@@ -9,7 +9,11 @@ public class SameWidth extends Value {
     private float value;
     
     public SameWidth(Layout... actors) {
-        value = -1;
+        this(-1, actors);
+    }
+
+    public SameWidth(float minWidth, Layout... actors) {
+        value = minWidth;
         for (Layout layout : actors) {
             float actorWidth = layout.getPrefWidth();
             if (actorWidth > value) {

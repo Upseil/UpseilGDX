@@ -26,7 +26,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     private final String autoSaveSlot;
     private float autoSaveInterval;
     private final int saveSlots;
-    private final String saveSlotPrefix;
+    private final String slotPrefix;
     private final String timeSuffix;
     private final String nameSuffix;
     
@@ -41,7 +41,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         autoSaveSlot = config.getAutoSaveSlot();
         autoSaveInterval = config.getAutoSaveInterval();
         saveSlots = config.getSaveSlots();
-        saveSlotPrefix = config.getSaveSlotPrefix();
+        slotPrefix = config.getSlotPrefix();
         timeSuffix = config.getTimeSuffix();
         nameSuffix = config.getNameSuffix();
         
@@ -56,6 +56,9 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
     public void saveToSlot(int slotNumber) {
         ensureSaveSlotsAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
         scheduleSave(getSlotKey(slotNumber));
     }
 
@@ -64,13 +67,11 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         slotsToSave.add(slotKey);
     }
     
-    public void exportSave(Consumer<String> callback) {
-        exportCallbacks.add(callback);
-        isScheduled = true;
-    }
-    
     public void deleteSave(int slotNumber) {
         ensureSaveSlotsAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
         deleteSave(getSlotKey(slotNumber));
     }
 
@@ -78,6 +79,31 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         saveStore.remove(slotKey);
         saveStore.remove(getNameKey(slotKey));
         saveStore.remove(getTimeKey(slotKey));
+        saveStore.flush();
+    }
+    
+    public void exportSave(Consumer<String> callback) {
+        exportCallbacks.add(callback);
+        isScheduled = true;
+    }
+    
+    public String exportFromSlot(int slotNumber) {
+        ensureSaveSlotsAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
+        return saveStore.getString(getSlotKey(slotNumber), null);
+    }
+    
+    public void importToSlot(int slotNumber, String data) {
+        ensureSaveSlotsAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
+        saveStore.putString(getSlotKey(slotNumber), data);
+        if (areSaveTimesSupported()) {
+            saveStore.putLong(getTimeKey(slotNumber), TimeUtils.millis());
+        }
         saveStore.flush();
     }
 
@@ -118,7 +144,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
             onSavingFailed();
         } else {
             if (slotsToSave.size > 0) {
-                boolean saveTimestamps = timeSuffix != null && !timeSuffix.isEmpty();
+                boolean saveTimestamps = areSaveTimesSupported();
                 long timestamp = TimeUtils.millis();
                 for (String slot : slotsToSave) {
                     saveStore.putString(slot, data);
@@ -174,6 +200,9 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
     public String getSaveSlotName(int slotNumber) {
         ensureSaveSlotNamesAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
         return saveStore.getString(getNameKey(slotNumber), null);
     }
     
@@ -191,6 +220,9 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
     public long getSaveTime(int slotNumber) {
         ensureSaveSlotsAreSupported();
+        if (slotNumber < 0 || slotNumber >= saveSlots) {
+            throw new IndexOutOfBoundsException("Illegal slot number: " + slotNumber);
+        }
         return getSaveTime(getSlotKey(slotNumber));
     }
     
@@ -200,7 +232,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     }
 
     public boolean areSaveSlotsSupported() {
-        return saveSlots > 0 && saveSlotPrefix != null && !saveSlotPrefix.isEmpty();
+        return saveSlots > 0 && slotPrefix != null && !slotPrefix.isEmpty();
     }
 
     public boolean areSaveSlotNamesSupported() {
@@ -216,7 +248,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     }
     
     private String getSlotKey(int slotNumber) {
-        return saveSlotPrefix + slotNumber;
+        return slotPrefix + slotNumber;
     }
     
     private String getNameKey(int slotNumber) {
@@ -225,6 +257,10 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
     private String getNameKey(String slotKey) {
         return slotKey + nameSuffix;
+    }
+    
+    private String getTimeKey(int slotNumber) {
+        return getTimeKey(getSlotKey(slotNumber));
     }
     
     private String getTimeKey(String slotKey) {
