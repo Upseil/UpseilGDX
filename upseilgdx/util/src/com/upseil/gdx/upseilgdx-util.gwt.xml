@@ -6,4 +6,6 @@
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.util.Pair" />
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.util.IntPair" />
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.util.IntFloatPair" />
+    
+    <extend-configuration-property name="artemis.reflect.include" value="com.upseil.gdx.util.format.DateFormatter" />
 </module>
