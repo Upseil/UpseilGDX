@@ -8,6 +8,7 @@ public class Scene extends PooledComponent implements Disposable {
     
     private Stage stage;
     private boolean manualAct;
+    private boolean paused;
 
     public Scene initialize(Stage stage) {
         return initialize(stage, false);
@@ -39,7 +40,7 @@ public class Scene extends PooledComponent implements Disposable {
 
     public void act(float delta) {
         if (!manualAct) {
-            stage.act(delta);
+            stage.act(paused ? 0 : delta);
         }
     }
 
@@ -47,11 +48,20 @@ public class Scene extends PooledComponent implements Disposable {
         stage.draw();
     }
     
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
     @Override
     protected void reset() {
         dispose();
         stage = null;
         manualAct = false;
+        paused = false;
     }
 
     @Override
