@@ -1,18 +1,16 @@
 package com.upseil.gdx.config;
 
-import com.badlogic.gdx.utils.ObjectFloatMap;
-import com.badlogic.gdx.utils.ObjectIntMap;
+import java.lang.reflect.Type;
+
 import com.badlogic.gdx.utils.ObjectMap;
 import com.upseil.gdx.util.DoubleBasedExpression;
 import com.upseil.gdx.util.exception.NotImplementedException;
 
 public class AbstractCachingConfig extends AbstractConfig {
     
-    private enum ObjectType { Double, Boolean, String, DoubleBasedExpression, Enum }
+    private enum ObjectType { Int, Float, Double, Boolean, String, DoubleBasedExpression, Enum }
 
-    private ObjectIntMap<String> intCache;
-    private ObjectFloatMap<String> floatCache;
-    private ObjectMap<String, Object> objectCache;
+    private ObjectMap<String, Object> valueCache;
 
     public AbstractCachingConfig(String path) {
         super(path);
@@ -24,12 +22,7 @@ public class AbstractCachingConfig extends AbstractConfig {
 
     @Override
     public float getFloat(String key) {
-        if (floatCache == null) floatCache = new ObjectFloatMap<>();
-        if (!floatCache.containsKey(key)) {
-            float value = super.getFloat(key);
-            floatCache.put(key, value);
-        }
-        return floatCache.get(key, 0);
+        return (Float) getObject(key, ObjectType.Float);
     }
 
     @Override
@@ -39,12 +32,7 @@ public class AbstractCachingConfig extends AbstractConfig {
 
     @Override
     public int getInt(String key) {
-        if (intCache == null) intCache = new ObjectIntMap<>();
-        if (!intCache.containsKey(key)) {
-            int value = super.getInt(key);
-            intCache.put(key, value);
-        }
-        return intCache.get(key, 0);
+        return (Integer) getObject(key, ObjectType.Int);
     }
 
     @Override
@@ -62,16 +50,30 @@ public class AbstractCachingConfig extends AbstractConfig {
         return (DoubleBasedExpression) getObject(key, ObjectType.DoubleBasedExpression);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends Enum<T>> T getEnum(String key, Class<T> type) {
         return (T) getObject(key, ObjectType.Enum, type);
     }
     
+    @SuppressWarnings("unchecked")
+    public <T> T getValue(String key, Class<T> type) {
+        return (T) getObject(key, getObjectType(type));
+    }
+    
+    private ObjectType getObjectType(Type type) {
+        if (type == Integer.class || type == Integer.TYPE) return ObjectType.Int;
+        if (type == Float.class || type == Float.TYPE) return ObjectType.Int;
+        if (type == Double.class || type == Double.TYPE) return ObjectType.Double;
+        if (type == Boolean.class || type == Boolean.TYPE) return ObjectType.Boolean;
+        if (type == String.class) return ObjectType.String;
+        if (type == DoubleBasedExpression.class) return ObjectType.DoubleBasedExpression;
+        if (type == Enum.class) return ObjectType.Enum;
+        throw new IllegalArgumentException("No " + ObjectType.class.getSimpleName() + " available for " + type);
+    } 
+    
     public void clear() {
-        if (intCache != null) intCache.clear();
-        if (floatCache != null) floatCache.clear();
-        if (objectCache != null) objectCache.clear();
+        if (valueCache != null) valueCache.clear();
     }
 
     private Object getObject(String key, ObjectType type) {
@@ -79,17 +81,17 @@ public class AbstractCachingConfig extends AbstractConfig {
     }
 
     private Object getObject(String key, ObjectType type, Class<?> enumType) {
-        if (objectCache == null) objectCache = new ObjectMap<>();
-        Object value = objectCache.get(key);
+        if (valueCache == null) valueCache = new ObjectMap<>();
+        Object value = valueCache.get(key);
         if (value == null) {
-            value = getObjectValue(key, type, enumType);
-            objectCache.put(key, value);
+            value = getConfigValue(key, type, enumType);
+            valueCache.put(key, value);
         }
         return value;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private Object getObjectValue(String key, ObjectType type, Class<?> enumType) {
+    private Object getConfigValue(String key, ObjectType type, Class<?> enumType) {
         switch (type) {
         case Boolean:
             return super.getBoolean(key);
@@ -101,6 +103,10 @@ public class AbstractCachingConfig extends AbstractConfig {
             return super.getEnum(key, (Class<Enum>) enumType);
         case String:
             return super.getString(key);
+        case Float:
+            return super.getFloat(key);
+        case Int:
+            return super.getInt(key);
         }
         throw new NotImplementedException("Can't get object value of type " + type);
     }
