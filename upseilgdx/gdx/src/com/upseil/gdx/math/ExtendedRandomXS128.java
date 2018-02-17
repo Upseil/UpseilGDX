@@ -28,7 +28,7 @@ public class ExtendedRandomXS128 implements ExtendedRandom {
     }
     
     @Override
-    public long randomLong(long exclusiveBound) {
+    public long randomLongExclusive(long exclusiveBound) {
         return random.nextLong(exclusiveBound);
     }
     
@@ -38,7 +38,7 @@ public class ExtendedRandomXS128 implements ExtendedRandom {
     }
     
     @Override
-    public int randomInt(int exclusiveBound) {
+    public int randomIntExclusive(int exclusiveBound) {
         return random.nextInt(exclusiveBound);
     }
     
