@@ -4,11 +4,13 @@ import static com.upseil.gdx.util.format.TimestampFormatter.DayComponent;
 
 import java.util.Random;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.upseil.gdx.util.format.TimestampFormatter.TimeComponent;
 
-public class TimeComponentPerformanceTest {
+@Ignore("Benchmark")
+public class TestTimeComponentPerformance {
 
     private static final Random Random = new Random();
     private static final int Runs = 100;

@@ -16,8 +16,9 @@ public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<
     public static final TimeComponent MinuteComponent = new TimeComponent(SecondsPerMinute * 1000);
     public static final TimeComponent SecondComponent = new TimeComponent(1000);
     public static final TimeComponent MillisecondComponent = new TimeComponent(1);
-    
+
     public static final String DefaultComponentSeparator = ":";
+    public static final String MillisecondsSeparator = ".";
 
     public static final TimestampFormatter ddHHMMSS = new TimeComponentsFormatter(DayComponent, HourComponent, MillisecondComponent, SecondComponent);
     public static final TimestampFormatter HHMMSS = new TimeComponentsFormatter(HourComponent, MinuteComponent, SecondComponent);
@@ -32,13 +33,13 @@ public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<
     @Override
     public String apply(long milliseconds, String separator);
     
-    public default String format(byte[] components) {
+    public default String format(short[] components) {
         return format(components, DefaultComponentSeparator);
     }
     
-    public default String format(byte[] components, String separator) {
+    public default String format(short[] components, String separator) {
         StringBuilder builder = new StringBuilder(components.length * 2 + separator.length() * (components.length - 1));
-        byte component = components[0];
+        short component = components[0];
         builder.append(component < 10 ? "0" : "").append(component);
         for (int index = 1; index < components.length; index++) {
             component = components[index];

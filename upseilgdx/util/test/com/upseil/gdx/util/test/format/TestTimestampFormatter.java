@@ -5,6 +5,7 @@ import static com.upseil.gdx.util.format.TimestampFormatter.HourComponent;
 import static com.upseil.gdx.util.format.TimestampFormatter.MinuteComponent;
 import static com.upseil.gdx.util.format.TimestampFormatter.SecondComponent;
 import static com.upseil.gdx.util.format.TimestampFormatter.SecondsPerHour;
+import static com.upseil.gdx.util.format.TimestampFormatter.MillisecondComponent;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -14,26 +15,47 @@ import com.upseil.gdx.util.format.TimeComponentsFormatter;
 import com.upseil.gdx.util.format.TimestampFormatter;
 import com.upseil.gdx.util.format.TimestampFormatter.TimeComponent;
 
-public class TimestampFormatterTest {
+public class TestTimestampFormatter {
     
     @Test
     public void testTimeComponentsFormatter() {
         TimestampFormatter formatter = new TimeComponentsFormatter(HourComponent, MinuteComponent, SecondComponent);
         
         long hours = 10;
-        long minutes = 24;
+        long minutes = 04;
         long seconds = 32;
         long milliseconds = 481;
         long timestamp = createTimestamp(0, hours, minutes, seconds, milliseconds);
         
-        String expectedString = "10:24:32";
+        String expectedString = "10:04:32";
         assertThat(formatter.apply(timestamp), is(expectedString));
         
-        expectedString = "10-24-32";
+        expectedString = "10-04-32";
         assertThat(formatter.apply(timestamp, "-"), is(expectedString));
         
         formatter = new TimeComponentsFormatter(MinuteComponent, SecondComponent, HourComponent);
-        expectedString = "10:24:32";
+        expectedString = "10:04:32";
+        assertThat(formatter.apply(timestamp), is(expectedString));
+    }
+    
+    @Test
+    public void testTimeComponentsFormatterWithMillisecondsComponent() {
+        TimestampFormatter formatter = new TimeComponentsFormatter(SecondComponent, MillisecondComponent);
+
+        long seconds = 32;
+        long milliseconds = 481;
+        long timestamp = createTimestamp(0, 0, 0, seconds, milliseconds);
+        String expectedString = "32.481";
+        assertThat(formatter.apply(timestamp), is(expectedString));
+
+        milliseconds = 81;
+        timestamp = createTimestamp(0, 0, 0, seconds, milliseconds);
+        expectedString = "32.081";
+        assertThat(formatter.apply(timestamp), is(expectedString));
+
+        milliseconds = 8;
+        timestamp = createTimestamp(0, 0, 0, seconds, milliseconds);
+        expectedString = "32.008";
         assertThat(formatter.apply(timestamp), is(expectedString));
     }
     
