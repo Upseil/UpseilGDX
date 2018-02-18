@@ -1,4 +1,4 @@
-package com.upseil.gdx.gwt.serialization;
+package com.upseil.gdx.gwt.util;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Clipboard;
