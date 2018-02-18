@@ -9,5 +9,8 @@
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.action" />
     <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.event" />
 	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.scene2d.action" />
+	
 	<extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.scene2d.util.CompoundDrawable" />
+    <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.pool.pair.PooledPair" />
+    <extend-configuration-property name="gdx.reflect.include" value="com.upseil.gdx.pool.pair.PooledIntPair" />
 </module>

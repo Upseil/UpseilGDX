@@ -34,7 +34,7 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping, R
 		super(Aspect.all(EventComponent.class));
 		pairPool = new IntPairPool<>();
 		handlers = new ObjectMap<>();
-        events = new Array<>(false, 32, PooledIntPair.class);
+        events = new Array<>(false, 32);
         eventsToDelete = new IntArray(32);
 	}
 	

@@ -9,6 +9,8 @@ public class CompoundDrawable implements Drawable {
     public Array<Drawable> drawables;
     private float leftWidth, rightWidth, topHeight, bottomHeight, minWidth, minHeight;
     
+    private boolean valuesInvalid;
+    
     // FIXME Dialogs are now broken
     public CompoundDrawable(Drawable... drawables) {
         this.drawables = new Array<>(drawables.length);
@@ -41,10 +43,13 @@ public class CompoundDrawable implements Drawable {
         }
     }
 
-    public CompoundDrawable() { }
+    public CompoundDrawable() {
+        valuesInvalid = true;
+    }
     
     @Override
     public void draw(Batch batch, float x, float y, float width, float height) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.draw(batch, x, y, width, height);
         }
@@ -52,11 +57,13 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getLeftWidth() {
+        validate();
         return leftWidth;
     }
 
     @Override
     public void setLeftWidth(float leftWidth) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setLeftWidth(leftWidth);
         }
@@ -65,11 +72,13 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getRightWidth() {
+        validate();
         return rightWidth;
     }
     
     @Override
     public void setRightWidth(float rightWidth) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setRightWidth(rightWidth);
         }
@@ -78,11 +87,13 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getTopHeight() {
+        validate();
         return topHeight;
     }
     
     @Override
     public void setTopHeight(float topHeight) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setTopHeight(topHeight);
         }
@@ -91,11 +102,13 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getBottomHeight() {
+        validate();
         return bottomHeight;
     }
     
     @Override
     public void setBottomHeight(float bottomHeight) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setBottomHeight(bottomHeight);
         }
@@ -104,11 +117,13 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getMinWidth() {
+        validate();
         return minWidth;
     }
     
     @Override
     public void setMinWidth(float minWidth) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setMinWidth(minWidth);
         }
@@ -117,17 +132,28 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getMinHeight() {
+        validate();
         return minHeight;
     }
     
     @Override
     public void setMinHeight(float minHeight) {
+        validate();
         for (Drawable drawable : drawables) {
             drawable.setMinHeight(minHeight);
         }
         if (minHeight > this.minHeight) this.minHeight = minHeight;
     }
     
+
+    private void validate() {
+        if (!valuesInvalid) return;
+        
+        for (Drawable drawable : this.drawables) {
+            adjustValues(drawable);
+        }
+        valuesInvalid = false;
+    }
 
     @Override
     public String toString() {
