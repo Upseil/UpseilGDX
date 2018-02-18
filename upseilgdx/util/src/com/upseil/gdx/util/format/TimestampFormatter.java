@@ -20,10 +20,11 @@ public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<
     public static final String DefaultComponentSeparator = ":";
     public static final String MillisecondsSeparator = ".";
 
-    public static final TimestampFormatter ddHHMMSS = new TimeComponentsFormatter(DayComponent, HourComponent, MillisecondComponent, SecondComponent);
+    public static final TimestampFormatter ddHHMMSS = new TimeComponentsFormatter(DayComponent, HourComponent, MinuteComponent, SecondComponent);
     public static final TimestampFormatter HHMMSS = new TimeComponentsFormatter(HourComponent, MinuteComponent, SecondComponent);
     public static final TimestampFormatter MMSS = new TimeComponentsFormatter(MinuteComponent, SecondComponent);
-    public static final TimestampFormatter SSLL = new TimeComponentsFormatter(SecondComponent, MillisecondComponent);
+    public static final TimestampFormatter MMSSLLL = new TimeComponentsFormatter(MinuteComponent, SecondComponent, MillisecondComponent);
+    public static final TimestampFormatter SSLLL = new TimeComponentsFormatter(SecondComponent, MillisecondComponent);
     
     @Override
     public default String apply(long milliseconds) {

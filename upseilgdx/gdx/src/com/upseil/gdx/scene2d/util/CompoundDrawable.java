@@ -7,17 +7,37 @@ import com.badlogic.gdx.utils.Array;
 public class CompoundDrawable implements Drawable {
     
     public Array<Drawable> drawables;
-    public int masterIndex = -1;
+    private float leftWidth, rightWidth, topHeight, bottomHeight, minWidth, minHeight;
     
     public CompoundDrawable(Drawable... drawables) {
         this.drawables = new Array<>(drawables.length);
         for (Drawable drawable : drawables) {
             this.drawables.add(drawable);
+            adjustValues(drawable);
         }
     }
     
+    private void adjustValues(Drawable drawable) {
+        float leftWidth = drawable.getLeftWidth();
+        float rightWidth = drawable.getRightWidth();
+        float topHeight = drawable.getTopHeight();
+        float bottomHeight = drawable.getBottomHeight();
+        float minWidth = drawable.getMinWidth();
+        float minHeight = drawable.getMinHeight();
+
+        if (leftWidth > this.leftWidth) this.leftWidth = leftWidth;
+        if (rightWidth > this.rightWidth) this.rightWidth = rightWidth;
+        if (topHeight > this.topHeight) this.topHeight = topHeight;
+        if (bottomHeight > this.bottomHeight) this.bottomHeight = bottomHeight;
+        if (minWidth > this.minWidth) this.minWidth = minWidth;
+        if (minHeight > this.minHeight) this.minHeight = minHeight;
+    }
+
     public CompoundDrawable(Array<Drawable> drawables) {
         this.drawables = drawables;
+        for (Drawable drawable : this.drawables) {
+            adjustValues(drawable);
+        }
     }
 
     public CompoundDrawable() { }
@@ -31,7 +51,7 @@ public class CompoundDrawable implements Drawable {
     
     @Override
     public float getLeftWidth() {
-        return getMaster().getLeftWidth();
+        return leftWidth;
     }
 
     @Override
@@ -39,11 +59,12 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setLeftWidth(leftWidth);
         }
+        if (leftWidth > this.leftWidth) this.leftWidth = leftWidth;
     }
     
     @Override
     public float getRightWidth() {
-        return getMaster().getRightWidth();
+        return rightWidth;
     }
     
     @Override
@@ -51,11 +72,12 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setRightWidth(rightWidth);
         }
+        if (rightWidth > this.rightWidth) this.rightWidth = rightWidth;
     }
     
     @Override
     public float getTopHeight() {
-        return getMaster().getTopHeight();
+        return topHeight;
     }
     
     @Override
@@ -63,11 +85,12 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setTopHeight(topHeight);
         }
+        if (topHeight > this.topHeight) this.topHeight = topHeight;
     }
     
     @Override
     public float getBottomHeight() {
-        return getMaster().getBottomHeight();
+        return bottomHeight;
     }
     
     @Override
@@ -75,11 +98,12 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setBottomHeight(bottomHeight);
         }
+        if (bottomHeight > this.bottomHeight) this.bottomHeight = bottomHeight;
     }
     
     @Override
     public float getMinWidth() {
-        return getMaster().getMinWidth();
+        return minWidth;
     }
     
     @Override
@@ -87,11 +111,12 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setMinWidth(minWidth);
         }
+        if (minWidth > this.minWidth) this.minWidth = minWidth;
     }
     
     @Override
     public float getMinHeight() {
-        return getMaster().getMinHeight();
+        return minHeight;
     }
     
     @Override
@@ -99,17 +124,14 @@ public class CompoundDrawable implements Drawable {
         for (Drawable drawable : drawables) {
             drawable.setMinHeight(minHeight);
         }
+        if (minHeight > this.minHeight) this.minHeight = minHeight;
     }
     
-    private Drawable getMaster() {
-        int index = masterIndex < 0 ? drawables.size - 1 : masterIndex;
-        return drawables.get(index);
-    }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getClass().getSimpleName()).append("[drawables=").append(drawables).append(", masterIndex=").append(masterIndex).append("]");
+        builder.append(getClass().getSimpleName()).append(drawables);
         return builder.toString();
     }
     

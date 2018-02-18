@@ -58,6 +58,10 @@ public class BorderBuilder extends AbstractDrawableBuilder {
         return this;
     }
     
+    public BorderBuilder slim() {
+        return slim(true);
+    }
+    
     public BorderBuilder slim(boolean slim) {
         this.slim = slim;
         return this;
