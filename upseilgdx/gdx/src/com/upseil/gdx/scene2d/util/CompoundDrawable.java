@@ -9,6 +9,7 @@ public class CompoundDrawable implements Drawable {
     public Array<Drawable> drawables;
     private float leftWidth, rightWidth, topHeight, bottomHeight, minWidth, minHeight;
     
+    // FIXME Dialogs are now broken
     public CompoundDrawable(Drawable... drawables) {
         this.drawables = new Array<>(drawables.length);
         for (Drawable drawable : drawables) {
