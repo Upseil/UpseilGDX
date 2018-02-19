@@ -36,4 +36,11 @@ public class ResizeEvent extends AbstractEvent<ResizeEvent> {
         newHeight = 0;
     }
     
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(super.toString());
+        builder.append(" - New Width: ").append(newWidth).append(" | New Height: ").append(newHeight);
+        return builder.toString();
+    }
+    
 }

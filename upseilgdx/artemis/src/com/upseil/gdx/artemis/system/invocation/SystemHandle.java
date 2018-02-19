@@ -24,4 +24,9 @@ public class SystemHandle {
         system.process();
     }
     
+    @Override
+    public String toString() {
+        return system == null ? "null" : system.getClass().getSimpleName();
+    }
+    
 }

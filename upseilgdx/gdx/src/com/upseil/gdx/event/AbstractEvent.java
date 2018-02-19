@@ -19,5 +19,10 @@ public abstract class AbstractEvent<T extends AbstractEvent<T>> extends Abstract
 		super.reset();
 		type = null;
 	}
+	
+	@Override
+	public String toString() {
+	    return getType().getName();
+	}
 
 }
