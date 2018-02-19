@@ -40,7 +40,7 @@ public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingS
         Scene scene = sceneMapper.get(entityId);
         
         if (resized) {
-            scene.update(screenWidth, screenHeight, true);
+            scene.update(screenWidth, screenHeight);
         } else {
             scene.apply();
         }

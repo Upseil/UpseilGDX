@@ -4,12 +4,15 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public abstract class PartialViewport extends Viewport {
     
     private ScreenDivider divider;
     private final Rectangle screenPart;
+    
+    private int alignment;
 
     public PartialViewport (ScreenDivider divider, float worldWidth, float worldHeight) {
         this(divider, worldWidth, worldHeight, new OrthographicCamera());
@@ -18,6 +21,7 @@ public abstract class PartialViewport extends Viewport {
     public PartialViewport(ScreenDivider divider, float worldWidth, float worldHeight, Camera camera) {
         this.divider = divider;
         screenPart = new Rectangle();
+        alignment = Align.center;
         setWorldSize(worldWidth, worldHeight);
         setCamera(camera);
     }
@@ -28,12 +32,25 @@ public abstract class PartialViewport extends Viewport {
         divider.getScreenPart(screenPart);
         Vector2 viewportSize = calculateViewportSize(screenPart);
         
-        int viewportWidth = Math.round(viewportSize.x);
-        int viewportHeight = Math.round(viewportSize.y);
-        int screenX = Math.round(screenPart.x + (screenPart.width - viewportSize.x) / 2);
-        int screenY = Math.round(screenPart.y + (screenPart.height - viewportSize.y) / 2);
+        float screenX;
+        if ((alignment & Align.left) != 0) {
+            screenX = screenPart.x;
+        } else if ((alignment & Align.right) != 0) {
+            screenX = screenPart.x + screenPart.width - viewportSize.x;
+        } else {
+            screenX = screenPart.x + (screenPart.width - viewportSize.x) / 2;
+        }
         
-        setScreenBounds(screenX, screenY, viewportWidth, viewportHeight);
+        float screenY;
+        if ((alignment & Align.bottom) != 0) {
+            screenY = screenPart.y;
+        } else if ((alignment & Align.top) != 0) {
+            screenY = screenPart.y + screenPart.height - viewportSize.y;
+        } else {
+            screenY = screenPart.y + (screenPart.height - viewportSize.y) / 2;
+        }
+        
+        setScreenBounds(Math.round(screenX), Math.round(screenY), Math.round(viewportSize.x), Math.round(viewportSize.y));
         apply(centerCamera);
     }
 
@@ -45,6 +62,14 @@ public abstract class PartialViewport extends Viewport {
 
     public void setDivider(ScreenDivider divider) {
         this.divider = divider;
+    }
+
+    public int getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(int alignment) {
+        this.alignment = alignment;
     }
     
 }

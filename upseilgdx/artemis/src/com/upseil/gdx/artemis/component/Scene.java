@@ -8,7 +8,15 @@ public class Scene extends PooledComponent implements Disposable {
     
     private Stage stage;
     private boolean manualAct;
+    
+    private boolean centerCamera;
     private boolean paused;
+    
+    public Scene() {
+        manualAct = false;
+        centerCamera = true;
+        paused = false;
+    }
 
     public Scene initialize(Stage stage) {
         return initialize(stage, false);
@@ -34,7 +42,7 @@ public class Scene extends PooledComponent implements Disposable {
         stage.getViewport().apply();
     }
 
-    public void update(int screenWidth, int screenHeight, boolean centerCamera) {
+    public void update(int screenWidth, int screenHeight) {
         stage.getViewport().update(screenWidth, screenHeight, centerCamera);
     }
 
@@ -47,7 +55,15 @@ public class Scene extends PooledComponent implements Disposable {
     public void draw() {
         stage.draw();
     }
-    
+
+    public boolean isCenterCamera() {
+        return centerCamera;
+    }
+
+    public void setCenterCamera(boolean centerCamera) {
+        this.centerCamera = centerCamera;
+    }
+
     public boolean isPaused() {
         return paused;
     }
@@ -61,6 +77,7 @@ public class Scene extends PooledComponent implements Disposable {
         dispose();
         stage = null;
         manualAct = false;
+        centerCamera = true;
         paused = false;
     }
 
