@@ -1,9 +1,0 @@
-{
-	duplicatePadding: false,
-	paddingX: 2,
-	paddingY: 2,
-	stripWhitespaceX: true,
-	stripWhitespaceY: true,
-	filterMin: Linear,
-	silent: true
-}
