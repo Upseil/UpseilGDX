@@ -5,11 +5,11 @@ import java.util.Date;
 
 import com.upseil.gdx.util.format.DateFormatter;
 
-public class DesktopDataFormatter implements DateFormatter {
+public class DesktopDateFormatter implements DateFormatter {
     
     private final DateFormat format;
     
-    public DesktopDataFormatter(DateFormat format) {
+    public DesktopDateFormatter(DateFormat format) {
         this.format = format;
     }
 

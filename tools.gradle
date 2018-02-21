@@ -23,7 +23,6 @@ ext {
     ]
 }
 
-
 /** packSkins/deploySkins Configuration
  *   Packs the fonts and components of the defined skins and deploys them
  *   to the <deploySkinRoot> directory (should be located in the game assets).
