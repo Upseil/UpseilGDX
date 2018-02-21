@@ -2,8 +2,6 @@
 
 dependencies {
     compile project(":upseilgdx:gdx")
-    
-    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
     
     testCompile "junit:junit:$junitTarget"

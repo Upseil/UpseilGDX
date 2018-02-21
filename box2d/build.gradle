@@ -3,10 +3,7 @@
 dependencies {
     compile project(":upseilgdx:gdx")
     compile project(":upseilgdx:artemis")
-    
-    compile "com.badlogicgames.gdx:gdx:$gdxTarget"
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxTarget"
-    compile "net.onedaybeard.artemis:artemis-odb:$artemisTarget"
     
     testCompile "junit:junit:$junitTarget"
     testCompile "org.hamcrest:java-hamcrest:$hamcrestTarget"
