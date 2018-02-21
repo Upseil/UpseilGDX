@@ -25,21 +25,35 @@ ext {
 
 
 /** packSkins/deploySkins Configuration
- *   Packs the fonts and components of the defined skins
- *   and deploys them to the skin root folder in the game assets.
- *   Packed skins are saved in the raw skin root folder.
+ *   Packs the fonts and components of the defined skins and deploys them
+ *   to the <deploySkinRoot> directory (should be located in the game assets).
+ *
+ *   Packed skins are saved in a subdirectory <skinName> located in the
+ *   <packedSkinRoot> directory.
  *
  *   Requires the rawFontRoot variable from the pixelateFonts configuration.
  *
  *   Path patterns for used
- *     fonts:     <rawFoontRoot>/<fontName>/fnt-*
- *     resources: <rawSkinRoot>/<skinBase>
+ *     fonts:           <rawFoontRoot>\<fontName>\fnt-*\[*.fnt,*.png]
+ *     image resources: <rawSkinRoot>\<skinBase>\**\[*.png,*.jpg,*.jpeg]
+ *                      <additionalResources>\**\[*.png,*.jpg,*.jpeg]
+ *
+ *   Supports the configuration of the texture packer via a pack.json located
+ *   in <rawSkinRoot>\<skinBase>\ or <additionalResources>\ (not in a subdirectory).
+ *   The pack.json in the additional resources overwrites the pack.json of the
+ *   skin base.
+ *
+ *   Any files inside the <additionalResources> directory that aren't image
+ *   resources will be copied into the directory of the packed skin (which means
+ *   that these files will be also deployed). This could be used for the json that
+ *   defines the skin licenses/attributions of assets.
  */
 ext {
     rawSkinRoot = 'relative path to root folder of the skin resources'
-    skinRoot = 'relative path to root folder of the skin assets (deploy destination)'
+    packedSkinRoot = 'destination for packed skins'
+    deploySkinRoot = 'relative path to root folder of the skin assets (deploy destination)'
     skins = [
-        ['skinBase', 'fontName', 'skinName']
+        ['skinName', 'fontName', 'skinBase', 'additionalResources (optional)']
     ]
 }
 
@@ -59,6 +73,90 @@ buildscript {
     
 ext {
     upseilGdxTools_workingDirectory = 'build/tmp/'
+}
+
+import com.badlogic.gdx.tools.texturepacker.TexturePacker
+task packSkins (group: 'Asset') {
+    description = 'Packs the skins and saves them in the packed skins directory.'
+    doLast {
+        for (String[] skin : skins) {
+            String skinName = skin[0]
+            String fontName = skin[1]
+            String baseName = skin[2]
+        
+            String fontRootDir = rawFontRoot + '/' + fontName + '/'
+            String skinBaseDir = rawSkinRoot + '/' + baseName + '/'
+            
+            println 'Collecting font ' + fontName + ': ' + fontRootDir
+            FileTree fontTree = fileTree(dir: fontRootDir, includes: ['**/fnt-*/*.fnt', '**/fnt-*/*.png'])
+            copy { from fontTree.files into upseilGdxTools_workingDirectory }
+            
+            println 'Collecting skin base ' + baseName + ': ' + skinBaseDir
+            FileTree baseTree = fileTree(dir: skinBaseDir, includes: ['**/*.png', '**/*.jpg', '**/*.jpeg', 'pack.json'])
+            copy { from baseTree.files into upseilGdxTools_workingDirectory }
+            
+            FileTree resourcesToCopy = null
+            if (skin.length > 3) {
+                String additionalResources = skin[3] + '/'
+                println 'Collecting additional image resources: ' + additionalResources
+                FileTree additionalTree = fileTree(dir: additionalResources, includes: ['**/*.png', '**/*.jpg', '**/*.jpeg', 'pack.json'])
+                copy { from additionalTree.files into upseilGdxTools_workingDirectory }
+                
+                resourcesToCopy = fileTree(dir: additionalResources, excludes: ['**/*.png', '**/*.jpg', '**/*.jpeg', 'pack.json'])
+            }
+            
+            String packedSkinDir = packedSkinRoot + '/' + skinName + '/'
+            println 'Packing skin ' + skinName + ' into ' + packedSkinDir
+            delete fileTree(dir: packedSkinDir)
+            TexturePacker.process(upseilGdxTools_workingDirectory, packedSkinDir, skinName)
+            copy {
+                from upseilGdxTools_workingDirectory
+                into packedSkinDir
+                include '**/*.fnt'
+            }
+            
+            if (resourcesToCopy != null) {
+                copy { from resourcesToCopy.files into packedSkinDir }
+            }
+            
+            delete fileTree(dir: upseilGdxTools_workingDirectory)
+        }
+    }
+}
+
+task deploySkins (group: 'Asset') {
+    description = 'Packs the skins, saves them in the packed skins directory and deploys them to the game assets.'
+    dependsOn packSkins
+    doLast {
+        for (String[] skin : skins) {
+            String skinName = skin[0]
+            String packedSkin = packedSkinRoot + '/' + skinName + '/'
+            String target = deploySkinRoot + '/' + skinName + '/'
+            
+            println 'Deleting old skin files'
+            delete fileTree(dir: target)
+            
+            println 'Deploying skin ' + skinName + ': ' + packedSkin + ' -> ' + target
+            copy {
+                from packedSkin
+                into target
+            }
+        }
+    }
+}
+
+task deploySkinsTraceless (group: 'Asset') {
+    description = 'Packs the skins and deploys them to the game assets without saving the packed skin.'
+    dependsOn deploySkins
+    doLast {
+        for (String[] skin : skins) {
+            String skinName = skin[0]
+            String packedSkin = packedSkinRoot + '/' + skinName + '/'
+            
+            println 'Deleting packed skin ' + skinName + ': ' + packedSkin
+            delete packedSkin
+        }
+    }
 }
 
 import java.awt.Color;
@@ -122,68 +220,6 @@ task pixelateFonts (group: 'Asset') {
                 String pixelatedBitmapPath = pixelatedFontPath + pixelatedFamilyName + '-' + fontSize + '.png'
                 ImageIO.write(bitmap, 'png', new File(pixelatedBitmapPath))
             }
-        }
-    }
-}
-
-import com.badlogic.gdx.tools.texturepacker.TexturePacker
-task packSkins (group: 'Asset') {
-    description = 'Packs the skins in the raw assets.'
-    doLast {
-        for (String[] skin : skins) {
-            String baseName = skin[0]
-            String fontName = skin[1]
-            String skinName = skin[2]
-        
-            String fontRootDir = rawFontRoot + '/' + fontName + '/'
-            String skinBaseDir = rawSkinRoot + '/' + baseName + '/'
-            String packedSkinDir = rawSkinRoot + '/' + skinName + '/'
-            
-            println 'Collecting skin base ' + baseName + ' and font ' + fontName
-            copy { from skinBaseDir into upseilGdxTools_workingDirectory }
-            FileTree fontTree = fileTree(dir: fontRootDir, includes: ['**/fnt-*/*.fnt', '**/fnt-*/*.png'])
-            copy { from fontTree.files into upseilGdxTools_workingDirectory }
-            
-            println 'Packing skin ' + skinName + ' into ' + packedSkinDir
-            delete fileTree(dir: packedSkinDir)
-            TexturePacker.process(upseilGdxTools_workingDirectory, packedSkinDir, skinName)
-            copy {
-                from upseilGdxTools_workingDirectory
-                into packedSkinDir
-                include '**/*.fnt'
-            }
-            
-            delete fileTree(dir: upseilGdxTools_workingDirectory)
-        }
-    }
-}
-
-task deploySkins (group: 'Asset') {
-    description = 'Packs the skins in the raw assets and deploys them to the game assets.'
-    dependsOn packSkins
-    doLast {
-        for (String[] skin : skins) {
-            String skinName = skin[2]
-            String packedSkin = rawSkinRoot + '/' + skinName + '/'
-            String target = skinRoot + '/' + skinName + '/'
-            println 'Deploying Skin ' + skinName + ': ' + packedSkin + ' -> ' + target
-            copy {
-                from packedSkin
-                into target
-            }
-        }
-    }
-}
-
-task deploySkinsTraceless (group: 'Asset') {
-    description = "Packs the skins and deploys them to the game assets without traces in the raw assets."
-    dependsOn deploySkins
-    doLast {
-        for (String[] skin : skins) {
-            String skinName = skin[2]
-            String packedSkin = rawSkinRoot + '/' + skinName + '/'
-            
-            delete packedSkin
         }
     }
 }

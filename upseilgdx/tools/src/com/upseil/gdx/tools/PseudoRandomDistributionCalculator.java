@@ -4,11 +4,18 @@ import java.util.Locale;
 
 public class PseudoRandomDistributionCalculator {
     
+    private static final boolean verbose = false;
+    
     private static final int probabilityDecimals = 3;
     private static final int testIterations = 100000;
     
     public static void main(String[] args) {
         PseudoRandomDistributionCalculator calculator = new PseudoRandomDistributionCalculator();
+        
+        System.out.println("Calculating probability constants: ");
+        if (verbose) {
+            System.out.println("Desired Probability -> Probability Constant (Tested Probability)");
+        }
         
         StringBuilder arrayOutput = new StringBuilder("{");
         double iMax = Math.pow(10, probabilityDecimals);
@@ -16,9 +23,17 @@ public class PseudoRandomDistributionCalculator {
             double p = i / iMax;
             double c = calculator.cFromP(p);
             arrayOutput.append(i > 1 ? ", " : "").append(c);
-            System.out.println(String.format(Locale.ENGLISH, "%." + probabilityDecimals + "f -> %.10f (%f)", p, c, testC(c)));
+            
+            if (verbose) {
+                System.out.println(String.format(Locale.ENGLISH, "%." + probabilityDecimals + "f -> %.10f (%f)", p, c, testC(c)));
+            } else {
+                System.out.print(".");
+            }
         }
         arrayOutput.append("}");
+        
+        System.out.println();
+        System.out.println("Probability Constants formatted as double array:");
         System.out.println(arrayOutput);
     }
     

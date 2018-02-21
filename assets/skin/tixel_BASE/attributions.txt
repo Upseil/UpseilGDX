@@ -1,0 +1,3 @@
+Unless specified otherwise these resources are based on tixel <https://github.com/kotcrab/vis-ui-contrib/tree/master/skins/tixel> created by Pawel Pastuszak <https://github.com/kotcrab>
+
+t-podium.png: Created by Delapouite <http://delapouite.com/> published on http://game-icons.net/delapouite/sports/podium.html under CC BY 3.0 <https://creativecommons.org/licenses/by/3.0/>, resized to 32x32 px
