@@ -22,7 +22,7 @@ public abstract class AbstractPositionAction extends Action {
     protected float width;
     protected float height;
     
-    // TODO Only act if necessary
+    // TODO [Performance] Only act if necessary
     @Override
     public boolean act(float delta) {
         prepareAct(delta);

@@ -98,11 +98,20 @@ public class PhysicsSystem extends BaseSystem implements ContactListener, Requir
         SubscriptionListener bodiesListener = new SubscriptionListener() {
             @Override
             public void removed(IntBag entities) {
-                ArtemisCollections.forEachComponent(entities, bodyMapper, body -> bodyToEntity.remove(body.get(), 0));
+                int[] bodyIds = entities.getData();
+                int bodiesSize = entities.size();
+                for (int i = 0; i < bodiesSize; i++) {
+                    bodyToEntity.remove(bodyMapper.get(bodyIds[i]).get(), 0);
+                }
             }
             @Override
             public void inserted(IntBag entities) {
-                ArtemisCollections.forEach(entities, id -> bodyToEntity.put(bodyMapper.get(id).get(), id));
+                int[] bodyIds = entities.getData();
+                int bodiesSize = entities.size();
+                for (int i = 0; i < bodiesSize; i++) {
+                    int bodyId = bodyIds[i];
+                    bodyToEntity.put(bodyMapper.get(bodyId).get(), bodyId);
+                }
             }
         };
         bodiesListener.inserted(bodies.getEntities());
@@ -118,13 +127,21 @@ public class PhysicsSystem extends BaseSystem implements ContactListener, Requir
         
         accumulator += Math.min(world.delta, maxFrameTime);
         while (accumulator >= stepTime) {
-            ArtemisCollections.forEachComponent(bodies.getEntities(), bodyMapper, body -> body.act(stepTime));
+            // Acting Bodies
+            IntBag bodyEntities = bodies.getEntities();
+            int[] bodyIds = bodyEntities.getData();
+            int bodiesSize = bodyEntities.size();
+            for (int i = 0; i < bodiesSize; i++) {
+                bodyMapper.get(bodyIds[i]).act(stepTime);
+            }
             
+            // Stepping Physics World
             for (int index = 0; index < worldsBag.size(); index++) {
                 Box2DWorld world = worldMapper.get(worldIds[index]);
                 world.step(stepTime, velocityIterations, positionIterations);
             }
 
+            // Processing Events
             Iterator<FireContactEvent<?, ?>> eventsIterator = scheduledContactEvents.iterator();
             while (eventsIterator.hasNext()) {
                 Action<?, ?> scheduledEvent = eventsIterator.next();
@@ -137,14 +154,21 @@ public class PhysicsSystem extends BaseSystem implements ContactListener, Requir
             accumulator -= stepTime;
         }
         
-        ArtemisCollections.forEachComponent(bodiedActors.getEntities(), bodyMapper, actorMapper,
-            (body, actor) -> {
-                Vector2 bodyPosition = body.getPosition();
-                float bodyRotation = body.getRotation();
-                actor.setPosition(bodyPosition.x - (actor.getWidth() / 2), bodyPosition.y - (actor.getHeight() / 2));
-                actor.setRotation(bodyRotation);
-            }
-        );
+        // Updating positions of Bodied Actors
+        IntBag bodiedActorEntities = bodiedActors.getEntities();
+        int[] bodiedActorIds = bodiedActorEntities.getData();
+        int bodiedActorsSize = bodiedActorEntities.size();
+        for (int i = 0; i < bodiedActorsSize; i++) {
+            int entityId = bodiedActorIds[i];
+            
+            BodyComponent body = bodyMapper.get(entityId);
+            Vector2 bodyPosition = body.getPosition();
+            float bodyRotation = body.getRotation();
+            
+            ActorComponent actor = actorMapper.get(entityId);
+            actor.setPosition(bodyPosition.x - (actor.getWidth() / 2), bodyPosition.y - (actor.getHeight() / 2));
+            actor.setRotation(bodyRotation);
+        }
     }
     
     public int getEntityForBody(Body body) {

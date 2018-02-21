@@ -37,7 +37,7 @@ import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 
-// TODO add performance improvements described in https://github.com/rufushuang/lz-string4java/pull/7
+// TODO [Performance] add performance improvements described in https://github.com/rufushuang/lz-string4java/pull/7
 public class LZString {
 
     private static char[] keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray();
@@ -106,7 +106,7 @@ public class LZString {
     private static String _compress(String uncompressedStr, int bitsPerChar, CompressFunctionWrapper getCharFromInt) {
         if (uncompressedStr == null) return "";
         int i, value;
-        ObjectIntMap<String> context_dictionary = new ObjectIntMap<String>();
+        ObjectIntMap<String> context_dictionary = new ObjectIntMap<String>(); // TODO [Performance] Creates a lot of Object[], may be not the best data structure
         ObjectSet<String> context_dictionaryToCreate = new ObjectSet<String>();
         String context_c = "";
         String context_wc = "";
@@ -114,14 +114,14 @@ public class LZString {
         double context_enlargeIn = 2d; // Compensate for the first entry which should not count
         int context_dictSize = 3;
         int context_numBits = 2;
-        CharArray context_data = new CharArray(uncompressedStr.length() / 3);
+        CharArray context_data = new CharArray(uncompressedStr.length() / 3); // TODO [Performance] Can this be made static?
         int context_data_val = 0;
         int context_data_position = 0;
         int ii;
         
         char[] uncompressed = uncompressedStr.toCharArray();
         for (ii = 0; ii < uncompressed.length; ii += 1) {
-            context_c = String.valueOf(uncompressed[ii]);
+            context_c = String.valueOf(uncompressed[ii]); // TODO [Performance] Creates many String objects. Can this be done with chars?
             if (!context_dictionary.containsKey(context_c)) {
                 context_dictionary.put(context_c, context_dictSize++);
                 context_dictionaryToCreate.add(context_c);
@@ -317,6 +317,7 @@ public class LZString {
             else
                 context_data_position++;
         }
+        // TODO [Performance] Can the CharArray used to create a String directly?
         StringBuffer sb = new StringBuffer(context_data.size);
         char[] data = context_data.items;
         int size = context_data.size;

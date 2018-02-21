@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 public class UpdateLabelTextAction extends Action {
     
+    // TODO [Performance] Add Conditional Updates
+    
     private Label label;
     private Supplier<String> textSupplier;
     

@@ -17,7 +17,6 @@ import com.upseil.gdx.event.EventType;
 import com.upseil.gdx.pool.PooledPools;
 import com.upseil.gdx.pool.pair.IntPairPool;
 import com.upseil.gdx.pool.pair.PooledIntPair;
-import com.upseil.gdx.util.GDXCollections;
 import com.upseil.gdx.util.RequiresResize;
 
 public class EventSystem extends BaseEntitySystem implements RequiresStepping, RequiresResize {
@@ -53,9 +52,16 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping, R
 
 	@Override
 	protected void processSystem() {
-	    GDXCollections.forEach(events, this::fireScheduledEvent);
+	    for (PooledIntPair<EventComponent> eventWithId : events) {
+            fireScheduledEvent(eventWithId);
+        }
 	    events.clear();
-	    GDXCollections.forEach(eventsToDelete, world::delete);
+	    
+	    int[] idsToDelete = eventsToDelete.items;
+	    int eventsToDeleteSize = eventsToDelete.size;
+	    for (int index = 0; index < eventsToDeleteSize; index++) {
+	        world.delete(idsToDelete[index]);
+	    }
 	    eventsToDelete.clear();
 	}
 

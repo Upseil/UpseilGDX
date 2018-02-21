@@ -11,7 +11,6 @@ public class CompoundDrawable implements Drawable {
     
     private boolean valuesInvalid;
     
-    // FIXME Dialogs are now broken
     public CompoundDrawable(Drawable... drawables) {
         this.drawables = new Array<>(drawables.length);
         for (Drawable drawable : drawables) {

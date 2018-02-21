@@ -138,6 +138,8 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     }
 
     private String getColorName() {
+        // TODO [Performance] Use static StringBuilder or at least a single StringBuilder per BackgroundBuilder instance
+        // Check other builders for similar flaws
         StringBuilder name = new StringBuilder();
         double alpha = this.alpha;
         boolean hasBaseColor = false;

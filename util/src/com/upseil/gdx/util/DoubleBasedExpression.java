@@ -401,7 +401,7 @@ public class DoubleBasedExpression {
     /**
      * All defined variables with name and value.
      */
-    private Map<String, Double> variables = new TreeMap<String, Double>(String.CASE_INSENSITIVE_ORDER);
+    private Map<String, Double> variables = new TreeMap<String, Double>(String.CASE_INSENSITIVE_ORDER); // TODO [Performance] Use primitve collection to prevent (un)boxing
 
     private DoubleFunction prepared;
 
