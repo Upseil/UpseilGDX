@@ -29,9 +29,8 @@ public class DividerBuilder extends AbstractDrawableBuilder {
     public static DividerBuilder get(Skin skin) {
         if (instance == null) {
             instance = new DividerBuilder(skin);
-            return instance;
         }
-        return instance.reset();
+        return instance.reset(skin);
     }
     
     private String color;
@@ -84,15 +83,21 @@ public class DividerBuilder extends AbstractDrawableBuilder {
         return getOrCreate(getDividerName(), getTextureName(), color);
     }
     
-    private String getTextureName() {
-        return texturePrefix + orientation.prefix + textureName + (slim ? slimSuffix : "");
-    }
-    
     private String getDividerName() {
-        return orientation.prefix + dividerName + (slim ? slimSuffix : "") + (color != null ? "-" + color : "");
+        StringBuilder name = string().append(orientation.prefix).append(dividerName);
+        if (slim) name.append(slimSuffix);
+        if (color != null) name.append("-").append(color);
+        return name.toString();
     }
     
-    public DividerBuilder reset() {
+    private String getTextureName() {
+        StringBuilder name = string().append(texturePrefix).append(orientation.prefix).append(textureName);
+        if (slim) name.append(slimSuffix);
+        return name.toString();
+    }
+    
+    public DividerBuilder reset(Skin skin) {
+        this.skin = skin;
         color = "t-highlight";
         orientation = null;
         slim = false;

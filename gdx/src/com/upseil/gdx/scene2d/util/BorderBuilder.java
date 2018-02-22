@@ -38,9 +38,8 @@ public class BorderBuilder extends AbstractDrawableBuilder {
     public static BorderBuilder get(Skin skin) {
         if (instance == null) {
             instance = new BorderBuilder(skin);
-            return instance;
         }
-        return instance.reset();
+        return instance.reset(skin);
     }
 
     private String color;
@@ -108,18 +107,24 @@ public class BorderBuilder extends AbstractDrawableBuilder {
     }
 
     private String getBaseName() {
-        return namePrefix + (slim ? slimSuffix : "") + partSuffix;
+        StringBuilder baseName = string().append(namePrefix);
+        if (slim) baseName.append(slimSuffix);
+        baseName.append(partSuffix);
+        return baseName.toString();
     }
 
     private String getBorderName() {
-        return getBaseName() + (color != null ? "-" + color : "");
+        String baseName = getBaseName();
+        return color == null ? baseName : string().append(baseName).append("-").append(color).toString();
     }
 
     private String getTextureName() {
-        return texturePrefix + getBaseName();
+        String baseName = getBaseName();
+        return string().append(texturePrefix).append(baseName).toString();
     }
     
-    public BorderBuilder reset() {
+    public BorderBuilder reset(Skin skin) {
+        this.skin = skin;
         color = null;
         slim = false;
         partSuffix = "";

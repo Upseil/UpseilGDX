@@ -48,9 +48,8 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     public static BackgroundBuilder get(Skin skin) {
         if (instance == null) {
             instance = new BackgroundBuilder(skin);
-            return instance;
         }
-        return instance.reset();
+        return instance.reset(skin);
     }
 
     public static Drawable byColor(Skin skin, String colorName) {
@@ -134,13 +133,13 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
         
         String colorName = getColorName();
         ensureColorExists(colorName);
-        return getOrCreate(namePrefix + componentSeparator + colorName, textureName, colorName);
+        
+        String drawableName = string().append(namePrefix).append(componentSeparator).append(colorName).toString();
+        return getOrCreate(drawableName, textureName, colorName);
     }
 
     private String getColorName() {
-        // TODO [Performance] Use static StringBuilder or at least a single StringBuilder per BackgroundBuilder instance
-        // Check other builders for similar flaws
-        StringBuilder name = new StringBuilder();
+        StringBuilder name = string();
         double alpha = this.alpha;
         boolean hasBaseColor = false;
         
@@ -184,7 +183,8 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
         }
     }
     
-    public BackgroundBuilder reset() {
+    public BackgroundBuilder reset(Skin skin) {
+        this.skin = skin;
         baseColorName = null;
         baseColor = null;
         alpha = -1;
