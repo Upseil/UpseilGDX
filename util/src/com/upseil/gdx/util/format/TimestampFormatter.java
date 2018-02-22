@@ -3,6 +3,8 @@ package com.upseil.gdx.util.format;
 import com.upseil.gdx.util.function.LongObjectBiFunction;
 
 public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<String, String> {
+    
+    // TODO [Performance] Reuse string builders
 
     public static final int SecondsPerMinute = 60;
     public static final int MinutesPerHour = 60;

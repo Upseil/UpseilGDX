@@ -4,6 +4,8 @@ import java.util.function.DoubleFunction;
 
 public interface DoubleFormatter extends DoubleFunction<String> {
     
+    // TODO [Performance] Reuse string builders
+    
     public enum Format { None, Rounded, Simple, Abbreviation, Engineering, Percent, Roman }
     
     public static final DoubleFormatter RomanFormat = new RomanFormat();
