@@ -317,14 +317,8 @@ public class LZString {
             else
                 context_data_position++;
         }
-        // TODO [Performance] Can the CharArray used to create a String directly?
-        StringBuffer sb = new StringBuffer(context_data.size);
-        char[] data = context_data.items;
-        int size = context_data.size;
-        for (int index = 0; index < size; index++) {
-            sb.append(data[index]);
-        }
-        return sb.toString();
+
+        return new String(context_data.items, 0, context_data.size);
     }
     
     private static abstract class DecompressFunctionWrapper {
@@ -471,9 +465,10 @@ public class LZString {
                 enlargeIn--;
                 break;
               case 2:
-                StringBuffer sb = new StringBuffer(result.size);
-                for (String s : result)
+                StringBuilder sb = new StringBuilder(result.size);
+                for (String s : result) {
                     sb.append(s);
+                }
                 return sb.toString();
             }
 
