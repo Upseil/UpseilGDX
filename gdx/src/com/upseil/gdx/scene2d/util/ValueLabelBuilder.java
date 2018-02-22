@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.upseil.gdx.scene2d.action.UpdateLabelTextAction;
-import com.upseil.gdx.util.builder.ReusableBuilder;
+import com.upseil.gdx.util.builder.Builder;
 import com.upseil.gdx.util.format.DoubleFormatter;
 import com.upseil.gdx.util.format.LongFormatter;
 import com.upseil.gdx.util.function.BooleanSupplier;
@@ -17,58 +17,56 @@ import com.upseil.gdx.util.function.FloatSupplier;
 import com.upseil.gdx.util.function.IntSupplier;
 import com.upseil.gdx.util.function.LongSupplier;
 
-public class ValueLabelBuilder implements ReusableBuilder<Label> {
+public class ValueLabelBuilder implements Builder<Label> {
     
     private static final String DefaultStyle = "default";
     
     private static ValueLabelBuilder instance;
 
-    public static ValueLabelBuilder get() {
-        return get(null);
+    public static ValueLabelBuilder newLabel(Skin skin) {
+        return newLabel(skin, DefaultStyle);
     }
 
-    public static ValueLabelBuilder get(Skin skin) {
+    public static ValueLabelBuilder newLabel(Skin skin, String styleName) {
+        return getInstance().reset(skin, styleName);
+    }
+    
+    public static ValueLabelBuilder decorate(Label label) {
+        return getInstance().reset(label);
+    }
+
+    private static ValueLabelBuilder getInstance() {
         if (instance == null) {
             instance = new ValueLabelBuilder();
         }
-        instance.reset();
-        instance.setSkin(skin);
         return instance;
     }
     
     public static Label withValue(Skin skin, Supplier<String> value) {
-        return get(skin).withValue(value).build();
+        return newLabel(skin).withValue(value).build();
     }
     
     private Skin skin;
+    private String styleName;
     
     private Label labelToDecorate;
-    private String styleName;
     
     private float updateInterval;
     private BooleanSupplier updateCondition;
     private Supplier<String> valueSupplier;
 
-    private ValueLabelBuilder() {
-        this(null);
-    }
+    private ValueLabelBuilder() { }
     
     public ValueLabelBuilder(Skin skin) {
-        this.skin = skin;
-        this.styleName = DefaultStyle;
+        reset(skin);
+    }
+
+    public ValueLabelBuilder(Skin skin, String styleName) {
+        reset(skin, styleName);
     }
     
-    // TODO Exceptions instead of overwriting fields?
-    public ValueLabelBuilder decorate(Label label) {
-        this.labelToDecorate = label;
-        this.styleName = null;
-        return this;
-    }
-    
-    public ValueLabelBuilder withStyle(String styleName) {
-        this.labelToDecorate = null;
-        this.styleName = styleName;
-        return this;
+    public ValueLabelBuilder(Label labelToDecorate) {
+        reset(labelToDecorate);
     }
     
     public ValueLabelBuilder withInterval(float updateInterval) {
@@ -114,15 +112,29 @@ public class ValueLabelBuilder implements ReusableBuilder<Label> {
         return label;
     }
     
-    public void setSkin(Skin skin) {
+    public ValueLabelBuilder reset(Skin skin) {
+        return reset(skin, DefaultStyle);
+    }
+    
+    public ValueLabelBuilder reset(Skin skin, String styleName) {
+        reset();
         this.skin = skin;
+        this.styleName = styleName;
+        return this;
+    }
+    
+    public ValueLabelBuilder reset(Label labelToDecorate) {
+        reset();
+        this.labelToDecorate = labelToDecorate;
+        return this;
     }
 
-    @Override
     public ValueLabelBuilder reset() {
         skin = null;
+        styleName = null;
+        
         labelToDecorate = null;
-        styleName = DefaultStyle;
+        
         updateInterval = 0;
         updateCondition = null;
         valueSupplier = null;
