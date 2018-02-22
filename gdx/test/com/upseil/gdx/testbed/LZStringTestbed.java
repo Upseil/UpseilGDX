@@ -16,12 +16,14 @@ public class LZStringTestbed {
             String compressed = reader.lines().collect(Collectors.joining());
             String decompressed = LZString.decompressFromBase64(compressed);
             
-            
             int compressedLength = compressed.length();
             int decompressedLength = decompressed.length();
             double compressionRate = (float) compressedLength / decompressedLength;
             System.out.println(String.format("Decompressed %d characters -> Compressed %d characters (%.4f%%)\n%s",
                                              decompressedLength, compressedLength, compressionRate, decompressed));
+            
+            String recompressed = LZString.compressToBase64(decompressed);
+            System.out.println(recompressed);
         } catch (IOException e) {
             e.printStackTrace();
         }

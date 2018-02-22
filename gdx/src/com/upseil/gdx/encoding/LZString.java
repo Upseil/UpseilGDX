@@ -26,32 +26,33 @@
  *  - Replaced the collections with libGDX collections
  *  - Reduced the amount of auto-boxing
  *  - Removed the unused variable
+ *  - Applied some improvements described in https://github.com/rufushuang/lz-string4java/pull/7
  */
 
 package com.upseil.gdx.encoding;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.CharArray;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 
-// TODO [Performance] add performance improvements described in https://github.com/rufushuang/lz-string4java/pull/7
 public class LZString {
 
-    private static char[] keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray();
-    private static ObjectMap<char[], IntIntMap> baseReverseDic = new ObjectMap<char[], IntIntMap>();
+    private static final char[] keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray();
+    private static final ObjectMap<char[], IntIntMap> baseReverseDic = new ObjectMap<char[], IntIntMap>();
+    
+    private static final CompressFunctionWrapper base64CompressFunctionWrapper = new CompressFunctionWrapper() {
+        @Override
+        public char doFunc(int a) {
+            return keyStrBase64[a];
+        }
+    };
     
     public static String compressToBase64(String input) {
         if (input == null)
             return "";
-        String res = LZString._compress(input, 6, new CompressFunctionWrapper() {
-            @Override
-            public char doFunc(int a) {
-                return keyStrBase64[a];
-            }
-        });
+        String res = LZString._compress(input, 6, base64CompressFunctionWrapper);
         switch (res.length() % 4) { // To produce valid Base64
         default: // When could this happen ?
         case 0:
@@ -68,15 +69,12 @@ public class LZString {
     public static String decompressFromBase64(String inputStr) {
         if (inputStr == null)
             return "";
-        if (inputStr == "")
+        if (inputStr.isEmpty())
             return null;
-        final char[] input = inputStr.toCharArray();
-        // function(index) { return getBaseValue(keyStrBase64,
-        // input.charAt(index)); }
-        return LZString._decompress(input.length, 32, new DecompressFunctionWrapper() {
+        return LZString._decompress(inputStr.length(), 32, new DecompressFunctionWrapper() {
             @Override
             public char doFunc(int index) {
-                return getBaseValue(keyStrBase64, input[index]);
+                return getBaseValue(keyStrBase64, inputStr.charAt(index));
             }
         });
     }
@@ -93,35 +91,31 @@ public class LZString {
         return (char) map.get(character, -1);
     }
     
-    protected static class Data {
-        int val;
-        int position;
-        StringBuffer string = new StringBuffer();
-    }
-    
     private static abstract class CompressFunctionWrapper {
         public abstract char doFunc(int i);
     }
     
+    private static final StringBuilder context_data = new StringBuilder();
+    
     private static String _compress(String uncompressedStr, int bitsPerChar, CompressFunctionWrapper getCharFromInt) {
         if (uncompressedStr == null) return "";
         int i, value;
-        ObjectIntMap<String> context_dictionary = new ObjectIntMap<String>(); // TODO [Performance] Creates a lot of Object[], may be not the best data structure
+        ObjectIntMap<String> context_dictionary = new ObjectIntMap<String>();
         ObjectSet<String> context_dictionaryToCreate = new ObjectSet<String>();
         String context_c = "";
         String context_wc = "";
         String context_w = "";
-        double context_enlargeIn = 2d; // Compensate for the first entry which should not count
+        int context_enlargeIn = 2; // Compensate for the first entry which should not count
         int context_dictSize = 3;
         int context_numBits = 2;
-        CharArray context_data = new CharArray(uncompressedStr.length() / 3); // TODO [Performance] Can this be made static?
+        context_data.setLength(0);
+        context_data.ensureCapacity(uncompressedStr.length() / 3);
         int context_data_val = 0;
         int context_data_position = 0;
         int ii;
         
-        char[] uncompressed = uncompressedStr.toCharArray();
-        for (ii = 0; ii < uncompressed.length; ii += 1) {
-            context_c = String.valueOf(uncompressed[ii]); // TODO [Performance] Creates many String objects. Can this be done with chars?
+        for (ii = 0; ii < uncompressedStr.length(); ii += 1) {
+            context_c = String.valueOf(uncompressedStr.charAt(ii));
             if (!context_dictionary.containsKey(context_c)) {
                 context_dictionary.put(context_c, context_dictSize++);
                 context_dictionaryToCreate.add(context_c);
@@ -137,7 +131,7 @@ public class LZString {
                             context_data_val = (context_data_val << 1);
                             if (context_data_position == bitsPerChar - 1) {
                                 context_data_position = 0;
-                                context_data.add(getCharFromInt.doFunc(context_data_val));
+                                context_data.append(getCharFromInt.doFunc(context_data_val));
                                 context_data_val = 0;
                             } else {
                                 context_data_position++;
@@ -148,7 +142,7 @@ public class LZString {
                             context_data_val = (context_data_val << 1) | (value & 1);
                             if (context_data_position == bitsPerChar - 1) {
                                 context_data_position = 0;
-                                context_data.add(getCharFromInt.doFunc(context_data_val));
+                                context_data.append(getCharFromInt.doFunc(context_data_val));
                                 context_data_val = 0;
                             } else {
                                 context_data_position++;
@@ -161,7 +155,7 @@ public class LZString {
                             context_data_val = (context_data_val << 1) | value;
                             if (context_data_position == bitsPerChar - 1) {
                                 context_data_position = 0;
-                                context_data.add(getCharFromInt.doFunc(context_data_val));
+                                context_data.append(getCharFromInt.doFunc(context_data_val));
                                 context_data_val = 0;
                             } else {
                                 context_data_position++;
@@ -173,7 +167,7 @@ public class LZString {
                             context_data_val = (context_data_val << 1) | (value & 1);
                             if (context_data_position == bitsPerChar - 1) {
                                 context_data_position = 0;
-                                context_data.add(getCharFromInt.doFunc(context_data_val));
+                                context_data.append(getCharFromInt.doFunc(context_data_val));
                                 context_data_val = 0;
                             } else {
                                 context_data_position++;
@@ -183,7 +177,7 @@ public class LZString {
                     }
                     context_enlargeIn--;
                     if (context_enlargeIn == 0) {
-                        context_enlargeIn = Math.pow(2, context_numBits);
+                        context_enlargeIn = powerOf2(context_numBits);
                         context_numBits++;
                     }
                     context_dictionaryToCreate.remove(context_w);
@@ -193,7 +187,7 @@ public class LZString {
                         context_data_val = (context_data_val << 1) | (value & 1);
                         if (context_data_position == bitsPerChar - 1) {
                             context_data_position = 0;
-                            context_data.add(getCharFromInt.doFunc(context_data_val));
+                            context_data.append(getCharFromInt.doFunc(context_data_val));
                             context_data_val = 0;
                         } else {
                             context_data_position++;
@@ -204,7 +198,7 @@ public class LZString {
                 }
                 context_enlargeIn--;
                 if (context_enlargeIn == 0) {
-                    context_enlargeIn = Math.pow(2, context_numBits);
+                    context_enlargeIn = powerOf2(context_numBits);
                     context_numBits++;
                 }
                 // Add wc to the dictionary.
@@ -221,7 +215,7 @@ public class LZString {
                         context_data_val = (context_data_val << 1);
                         if (context_data_position == bitsPerChar - 1) {
                             context_data_position = 0;
-                            context_data.add(getCharFromInt.doFunc(context_data_val));
+                            context_data.append(getCharFromInt.doFunc(context_data_val));
                             context_data_val = 0;
                         } else {
                             context_data_position++;
@@ -232,7 +226,7 @@ public class LZString {
                         context_data_val = (context_data_val << 1) | (value & 1);
                         if (context_data_position == bitsPerChar - 1) {
                             context_data_position = 0;
-                            context_data.add(getCharFromInt.doFunc(context_data_val));
+                            context_data.append(getCharFromInt.doFunc(context_data_val));
                             context_data_val = 0;
                         } else {
                             context_data_position++;
@@ -245,7 +239,7 @@ public class LZString {
                         context_data_val = (context_data_val << 1) | value;
                         if (context_data_position == bitsPerChar - 1) {
                             context_data_position = 0;
-                            context_data.add(getCharFromInt.doFunc(context_data_val));
+                            context_data.append(getCharFromInt.doFunc(context_data_val));
                             context_data_val = 0;
                         } else {
                             context_data_position++;
@@ -257,7 +251,7 @@ public class LZString {
                         context_data_val = (context_data_val << 1) | (value & 1);
                         if (context_data_position == bitsPerChar - 1) {
                             context_data_position = 0;
-                            context_data.add(getCharFromInt.doFunc(context_data_val));
+                            context_data.append(getCharFromInt.doFunc(context_data_val));
                             context_data_val = 0;
                         } else {
                             context_data_position++;
@@ -267,7 +261,7 @@ public class LZString {
                 }
                 context_enlargeIn--;
                 if (context_enlargeIn == 0) {
-                    context_enlargeIn = Math.pow(2, context_numBits);
+                    context_enlargeIn = powerOf2(context_numBits);
                     context_numBits++;
                 }
                 context_dictionaryToCreate.remove(context_w);
@@ -277,7 +271,7 @@ public class LZString {
                     context_data_val = (context_data_val << 1) | (value & 1);
                     if (context_data_position == bitsPerChar - 1) {
                         context_data_position = 0;
-                        context_data.add(getCharFromInt.doFunc(context_data_val));
+                        context_data.append(getCharFromInt.doFunc(context_data_val));
                         context_data_val = 0;
                     } else {
                         context_data_position++;
@@ -288,7 +282,7 @@ public class LZString {
             }
             context_enlargeIn--;
             if (context_enlargeIn == 0) {
-                context_enlargeIn = Math.pow(2, context_numBits);
+                context_enlargeIn = powerOf2(context_numBits);
                 context_numBits++;
             }
         }
@@ -299,7 +293,7 @@ public class LZString {
             context_data_val = (context_data_val << 1) | (value & 1);
             if (context_data_position == bitsPerChar - 1) {
                 context_data_position = 0;
-                context_data.add(getCharFromInt.doFunc(context_data_val));
+                context_data.append(getCharFromInt.doFunc(context_data_val));
                 context_data_val = 0;
             } else {
                 context_data_position++;
@@ -311,36 +305,35 @@ public class LZString {
         while (true) {
             context_data_val = (context_data_val << 1);
             if (context_data_position == bitsPerChar - 1) {
-                context_data.add(getCharFromInt.doFunc(context_data_val));
+                context_data.append(getCharFromInt.doFunc(context_data_val));
                 break;
             }
             else
                 context_data_position++;
         }
 
-        return new String(context_data.items, 0, context_data.size);
+        return context_data.toString();
     }
     
     private static abstract class DecompressFunctionWrapper {
         public abstract char doFunc(int i);
     }
-    protected static class DecData {
+    
+    private static class DecData {
         public char val;
         public int position;
         public int index;       
     }
-
-    public static String f(int i) {
-        return String.valueOf((char) i);
-    }
+    
+    private static final StringBuilder result = new StringBuilder();
 
     private static String _decompress(int length, int resetValue, DecompressFunctionWrapper getNextValue) {
         Array<String> dictionary = new Array<String>();
-        double enlargeIn = 4d;
+        int enlargeIn = 4;
         int dictSize = 4;
         int numBits = 3;
         String entry = "";
-        Array<String> result = new Array<String>();
+        result.setLength(0);
         String w;
         int bits, resb; int maxpower, power;
         String c = null;
@@ -354,7 +347,7 @@ public class LZString {
         }
         
         bits = 0;
-        maxpower = (int) Math.pow(2, 2);
+        maxpower = powerOf2(2);
         power = 1;
         while (power != maxpower) {
             resb = data.val & data.position;
@@ -370,7 +363,7 @@ public class LZString {
         switch (bits) {
           case 0:
               bits = 0;
-              maxpower = (int) Math.pow(2,8);
+              maxpower = powerOf2(8);
               power=1;
               while (power != maxpower) {
                 resb = data.val & data.position;
@@ -386,7 +379,7 @@ public class LZString {
             break;
           case 1:
               bits = 0;
-              maxpower = (int) Math.pow(2,16);
+              maxpower = powerOf2(16);
               power=1;
               while (power!=maxpower) {
                 resb = data.val & data.position;
@@ -405,14 +398,14 @@ public class LZString {
         }
         dictionary.insert(3, c);
         w = c;
-        result.add(w);
+        result.append(w);
         while (true) {
             if (data.index > length) {
               return "";
             }
 
             bits = 0;
-            maxpower = (int) Math.pow(2,numBits);
+            maxpower = powerOf2(numBits);
             power=1;
             while (power!=maxpower) {
               resb = data.val & data.position;
@@ -429,7 +422,7 @@ public class LZString {
             switch (cc = bits) {
               case 0:
                 bits = 0;
-                maxpower = (int) Math.pow(2,8);
+                maxpower = powerOf2(8);
                 power=1;
                 while (power!=maxpower) {
                   resb = data.val & data.position;
@@ -448,7 +441,7 @@ public class LZString {
                 break;
               case 1:
                 bits = 0;
-                maxpower = (int) Math.pow(2,16);
+                maxpower = powerOf2(16);
                 power=1;
                 while (power!=maxpower) {
                   resb = data.val & data.position;
@@ -465,15 +458,11 @@ public class LZString {
                 enlargeIn--;
                 break;
               case 2:
-                StringBuilder sb = new StringBuilder(result.size);
-                for (String s : result) {
-                    sb.append(s);
-                }
-                return sb.toString();
+                return result.toString();
             }
 
             if (enlargeIn == 0) {
-              enlargeIn = Math.pow(2, numBits);
+              enlargeIn = powerOf2(numBits);
               numBits++;
             }
 
@@ -486,7 +475,7 @@ public class LZString {
                 return null;
               }
             }
-            result.add(entry);
+            result.append(entry);
 
             // Add w+entry[0] to the dictionary.
             dictionary.insert(dictSize++, w + entry.charAt(0));
@@ -495,11 +484,17 @@ public class LZString {
             w = entry;
 
             if (enlargeIn == 0) {
-              enlargeIn = Math.pow(2, numBits);
+              enlargeIn = powerOf2(numBits);
               numBits++;
             }
+        }
+    }
 
-          }
-        
+    public static String f(int i) {
+        return String.valueOf((char) i);
+    }
+    
+    private static int powerOf2(int power) {
+        return 1 << power;
     }
 }
