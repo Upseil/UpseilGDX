@@ -5,23 +5,35 @@ import java.util.function.Supplier;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.upseil.gdx.util.function.BooleanSupplier;
 
 public class UpdateLabelTextAction extends Action {
     
-    // TODO [Performance] Add Conditional Updates
-    
     private Label label;
+    private BooleanSupplier condition;
     private Supplier<String> textSupplier;
     
     private float updateInterval;
     private float accumulator;
     
-    public UpdateLabelTextAction set(Supplier<String> textSupplier) {
-        return set(0, textSupplier);
+    public UpdateLabelTextAction set(float updateInterval, BooleanSupplier condition, Supplier<String> textSupplier) {
+        setCondition(condition);
+        setTextSupplier(textSupplier);
+        setUpdateInterval(updateInterval);
+        return this;
     }
-    
-    public UpdateLabelTextAction set(float updateInterval, Supplier<String> textSupplier) {
+
+    private UpdateLabelTextAction setCondition(BooleanSupplier condition) {
+        this.condition = condition;
+        return this;
+    }
+
+    private UpdateLabelTextAction setTextSupplier(Supplier<String> textSupplier) {
         this.textSupplier = textSupplier;
+        return this;
+    }
+
+    private UpdateLabelTextAction setUpdateInterval(float updateInterval) {
         this.updateInterval = updateInterval;
         accumulator = updateInterval;
         return this;
@@ -41,7 +53,9 @@ public class UpdateLabelTextAction extends Action {
     public boolean act(float delta) {
         accumulator += delta;
         if (accumulator >= updateInterval) {
-            label.setText(textSupplier.get());
+            if (condition == null || condition.get()) {
+                label.setText(textSupplier.get());
+            }
             accumulator = 0;
         }
         return false;
@@ -56,6 +70,7 @@ public class UpdateLabelTextAction extends Action {
     public void reset() {
         super.reset();
         label = null;
+        condition = null;
         textSupplier = null;
         updateInterval = 0;
         accumulator = 0;

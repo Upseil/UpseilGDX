@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 public abstract class AbstractDrawableBuilder {
 
+    // TODO This shouldn't be final, since this locks the static instances to a single skin
     protected final Skin skin;
 
     public AbstractDrawableBuilder(Skin skin) {
