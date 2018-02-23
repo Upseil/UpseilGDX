@@ -7,20 +7,22 @@ import com.badlogic.gdx.graphics.GL20;
 
 public class ClearScreenSystem extends BaseSystem {
     
+    private final int clearMask;
 	private Color clearColor;
 	
     public ClearScreenSystem() {
-		this(Color.BLACK);
+		this(GL20.GL_COLOR_BUFFER_BIT, Color.BLACK);
 	}
 
-	public ClearScreenSystem(Color clearColor) {
+    public ClearScreenSystem(int clearMask, Color clearColor) {
+        this.clearMask = clearMask;
 		this.clearColor = clearColor;
 	}
 
 	@Override
     protected void processSystem() {
         Gdx.gl.glClearColor(clearColor.r, clearColor.g, clearColor.b, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(clearMask);
     }
 
 	public Color getClearColor() {
