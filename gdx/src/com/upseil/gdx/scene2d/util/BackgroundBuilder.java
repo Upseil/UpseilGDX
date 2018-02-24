@@ -185,6 +185,10 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     
     public BackgroundBuilder reset(Skin skin) {
         this.skin = skin;
+        return reset();
+    }
+
+    public BackgroundBuilder reset() {
         baseColorName = null;
         baseColor = null;
         alpha = -1;

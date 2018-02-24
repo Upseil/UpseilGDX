@@ -33,6 +33,10 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     private final Array<Consumer<String>> exportCallbacks;
     private final ObjectSet<String> slotsToSave;
     
+    public AbstractSaveSystem(Writer<T> mapper, SaveConfig config) {
+        this(mapper, null, config);
+    }
+    
     public AbstractSaveSystem(Writer<T> mapper, Clipboard systemAccessClipboard, SaveConfig config) {
         this.mapper = mapper;
         this.systemAccessClipboard = systemAccessClipboard;
@@ -48,7 +52,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         exportCallbacks = new Array<>(4);
         slotsToSave = new ObjectSet<>();
     }
-    
+
     public void saveToAutoSlot() {
         scheduleSave(autoSaveSlot);
         accumulatedDelta = 0;
