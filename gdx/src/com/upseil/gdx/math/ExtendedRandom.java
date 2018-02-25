@@ -74,7 +74,7 @@ public interface ExtendedRandom {
     /**
      * Returns a random number between start (inclusive) and end (exclusive).
      */
-    public default double randomFloat(double start, double end) {
+    public default double randomDouble(double start, double end) {
         return start + randomDouble() * (end - start);
     }
 

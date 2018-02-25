@@ -7,15 +7,17 @@ import com.badlogic.gdx.utils.Disposable;
 public class Scene extends PooledComponent implements Disposable {
     
     private Stage stage;
-    private boolean manualAct;
     
+    private boolean manualAct;
     private boolean centerCamera;
-    private boolean paused;
+    private float timeScale;
+    private float activeTimeScale;
     
     public Scene() {
         manualAct = false;
         centerCamera = true;
-        paused = false;
+        timeScale = 1;
+        activeTimeScale = 1;
     }
 
     public Scene initialize(Stage stage) {
@@ -48,7 +50,7 @@ public class Scene extends PooledComponent implements Disposable {
 
     public void act(float delta) {
         if (!manualAct) {
-            stage.act(paused ? 0 : delta);
+            stage.act(activeTimeScale * delta);
         }
     }
 
@@ -65,11 +67,24 @@ public class Scene extends PooledComponent implements Disposable {
     }
 
     public boolean isPaused() {
-        return paused;
+        return activeTimeScale == 0;
     }
 
     public void setPaused(boolean paused) {
-        this.paused = paused;
+        activeTimeScale = paused ? 0 : timeScale;
+    }
+    
+    public void setTimeScale(float timeScale) {
+        this.timeScale = timeScale;
+        activeTimeScale = timeScale;
+    }
+
+    public float getTimeScale() {
+        return timeScale;
+    }
+
+    public float getActiveTimeScale() {
+        return activeTimeScale;
     }
 
     @Override
@@ -78,7 +93,8 @@ public class Scene extends PooledComponent implements Disposable {
         stage = null;
         manualAct = false;
         centerCamera = true;
-        paused = false;
+        timeScale = 1;
+        activeTimeScale = 1;
     }
 
     @Override

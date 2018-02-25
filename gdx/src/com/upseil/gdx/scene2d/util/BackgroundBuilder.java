@@ -53,7 +53,7 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     }
 
     public static Drawable byColor(Skin skin, String colorName) {
-        return getOrCreate(skin, namePrefix+ componentSeparator + colorName, textureName, colorName);
+        return getOrCreate(skin, string().append(namePrefix).append(componentSeparator).append(colorName).toString(), textureName, colorName);
     }
     
     public static Drawable byColor(Skin skin, String colorName, double alpha) {
