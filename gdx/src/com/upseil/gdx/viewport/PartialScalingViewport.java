@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Scaling;
 
-public class PartialScalingViewport extends PartialViewport {
+public class PartialScalingViewport extends PartialWorldViewport {
     
     private Scaling scaling;
 

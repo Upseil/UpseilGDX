@@ -29,6 +29,7 @@ public class ScreenRatioDivider implements ScreenDivider {
             float newHeight = screen.width / ratio;
             screen.set(screen.x, screen.y + (screen.height - newHeight) / 2, screen.width, newHeight);
         }
+        // TODO Round values
         return screen;
     }
     
