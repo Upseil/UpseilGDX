@@ -11,10 +11,11 @@ public class CompoundScreenDivider implements ScreenDivider {
     }
     
     @Override
-    public void getScreenPart(Rectangle screen) {
+    public Rectangle getScreenPart(Rectangle screen) {
         for (ScreenDivider divider : dividers) {
             divider.getScreenPart(screen);
         }
+        return screen;
     }
     
 }

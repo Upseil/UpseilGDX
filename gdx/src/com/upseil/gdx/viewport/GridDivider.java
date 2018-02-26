@@ -22,13 +22,13 @@ public class GridDivider implements ScreenDivider {
     }
     
     @Override
-    public void getScreenPart(Rectangle screen) {
+    public Rectangle getScreenPart(Rectangle screen) {
         float xUnit = screen.width / columns;
         float yUnit = screen.height / rows;
         
         float newX = screen.x + (xUnit * column);
         float newY = screen.y + screen.height - (yUnit * (row + 1));
-        screen.set(newX, newY, xUnit, yUnit);
+        return screen.set(newX, newY, xUnit, yUnit);
     }
     
 }
