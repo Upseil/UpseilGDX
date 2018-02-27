@@ -1,6 +1,7 @@
 package com.upseil.gdx.artemis.component;
 
 import com.artemis.PooledComponent;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -85,6 +86,22 @@ public class Scene extends PooledComponent implements Disposable {
 
     public float getActiveTimeScale() {
         return activeTimeScale;
+    }
+    
+    public void clear() {
+        stage.clear();
+    }
+    
+    public void addActor(Actor actor) {
+        stage.addActor(actor);
+    }
+    
+    public float getWidth() {
+        return stage.getWidth();
+    }
+    
+    public float getHeight() {
+        return stage.getHeight();
     }
 
     @Override
