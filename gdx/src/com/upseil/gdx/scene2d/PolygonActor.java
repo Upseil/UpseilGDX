@@ -131,7 +131,7 @@ public class PolygonActor extends ChangeNotifingActor {
         if (spriteBatch == null || (!customSpriteBatch && spriteBatch != batch)) {
             if (!(batch instanceof PolygonSpriteBatch)) {
                 throw new IllegalStateException("Unable to draw, because no " + PolygonSpriteBatch.class.getSimpleName()
-                        + " has been given by creation and the standard " + Batch.class.getSimpleName() + " is invalid");
+                        + " has been given by creation and the stages " + Batch.class.getSimpleName() + " is invalid");
             }
             spriteBatch = (PolygonSpriteBatch) batch;
         }
