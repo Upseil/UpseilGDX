@@ -20,7 +20,7 @@ public class TestGeometryUtils {
         assertThat(GeometryUtils.polygonArea(vertices), is(128.0f));
         assertThat(GeometryUtils.polygonArea(vertices, 1, 4), is(32.0f));
         
-        float[] flatVertices = GDXArrays.flatten(vertices);
+        float[] flatVertices = GDXArrays.flattenToArray(vertices);
         assertThat(GeometryUtils.polygonArea(flatVertices), is(128.0f));
         assertThat(GeometryUtils.polygonArea(flatVertices, 2, 8), is(32.0f));
     }
@@ -35,7 +35,7 @@ public class TestGeometryUtils {
         assertThat(GeometryUtils.polygonArea(vertices), is(128.0f));
         assertThat(GeometryUtils.polygonArea(vertices, 1, 4), is(32.0f));
         
-        float[] flatVertices = GDXArrays.flatten(vertices);
+        float[] flatVertices = GDXArrays.flattenToArray(vertices);
         assertThat(GeometryUtils.polygonArea(flatVertices), is(128.0f));
         assertThat(GeometryUtils.polygonArea(flatVertices, 2, 8), is(32.0f));
     }

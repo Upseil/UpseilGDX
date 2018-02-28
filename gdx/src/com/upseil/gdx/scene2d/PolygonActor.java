@@ -45,7 +45,7 @@ public class PolygonActor extends ChangeNotifingActor {
     }
 
     public PolygonActor(Skin skin, String textureRegionName, Vector2[] vertices, PolygonSpriteBatch spriteBatch) {
-        this(skin, textureRegionName, GDXArrays.flatten(vertices), spriteBatch);
+        this(skin, textureRegionName, GDXArrays.flattenToArray(vertices), spriteBatch);
     }
     
     public PolygonActor(Skin skin, String textureRegionName, float[] vertices) {
@@ -69,7 +69,7 @@ public class PolygonActor extends ChangeNotifingActor {
     }
 
     public PolygonActor(TextureRegion texture, Vector2[] vertices, PolygonSpriteBatch spriteBatch) {
-        this(texture == null ? NullTexture : texture, GDXArrays.flatten(vertices), spriteBatch);
+        this(texture == null ? NullTexture : texture, GDXArrays.flattenToArray(vertices), spriteBatch);
     }
 
     public PolygonActor(float[] vertices) {

@@ -1,20 +1,143 @@
 package com.upseil.gdx.util;
 
+import java.util.Random;
+
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.FloatArray;
 
 public class GDXArrays {
     
-    // TODO flatten with existing array, offset and length
-    // TODO flatten to new/existing FloatArray
-    public static float[] flatten(Vector2[] vectors) {
-        float[] coordinates = new float[vectors.length * 2];
-        for (int i = 0, j = 0; i < coordinates.length; i += 2, j++) {
-            coordinates[i] = vectors[j].x;
-            coordinates[i + 1] = vectors[j].y;
-        }
-        return coordinates;
+    private GDXArrays() { }
+    
+    // Vector Flattening --------------------------------------------------------------------------
+    
+    // ---- To FloatArray -------------------------------------------------------------------------
+    
+    // TODO Tests
+    public static FloatArray flattenToFloatArray(Vector2[] vectors) {
+        return flattenToFloatArray(vectors, 0, vectors.length);
     }
     
-    private GDXArrays() { }
+    public static FloatArray flattenToFloatArray(Vector2[] vectors, int offset, int length) {
+        FloatArray result = new FloatArray(length * 2);
+        flatten(vectors, offset, length, result);
+        return result;
+    }
+    
+    public static void flatten(Vector2[] vectors, FloatArray target) {
+        flatten(vectors, 0, vectors.length, target);
+    }
+    
+    public static void flatten(Vector2[] vectors, int offset, int length, FloatArray target) {
+        target.setSize(length * 2);
+        flatten(vectors, offset, length, target.items);
+    }
+    
+    // ---- To float[] ----------------------------------------------------------------------------
+    
+    public static float[] flattenToArray(Vector2[] vectors) {
+        return flattenToArray(vectors, 0, vectors.length);
+    }
+    
+    public static float[] flattenToArray(Vector2[] vectors, int offset, int length) {
+        float[] result = new float[length * 2];
+        flatten(vectors, offset, length, result);
+        return result;
+    }
+    
+    public static void flatten(Vector2[] vectors, float[] target) {
+        if (vectors.length * 2 != target.length) {
+            throw new IllegalArgumentException("The given target array has to be exactly twice as large as the given vector array: "
+                    + "vectors.length = " + vectors.length + ", target.length = " + target.length);
+        }
+        flattenUnsafe(vectors, 0, vectors.length, target);
+    }
+
+    public static void flatten(Vector2[] vectors, int offset, int length, float[] target) {
+        if (length * 2 != target.length) {
+            throw new IllegalArgumentException("The given target array has to be exactly twice as large as the given length: "
+                    + "length = " + vectors.length + ", target.length = " + target.length);
+        }
+        flattenUnsafe(vectors, offset, length, target);
+    }
+    
+    private static void flattenUnsafe(Vector2[] vectors, int offset, int length, float[] target) {
+        int bound = offset + length;
+        for (int i = 0, j = offset; j < bound; i += 2, j++) {
+            target[i] = vectors[j].x;
+            target[i + 1] = vectors[j].y;
+        }
+    }
+    
+    // Shuffling ----------------------------------------------------------------------------------
+
+    /**
+     * Shuffles the given array with the Fisher-Yates algorithm, using {@link MathUtils#random}.
+     * 
+     * @param array The array to shuffle
+     * 
+     * @see #shuffle(T[], Random)
+     * @see <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm">Fisher-Yates on Wikipedia</a>
+     */
+    public static <T> void shuffle(T[] array) {
+        shuffle(array, MathUtils.random);
+    }
+
+    /**
+     * Shuffles the given array with the Fisher-Yates algorithm, using the given {@link Random}.
+     * 
+     * @param array The array to shuffle
+     * @param random The random number generator
+     * 
+     * @see <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm">Fisher-Yates on Wikipedia</a>
+     */
+    public static <T> void shuffle(T[] array, Random random) {
+        for (int i = array.length - 1; i >= 0; i--) {
+            int j = random.nextInt(i+1);
+            swap(array, i, j);
+        }
+    }
+
+    /**
+     * Shuffles the given array with the Fisher-Yates algorithm, using {@link MathUtils#random}.
+     * 
+     * @param array The array to shuffle
+     * 
+     * @see #shuffle(int[], Random)
+     * @see <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm">Fisher-Yates on Wikipedia</a>
+     */
+    public static void shuffle(int[] array) {
+        shuffle(array, MathUtils.random);
+    }
+
+    /**
+     * Shuffles the given array with the Fisher-Yates algorithm, using the given {@link Random}.
+     * 
+     * @param array The array to shuffle
+     * @param random The random number generator
+     * 
+     * @see <a href="https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm">Fisher-Yates on Wikipedia</a>
+     */
+    public static void shuffle(int[] array, Random random) {
+        for (int i = array.length - 1; i >= 0; i--) {
+            int j = random.nextInt(i+1);
+            swap(array, i, j);
+        }
+    }
+    
+    // Swapping -----------------------------------------------------------------------------------
+    
+    public static <T> void swap(T[] array, int i, int j) {
+        T tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+    
+    public static void swap(int[] array, int i, int j) {
+        int tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
     
 }
