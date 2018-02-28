@@ -8,6 +8,9 @@ public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A,
 
     private Pool<PooledPair<A, B>> pool;
 
+    private boolean freeA = true;
+    private boolean freeB = true;
+
     @Override
     public Pool<PooledPair<A, B>> getPool() {
         return pool;
@@ -20,10 +23,10 @@ public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A,
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void free() {
-        if (a instanceof Pooled) {
+        if (freeA && a instanceof Pooled) {
             ((Pooled<?>) a).free();
         }
-        if (b instanceof Pooled) {
+        if (freeB && b instanceof Pooled) {
             ((Pooled<?>) b).free();
         }
         if (pool != null) {
@@ -35,6 +38,7 @@ public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A,
     public void reset() {
         pool = null;
         set(null, null);
+        setFree(true, true);
     }
 
     @Override
@@ -53,6 +57,27 @@ public class PooledPair<A, B> extends Pair<A, B> implements Pooled<PooledPair<A,
     public PooledPair<A, B> setB(B b) {
         super.setB(b);
         return this;
+    }
+    
+    public void setFree(boolean freeA, boolean freeB) {
+        this.freeA = freeA;
+        this.freeB = freeB;
+    }
+
+    public boolean isFreeA() {
+        return freeA;
+    }
+
+    public void setFreeA(boolean freeA) {
+        this.freeA = freeA;
+    }
+
+    public boolean isFreeB() {
+        return freeB;
+    }
+
+    public void setFreeB(boolean freeB) {
+        this.freeB = freeB;
     }
     
 }
