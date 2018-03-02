@@ -1,6 +1,10 @@
 package com.upseil.gdx.math;
 
+import java.util.Random;
+
 public interface ExtendedRandom {
+    
+    public Random asRandom();
     
     // long ---------------------------------------------------------------------------------------
     

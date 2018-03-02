@@ -1,5 +1,7 @@
 package com.upseil.gdx.math;
 
+import java.util.Random;
+
 import com.badlogic.gdx.math.RandomXS128;
 
 public class ExtendedRandomXS128 implements ExtendedRandom {
@@ -20,6 +22,11 @@ public class ExtendedRandomXS128 implements ExtendedRandom {
     
     public ExtendedRandomXS128(RandomXS128 random) {
         this.random = random;
+    }
+    
+    @Override
+    public Random asRandom() {
+        return random;
     }
 
     @Override
