@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.IntMap.Entry;
 import com.badlogic.gdx.utils.IntMap.Keys;
 import com.badlogic.gdx.utils.IntSet;
 import com.badlogic.gdx.utils.IntSet.IntSetIterator;
+import com.badlogic.gdx.utils.ObjectSet;
 import com.upseil.gdx.util.function.CharConsumer;
 import com.upseil.gdx.util.function.FloatConsumer;
 import com.upseil.gdx.util.function.IntObjectConsumer;
@@ -109,6 +110,16 @@ public class GDXCollections {
             return ((Collection<?>) iterable).isEmpty();
         }
         return !iterable.iterator().hasNext();
+    }
+    
+    // Empty Collections --------------------------------------------------------------------------
+    // TODO Add more empty collections
+    
+    private static final ObjectSet<Object> EmptySet = new UnmodifiableObjectSet<>(new ObjectSet<Object>(0));
+    
+    @SuppressWarnings("unchecked")
+    public static <T> ObjectSet<T> emptySet() {
+        return (ObjectSet<T>) EmptySet;
     }
     
 }

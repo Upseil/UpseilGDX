@@ -17,10 +17,11 @@ import com.upseil.gdx.event.EventType;
 import com.upseil.gdx.pool.PooledPools;
 import com.upseil.gdx.pool.pair.IntPairPool;
 import com.upseil.gdx.pool.pair.PooledIntPair;
+import com.upseil.gdx.util.GDXCollections;
 import com.upseil.gdx.util.RequiresResize;
 
 public class EventSystem extends BaseEntitySystem implements RequiresStepping, RequiresResize {
-	
+    
 	private ComponentMapper<EventComponent> mapper;
 	
 	private final IntPairPool<EventComponent> pairPool;
@@ -76,9 +77,9 @@ public class EventSystem extends BaseEntitySystem implements RequiresStepping, R
     }
 
     private void forwardToHandlers(int entityId, Event<?> event) {
-        for (EventHandler<?> handler : handlers.get(event.getType())) {
+        for (EventHandler<?> handler : handlers.get(event.getType(), GDXCollections.emptySet())) {
             forwardEvent(event, handler);
-        }
+        } 
         if (entityId != -1) eventsToDelete.add(entityId);
     }
     
