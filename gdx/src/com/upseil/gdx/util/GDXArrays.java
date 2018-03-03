@@ -1,5 +1,6 @@
 package com.upseil.gdx.util;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -138,6 +139,28 @@ public class GDXArrays {
         int tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
+    }
+    
+    // Clearing -----------------------------------------------------------------------------------
+    
+    public static <T> void clear(T[] array) {
+        fill(array, null);
+    }
+    
+    public static <T> void clear(T[][] table) {
+        fill(table, null);
+    }
+    
+    // Filling ------------------------------------------------------------------------------------
+    
+    public static <T> void fill(T[] array, T value) {
+        Arrays.fill(array, value);
+    }
+    
+    public static <T> void fill(T[][] table, T value) {
+        for (T[] row : table) {
+            fill(row, value);
+        }
     }
     
 }
