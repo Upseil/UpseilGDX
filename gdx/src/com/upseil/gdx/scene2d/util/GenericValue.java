@@ -2,13 +2,13 @@ package com.upseil.gdx.scene2d.util;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Value;
-import com.upseil.gdx.util.function.ObjectFloatFunction;
+import com.upseil.gdx.util.function.FloatFunction;
 
 public class GenericValue extends Value {
     
-    private final ObjectFloatFunction<Actor> value;
+    private final FloatFunction<Actor> value;
     
-    public GenericValue(ObjectFloatFunction<Actor> value) {
+    public GenericValue(FloatFunction<Actor> value) {
         this.value = value;
     }
 

@@ -1,7 +1,7 @@
 package com.upseil.gdx.util.function;
 
 @FunctionalInterface
-public interface ObjectFloatFunction<T> {
+public interface FloatFunction<T> {
     
     float apply(T t);
 }
