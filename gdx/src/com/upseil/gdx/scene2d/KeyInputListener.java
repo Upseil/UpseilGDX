@@ -24,10 +24,10 @@ public abstract class KeyInputListener implements EventListener {
     }
 
     /** Called when a key goes down. When true is returned, the event is {@link Event#handle() handled}. */
-    public abstract boolean keyDown (InputEvent event, int keycode);
+    public abstract boolean keyDown (InputEvent event, int keyCode);
 
     /** Called when a key goes up. When true is returned, the event is {@link Event#handle() handled}. */
-    public abstract boolean keyUp (InputEvent event, int keycode);
+    public abstract boolean keyUp (InputEvent event, int keyCode);
 
     /** Called when a key is typed. When true is returned, the event is {@link Event#handle() handled}.
      * @param character May be 0 for key typed events that don't map to a character (ctrl, shift, etc). */

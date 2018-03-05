@@ -5,12 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 public class SimpleKeyInputListener extends KeyInputListener {
     
     @Override
-    public boolean keyDown(InputEvent event, int keycode) {
+    public boolean keyDown(InputEvent event, int keyCode) {
         return false;
     }
     
     @Override
-    public boolean keyUp(InputEvent event, int keycode) {
+    public boolean keyUp(InputEvent event, int keyCode) {
         return false;
     }
     
