@@ -1,7 +1,6 @@
-package com.upseil.gdx.artemis.system;
+package com.upseil.gdx.scene2d;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.upseil.gdx.scene2d.SimpleKeyInputListener;
 import com.upseil.gdx.util.function.BooleanFunction;
 
 public class SimpleKeyTypedListener extends SimpleKeyInputListener {
