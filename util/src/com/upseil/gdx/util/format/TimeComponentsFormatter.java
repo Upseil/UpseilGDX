@@ -4,6 +4,8 @@ import java.util.Arrays;
 
 public class TimeComponentsFormatter implements TimestampFormatter {
     
+    private static final StringBuilder textBuilder = new StringBuilder();
+    
     private final TimeComponent[] components;
     private final short[] componentValues;
     
@@ -21,16 +23,15 @@ public class TimeComponentsFormatter implements TimestampFormatter {
     public String apply(long milliseconds, String componentSeparator) {
         setComponentValues(milliseconds);
         
+        textBuilder.setLength(0);
+        format(componentValues, componentSeparator, textBuilder);
         if (hasMillisecondComponent) {
-            StringBuilder builder = new StringBuilder(format(componentValues, componentSeparator));
-            builder.append(MillisecondsSeparator);
-            if (millisecondsComponent < 100) builder.append("0");
-            if (millisecondsComponent < 10) builder.append("0");
-            builder.append(millisecondsComponent);
-            return builder.toString(); 
-        } else {
-            return format(componentValues, componentSeparator);
+            textBuilder.append(MillisecondsSeparator);
+            if (millisecondsComponent < 100) textBuilder.append("0");
+            if (millisecondsComponent < 10) textBuilder.append("0");
+            textBuilder.append(millisecondsComponent);
         }
+        return textBuilder.toString();
     }
 
     private void setComponentValues(long milliseconds) {

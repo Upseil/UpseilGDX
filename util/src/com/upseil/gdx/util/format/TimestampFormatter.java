@@ -4,8 +4,6 @@ import com.upseil.gdx.util.function.LongObjectBiFunction;
 
 public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<String, String> {
     
-    // TODO [Performance] Reuse string builders
-
     public static final int SecondsPerMinute = 60;
     public static final int MinutesPerHour = 60;
     public static final int HoursPerDay = 24;
@@ -36,19 +34,18 @@ public interface TimestampFormatter extends LongFormatter, LongObjectBiFunction<
     @Override
     public String apply(long milliseconds, String separator);
     
-    public default String format(short[] components) {
-        return format(components, DefaultComponentSeparator);
+    public default void format(short[] components, StringBuilder builder) {
+        format(components, DefaultComponentSeparator, builder);
     }
     
-    public default String format(short[] components, String separator) {
-        StringBuilder builder = new StringBuilder(components.length * 2 + separator.length() * (components.length - 1));
+    public default void format(short[] components, String separator, StringBuilder builder) {
+        builder.ensureCapacity(components.length * 2 + separator.length() * (components.length - 1));
         short component = components[0];
         builder.append(component < 10 ? "0" : "").append(component);
         for (int index = 1; index < components.length; index++) {
             component = components[index];
             builder.append(separator).append(component < 10 ? "0" : "").append(component);
         }
-        return builder.toString();
     }
     
     public static class TimeComponent {
