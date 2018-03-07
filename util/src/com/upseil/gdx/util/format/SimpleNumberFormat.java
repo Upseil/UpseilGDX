@@ -6,7 +6,7 @@ public class SimpleNumberFormat implements DoubleFormatter {
     
     private static final ArrayList<SimpleNumberFormat> cache = new ArrayList<>(4);
     
-    static DoubleFormatter get(int decimals) {
+    public static DoubleFormatter get(int decimals) {
         int size = decimals + 1;
         if (cache.size() < size) {
             cache.ensureCapacity(size);
@@ -25,18 +25,21 @@ public class SimpleNumberFormat implements DoubleFormatter {
     
     private final double precisionFactor;
     
-    private SimpleNumberFormat(int decimals) {
-        super();
-        this.precisionFactor = Math.pow(10, decimals);
+    public SimpleNumberFormat(int decimals) {
+        double precisionFactorAccumulator = 1;
+        for (int i = 0; i < decimals; i++) {
+            precisionFactorAccumulator *= 10;
+        }
+        this.precisionFactor = precisionFactorAccumulator;
     }
 
     @Override
     public String apply(double value) {
         double precisionValue = Math.round(value * precisionFactor) / precisionFactor;
         if (precisionValue == Math.floor(precisionValue)) {
-            return (int) precisionValue + "";
+            return Integer.toString((int) precisionValue);
         } else {
-            return precisionValue + "";
+            return Double.toString(precisionValue);
         }
     }
     

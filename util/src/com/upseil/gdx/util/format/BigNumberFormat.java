@@ -4,42 +4,49 @@ public abstract class BigNumberFormat implements DoubleFormatter {
     
     public static final BigNumberFormat Abbreviation = new AbbreviationFormat();
     public static final BigNumberFormat Engineering = new EngineeringFormat();
-    
+
+    private static final StringBuilder textBuilder = new StringBuilder(8);
     private static final String infinity = "\u221e";
     private static final double log1000 = Math.log(1000);
     
     @Override
     public String apply(double value) {
-        if (Double.isInfinite(value)) {
-            return infinity;
-        }
+        textBuilder.setLength(0);
         if (value < 0) {
-            return "-" + apply(-1 * value);
-        }
-        if (value < 10000) {
-            return formatNumber(value);
+            textBuilder.append("-");
+            value = -1 * value;
         }
         
-        int base = (int) (Math.log(value) / log1000);
-        value /= Math.pow(1000, base);
-        return formatNumber(value) + getSuffix(base);
+        if (Double.isInfinite(value)) {
+            textBuilder.append(infinity);
+        } else {
+            if (value < 10000) {
+                textBuilder.append(formatNumber(value));
+            } else {
+                int base = (int) (Math.log(value) / log1000);
+                value /= Math.pow(1000, base);
+                textBuilder.append(formatNumber(value));
+                appendSuffix(base, textBuilder);
+            }
+        }
+        return textBuilder.toString();
     }
     
     private String formatNumber(double value) {
         if (value >= 100) {
-            return (int) value + "";
+            return Integer.toString((int) Math.round(value));
         }
         
         double precisionFactor = 10 * (value < 10 ? 10 : 1);
         double precisionValue = Math.round(value * precisionFactor) / precisionFactor;
         if (precisionValue == Math.floor(precisionValue)) {
-            return (int) precisionValue + "";
+            return Integer.toString((int) precisionValue);
         } else {
-            return precisionValue + "";
+            return Double.toString(precisionValue);
         }
     }
     
-    protected abstract String getSuffix(int base1000);
+    protected abstract void appendSuffix(int base1000, StringBuilder builder);
     
     private static class AbbreviationFormat extends BigNumberFormat {
         
@@ -48,21 +55,23 @@ public abstract class BigNumberFormat implements DoubleFormatter {
                 " V", " Uv", " Dv", " Tv", " Qav", " Qiv", " Sxv", " Spv", " Ov", " Nv", " Tt" };
         
         @Override
-        protected String getSuffix(int base1000) {
+        protected void appendSuffix(int base1000, StringBuilder builder) {
             int suffixIndex = base1000 - 1;
             if (suffixIndex >= suffices.length) {
-                return BigNumberFormat.Engineering.getSuffix(base1000);
+                Engineering.appendSuffix(base1000, builder);
             }
-            return suffices[suffixIndex];
+            builder.append(suffices[suffixIndex]);
         }
         
     }
     
     private static class EngineeringFormat extends BigNumberFormat {
         
+        private static final String exponent = "e";
+        
         @Override
-        protected String getSuffix(int base1000) {
-            return "e" + (base1000 * 3);
+        protected void appendSuffix(int base1000, StringBuilder builder) {
+            builder.append(exponent).append(base1000 * 3);
         }
         
     }

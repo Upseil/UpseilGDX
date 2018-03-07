@@ -4,13 +4,11 @@ import java.util.function.DoubleFunction;
 
 public interface DoubleFormatter extends DoubleFunction<String> {
     
-    // TODO [Performance] Reuse string builders
-    
     public enum Format { None, Rounded, Simple, Abbreviation, Engineering, Percent, Roman }
     
     public static final DoubleFormatter RomanFormat = new RomanFormat();
-    public static final DoubleFormatter NoFormat = value -> value + "";
-    public static final DoubleFormatter RoundedFormat = value -> (int) Math.round(value) + "";
+    public static final DoubleFormatter NoFormat = value -> Double.toString(value);
+    public static final DoubleFormatter RoundedFormat = value -> Integer.toString((int) Math.round(value));
     
     public static DoubleFormatter get(Format format) {
         switch (format) {
@@ -37,7 +35,6 @@ public interface DoubleFormatter extends DoubleFunction<String> {
     }
 
     public static DoubleFormatter getPercentFormat(int decimals) {
-        if (decimals == 0) return RoundedFormat;
         return PercentFormat.get(decimals);
     }
     
