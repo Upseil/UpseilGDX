@@ -84,9 +84,17 @@ public class ValueLabelBuilder implements Builder<Label> {
         return this;
     }
     
+    public ValueLabelBuilder withValue(FloatSupplier value) {
+        return withValue(DoubleFormatter.NoFormat, value);
+    }
+    
     public ValueLabelBuilder withValue(DoubleFormatter format, FloatSupplier value) {
         this.valueSupplier = () -> format.apply(value.get());
         return this;
+    }
+    
+    public ValueLabelBuilder withValue(DoubleSupplier value) {
+        return withValue(DoubleFormatter.NoFormat, value);
     }
     
     public ValueLabelBuilder withValue(DoubleFormatter format, DoubleSupplier value) {
@@ -94,9 +102,17 @@ public class ValueLabelBuilder implements Builder<Label> {
         return this;
     }
     
+    public ValueLabelBuilder withValue(IntSupplier value) {
+        return withValue(LongFormatter.NoFormat, value);
+    }
+    
     public ValueLabelBuilder withValue(LongFormatter format, IntSupplier value) {
         this.valueSupplier = () -> format.apply(value.get());
         return this;
+    }
+    
+    public ValueLabelBuilder withValue(LongSupplier value) {
+        return withValue(LongFormatter.NoFormat, value);
     }
     
     public ValueLabelBuilder withValue(LongFormatter format, LongSupplier value) {
