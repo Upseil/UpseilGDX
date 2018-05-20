@@ -5,9 +5,57 @@ import com.badlogic.gdx.utils.ObjectSet;
 
 public class UnmodifiableObjectSet<T> extends ObjectSet<T> {
 
+    private final ObjectSet<T> set;
+
     public UnmodifiableObjectSet(ObjectSet<T> set) {
-        super(set);
-        shrink(0);
+        this.set = set;
+    }
+
+    @Override
+    public boolean contains(T key) {
+        return set.contains(key);
+    }
+
+    @Override
+    public T get(T key) {
+        return set.get(key);
+    }
+
+    @Override
+    public T first() {
+        return set.first();
+    }
+
+    @Override
+    public int hashCode() {
+        return set.hashCode() + UnmodifiableObjectSet.class.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof UnmodifiableObjectSet)) return false;
+        
+        return set.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return set.toString();
+    }
+
+    @Override
+    public String toString(String separator) {
+        return set.toString(separator);
+    }
+
+    @Override
+    public ObjectSetIterator<T> iterator() {
+        return set.iterator();
+    }
+
+    @Override
+    public void shrink(int maximumCapacity) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
