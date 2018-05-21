@@ -1,4 +1,4 @@
-package com.upseil.gdx.properties;
+package com.upseil.gdx.util.properties;
 
 import java.util.Arrays;
 import java.util.HashMap;

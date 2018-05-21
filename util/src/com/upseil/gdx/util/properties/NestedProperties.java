@@ -1,4 +1,4 @@
-package com.upseil.gdx.properties;
+package com.upseil.gdx.util.properties;
 
 public interface NestedProperties<K> extends Properties<K> {
     
