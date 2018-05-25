@@ -1,5 +1,7 @@
 package com.upseil.gdx.artemis.system;
 
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.*;
+
 import java.util.function.Consumer;
 
 import com.artemis.BaseSystem;
@@ -10,7 +12,7 @@ import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.upseil.gdx.artemis.ArtemisApplicationAdapter;
-import com.upseil.gdx.artemis.config.SaveConfig;
+import com.upseil.gdx.artemis.ArtemisConfigs.SaveConfig;
 import com.upseil.gdx.serialization.Writer;
 
 public abstract class AbstractSaveSystem<T> extends BaseSystem {
@@ -41,13 +43,13 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
         this.mapper = mapper;
         this.systemAccessClipboard = systemAccessClipboard;
         
-        saveStore = Gdx.app.getPreferences(config.getSaveStoreName());
-        autoSaveSlot = config.getAutoSaveSlot();
-        autoSaveInterval = config.getAutoSaveInterval();
-        saveSlots = config.getSaveSlots();
-        slotPrefix = config.getSlotPrefix();
-        timeSuffix = config.getTimeSuffix();
-        nameSuffix = config.getNameSuffix();
+        saveStore = Gdx.app.getPreferences(config.get(SaveStoreName));
+        autoSaveSlot = config.get(AutoSaveSlot);
+        autoSaveInterval = config.getFloat(AutoSaveInterval);
+        saveSlots = config.getInt(SaveSlots);
+        slotPrefix = config.get(SlotPrefix);
+        timeSuffix = config.get(TimeSuffix);
+        nameSuffix = config.get(NameSuffix);
         
         exportCallbacks = new Array<>(4);
         slotsToSave = new ObjectSet<>();

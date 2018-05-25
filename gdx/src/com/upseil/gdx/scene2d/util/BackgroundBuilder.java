@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.upseil.gdx.config.AbstractConfig;
-import com.upseil.gdx.config.RawConfig;
+import com.badlogic.gdx.utils.JsonValue;
+import com.upseil.gdx.properties.EnumerizedJsonBasedProperties;
 
 public class BackgroundBuilder extends AbstractDrawableBuilder {
     
@@ -25,17 +25,17 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     private static String componentSeparator;
     
     public static void setConfig(Config config) {
-        textureName = config.getTextureName();
-        namePrefix = config.getNamePrefix();
+        textureName = config.get(BackgroundBuilderConfig.TextureName);
+        namePrefix = config.get(BackgroundBuilderConfig.NamePrefix);
 
-        redPrefix = config.getRedPrefix();
-        greenPrefix = config.getGreenPrefix();
-        bluePrefix = config.getBluePrefix();
+        redPrefix = config.get(BackgroundBuilderConfig.RedPrefix);
+        greenPrefix = config.get(BackgroundBuilderConfig.GreenPrefix);
+        bluePrefix = config.get(BackgroundBuilderConfig.BluePrefix);
         
-        alphaPrefix = config.getAlphaPrefix();
-        defaultAlphaBase = Colors.get(config.getDefaultAlphaBase());
+        alphaPrefix = config.get(BackgroundBuilderConfig.AlphaPrefix);
+        defaultAlphaBase = Colors.get(config.get(BackgroundBuilderConfig.DefaultAlphaBase));
         
-        componentSeparator = config.getComponentSeparator();
+        componentSeparator = config.get(BackgroundBuilderConfig.ComponentSeparator);
     }
     
     private static BackgroundBuilder instance;
@@ -196,46 +196,14 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
         return this;
     }
     
-    public static class Config extends AbstractConfig {
+    public static enum BackgroundBuilderConfig {
+        TextureName, NamePrefix, RedPrefix, GreenPrefix, BluePrefix, AlphaPrefix, DefaultAlphaBase, ComponentSeparator
+    }
+    
+    public static class Config extends EnumerizedJsonBasedProperties<BackgroundBuilderConfig> {
         
-        public Config(String path) {
-            super(path);
-        }
-
-        public Config(RawConfig rawConfig) {
-            super(rawConfig);
-        }
-        
-        public String getTextureName() {
-            return getString("textureName");
-        }
-        
-        public String getNamePrefix() {
-            return getString("namePrefix");
-        }
-        
-        public String getRedPrefix() {
-            return getString("redPrefix");
-        }
-        
-        public String getGreenPrefix() {
-            return getString("greenPrefix");
-        }
-        
-        public String getBluePrefix() {
-            return getString("bluePrefix");
-        }
-        
-        public String getAlphaPrefix() {
-            return getString("alphaPrefix");
-        }
-        
-        public String getDefaultAlphaBase() {
-            return getString("defaultAlphaBase");
-        }
-        
-        public String getComponentSeparator() {
-            return getString("componentSeparator");
+        public Config(JsonValue json) {
+            super(json, BackgroundBuilderConfig.class);
         }
         
     }

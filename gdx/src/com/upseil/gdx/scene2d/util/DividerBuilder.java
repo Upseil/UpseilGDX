@@ -2,8 +2,8 @@ package com.upseil.gdx.scene2d.util;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.upseil.gdx.config.AbstractConfig;
-import com.upseil.gdx.config.RawConfig;
+import com.badlogic.gdx.utils.JsonValue;
+import com.upseil.gdx.properties.EnumerizedJsonBasedProperties;
 
 public class DividerBuilder extends AbstractDrawableBuilder {
     
@@ -13,10 +13,10 @@ public class DividerBuilder extends AbstractDrawableBuilder {
     private static String slimSuffix = "-slim";
     
     public static void setConfig(Config config) {
-        texturePrefix = config.getTexturePrefix();
-        textureName = config.getTextureName();
-        dividerName = config.getDividerName();
-        slimSuffix = config.getSlimSuffix();
+        texturePrefix = config.get(DividerBuilderConfig.TexturePrefix);
+        textureName = config.get(DividerBuilderConfig.TextureName);
+        dividerName = config.get(DividerBuilderConfig.DividerName);
+        slimSuffix = config.get(DividerBuilderConfig.SlimSuffix);
     }
     
     private static DividerBuilder instance;
@@ -104,30 +104,14 @@ public class DividerBuilder extends AbstractDrawableBuilder {
         return this;
     }
     
-    public static class Config extends AbstractConfig {
-
-        public Config(RawConfig rawConfig) {
-            super(rawConfig);
-        }
-
-        public Config(String path) {
-            super(path);
-        }
+    public static enum DividerBuilderConfig {
+        TexturePrefix, TextureName, DividerName, SlimSuffix
+    }
+    
+    public static class Config extends EnumerizedJsonBasedProperties<DividerBuilderConfig> {
         
-        public String getTexturePrefix() {
-            return getString("texturePrefix");
-        }
-        
-        public String getTextureName() {
-            return getString("textureName");
-        }
-        
-        public String getDividerName() {
-            return getString("dividerName");
-        }
-        
-        public String getSlimSuffix() {
-            return getString("slimSuffix");
+        public Config(JsonValue json) {
+            super(json, DividerBuilderConfig.class);
         }
         
     }

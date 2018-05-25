@@ -1,9 +1,11 @@
 package com.upseil.gdx.artemis.system;
 
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.*;
+
 import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.upseil.gdx.artemis.config.SaveConfig;
+import com.upseil.gdx.artemis.ArtemisConfigs.SaveConfig;
 import com.upseil.gdx.serialization.Reader;
 
 public abstract class AbstractLoadSystem<T> extends BaseSystem {
@@ -21,10 +23,10 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
     public AbstractLoadSystem(Reader<T> mapper, SaveConfig config) {
         this.mapper = mapper;
         
-        saveStore = Gdx.app.getPreferences(config.getSaveStoreName());
-        autoSaveSlot = config.getAutoSaveSlot();
-        saveSlots = config.getSaveSlots();
-        saveSlotPrefix = config.getSlotPrefix();
+        saveStore = Gdx.app.getPreferences(config.get(SaveStoreName));
+        autoSaveSlot = config.get(AutoSaveSlot);
+        saveSlots = config.getInt(SaveSlots);
+        saveSlotPrefix = config.get(SlotPrefix);
     }
 
     @Override

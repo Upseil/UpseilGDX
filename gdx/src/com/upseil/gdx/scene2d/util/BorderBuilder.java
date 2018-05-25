@@ -3,8 +3,8 @@ package com.upseil.gdx.scene2d.util;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
-import com.upseil.gdx.config.AbstractConfig;
-import com.upseil.gdx.config.RawConfig;
+import com.badlogic.gdx.utils.JsonValue;
+import com.upseil.gdx.properties.EnumerizedJsonBasedProperties;
 
 public class BorderBuilder extends AbstractDrawableBuilder {
     
@@ -18,14 +18,14 @@ public class BorderBuilder extends AbstractDrawableBuilder {
     private static String rightSuffix;
     
     public static void setConfig(Config config) {
-        texturePrefix = config.getTexturePrefix();
-        namePrefix = config.getNamePrefix();
-        slimSuffix = config.getSlimSuffix();
+        texturePrefix = config.get(BorderBuilderConfig.TexturePrefix);
+        namePrefix = config.get(BorderBuilderConfig.NamePrefix);
+        slimSuffix = config.get(BorderBuilderConfig.SlimSuffix);
         
-        topSuffix = config.getTopSuffix();
-        leftSuffix = config.getLeftSuffix();
-        bottomSuffix = config.getBottomSuffix();
-        rightSuffix = config.getRightSuffix();
+        topSuffix = config.get(BorderBuilderConfig.TopSuffix);
+        leftSuffix = config.get(BorderBuilderConfig.LeftSuffix);
+        bottomSuffix = config.get(BorderBuilderConfig.BottomSuffix);
+        rightSuffix = config.get(BorderBuilderConfig.RightSuffix);
     }
     
     private static BorderBuilder instance;
@@ -132,42 +132,14 @@ public class BorderBuilder extends AbstractDrawableBuilder {
         return this;
     }
     
-    public static class Config extends AbstractConfig {
-
-        public Config(RawConfig rawConfig) {
-            super(rawConfig);
-        }
-
-        public Config(String path) {
-            super(path);
-        }
+    public static enum BorderBuilderConfig {
+        TexturePrefix, NamePrefix, SlimSuffix, TopSuffix, LeftSuffix, BottomSuffix, RightSuffix
+    }
+    
+    public static class Config extends EnumerizedJsonBasedProperties<BorderBuilderConfig> {
         
-        public String getTexturePrefix() {
-            return getString("texturePrefix");
-        }
-        
-        public String getNamePrefix() {
-            return getString("namePrefix");
-        }
-        
-        public String getSlimSuffix() {
-            return getString("slimSuffix");
-        }
-        
-        public String getTopSuffix() {
-            return getString("topSuffix");
-        }
-        
-        public String getLeftSuffix() {
-            return getString("leftSuffix");
-        }
-        
-        public String getBottomSuffix() {
-            return getString("bottomSuffix");
-        }
-        
-        public String getRightSuffix() {
-            return getString("rightSuffix");
+        public Config(JsonValue json) {
+            super(json, BorderBuilderConfig.class);
         }
         
     }
