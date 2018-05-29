@@ -1,6 +1,12 @@
 package com.upseil.gdx.artemis.system;
 
-import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.*;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.AutoSaveInterval;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.AutoSaveSlot;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.NameSuffix;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.SaveSlots;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.SaveStoreName;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.SlotPrefix;
+import static com.upseil.gdx.artemis.ArtemisConfigs.SaveConfigValues.TimeSuffix;
 
 import java.util.function.Consumer;
 
@@ -8,7 +14,6 @@ import com.artemis.BaseSystem;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Clipboard;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.upseil.gdx.artemis.ArtemisApplicationAdapter;
@@ -18,7 +23,6 @@ import com.upseil.gdx.serialization.Writer;
 public abstract class AbstractSaveSystem<T> extends BaseSystem {
     
     private final Writer<T> mapper;
-    private final Clipboard systemAccessClipboard;
 
     private float accumulatedDelta;
     private boolean isAutoSaving;
@@ -36,12 +40,7 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
     private final ObjectSet<String> slotsToSave;
     
     public AbstractSaveSystem(Writer<T> mapper, SaveConfig config) {
-        this(mapper, null, config);
-    }
-    
-    public AbstractSaveSystem(Writer<T> mapper, Clipboard systemAccessClipboard, SaveConfig config) {
         this.mapper = mapper;
-        this.systemAccessClipboard = systemAccessClipboard;
         
         saveStore = Gdx.app.getPreferences(config.get(SaveStoreName));
         autoSaveSlot = config.get(AutoSaveSlot);
@@ -180,13 +179,6 @@ public abstract class AbstractSaveSystem<T> extends BaseSystem {
 
     protected void onSavingFailed() { }
     protected void onSavingSucceeded() { }
-    
-    public Clipboard getSystemAccessClipboard() {
-        if (systemAccessClipboard == null) {
-            return Gdx.app.getClipboard();
-        }
-        return systemAccessClipboard;
-    }
 
     protected float getAutoSaveInterval() {
         return autoSaveInterval;
