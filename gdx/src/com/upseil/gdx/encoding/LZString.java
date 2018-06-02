@@ -27,6 +27,7 @@
  *  - Reduced the amount of auto-boxing
  *  - Removed the unused variable
  *  - Applied some improvements described in https://github.com/rufushuang/lz-string4java/pull/7
+ *  - Replaced abstract classes with functional interfaces
  */
 
 package com.upseil.gdx.encoding;
@@ -36,27 +37,22 @@ import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.ObjectIntMap;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
+import com.upseil.gdx.util.function.IntCharFunction;
 
 public class LZString {
 
     private static final char[] keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=".toCharArray();
     private static final ObjectMap<char[], IntIntMap> baseReverseDic = new ObjectMap<char[], IntIntMap>();
     
-    private static final CompressFunctionWrapper base64CompressFunctionWrapper = new CompressFunctionWrapper() {
-        @Override
-        public char doFunc(int a) {
-            return keyStrBase64[a];
-        }
-    };
+    private static final IntCharFunction base64CompressFunction = i -> keyStrBase64[i];
     
     public static String compressToBase64(String input) {
-        if (input == null)
-            return "";
-        String res = LZString._compress(input, 6, base64CompressFunctionWrapper);
-        switch (res.length() % 4) { // To produce valid Base64
-        default: // When could this happen ?
-        case 0:
-            return res;
+        if (input == null || input.isEmpty()) {
+            return null;
+        }
+        
+        String res = compress(input, 6, base64CompressFunction);
+        switch (res.length() % 4) {
         case 1:
             return res + "===";
         case 2:
@@ -64,19 +60,14 @@ public class LZString {
         case 3:
             return res + "=";
         }
+        return res;
     }
     
-    public static String decompressFromBase64(String inputStr) {
-        if (inputStr == null)
-            return "";
-        if (inputStr.isEmpty())
+    public static String decompressFromBase64(String input) {
+        if (input == null || input.isEmpty()) {
             return null;
-        return LZString._decompress(inputStr.length(), 32, new DecompressFunctionWrapper() {
-            @Override
-            public char doFunc(int index) {
-                return getBaseValue(keyStrBase64, inputStr.charAt(index));
-            }
-        });
+        }
+        return decompress(input.length(), 32, i -> getBaseValue(keyStrBase64, input.charAt(i)));
     }
 
     private static char getBaseValue(char[] alphabet, char character) {
@@ -91,235 +82,226 @@ public class LZString {
         return (char) map.get(character, -1);
     }
     
-    private static abstract class CompressFunctionWrapper {
-        public abstract char doFunc(int i);
-    }
+    private static final StringBuilder contextData = new StringBuilder();
     
-    private static final StringBuilder context_data = new StringBuilder();
-    
-    private static String _compress(String uncompressedStr, int bitsPerChar, CompressFunctionWrapper getCharFromInt) {
-        if (uncompressedStr == null) return "";
+    private static String compress(String uncompressed, int bitsPerChar, IntCharFunction compress) {
         int i, value;
-        ObjectIntMap<String> context_dictionary = new ObjectIntMap<String>();
-        ObjectSet<String> context_dictionaryToCreate = new ObjectSet<String>();
-        String context_c = "";
-        String context_wc = "";
-        String context_w = "";
-        int context_enlargeIn = 2; // Compensate for the first entry which should not count
-        int context_dictSize = 3;
-        int context_numBits = 2;
-        context_data.setLength(0);
-        context_data.ensureCapacity(uncompressedStr.length() / 3);
-        int context_data_val = 0;
-        int context_data_position = 0;
+        ObjectIntMap<String> contextDictionary = new ObjectIntMap<String>();
+        ObjectSet<String> contextDictionaryToCreate = new ObjectSet<String>();
+        String contextC = "";
+        String contextWC = "";
+        String contextW = "";
+        int contextEnlargeIn = 2; // Compensate for the first entry which should not count
+        int contextDictSize = 3;
+        int contextNumBits = 2;
+        contextData.setLength(0);
+        contextData.ensureCapacity(uncompressed.length() / 3);
+        int contextDataValue = 0;
+        int contextDataPosition = 0;
         int ii;
         
-        for (ii = 0; ii < uncompressedStr.length(); ii += 1) {
-            context_c = String.valueOf(uncompressedStr.charAt(ii));
-            if (!context_dictionary.containsKey(context_c)) {
-                context_dictionary.put(context_c, context_dictSize++);
-                context_dictionaryToCreate.add(context_c);
+        for (ii = 0; ii < uncompressed.length(); ii += 1) {
+            contextC = String.valueOf(uncompressed.charAt(ii));
+            if (!contextDictionary.containsKey(contextC)) {
+                contextDictionary.put(contextC, contextDictSize++);
+                contextDictionaryToCreate.add(contextC);
             }
 
-            context_wc = context_w + context_c;
-            if (context_dictionary.containsKey(context_wc)) {
-                context_w = context_wc;
+            contextWC = contextW + contextC;
+            if (contextDictionary.containsKey(contextWC)) {
+                contextW = contextWC;
             } else {
-                if (context_dictionaryToCreate.contains(context_w)) {
-                    if (context_w.charAt(0) < 256) {
-                        for (i = 0; i < context_numBits; i++) {
-                            context_data_val = (context_data_val << 1);
-                            if (context_data_position == bitsPerChar - 1) {
-                                context_data_position = 0;
-                                context_data.append(getCharFromInt.doFunc(context_data_val));
-                                context_data_val = 0;
+                if (contextDictionaryToCreate.contains(contextW)) {
+                    if (contextW.charAt(0) < 256) {
+                        for (i = 0; i < contextNumBits; i++) {
+                            contextDataValue = (contextDataValue << 1);
+                            if (contextDataPosition == bitsPerChar - 1) {
+                                contextDataPosition = 0;
+                                contextData.append(compress.apply(contextDataValue));
+                                contextDataValue = 0;
                             } else {
-                                context_data_position++;
+                                contextDataPosition++;
                             }
                         }
-                        value = context_w.charAt(0);
+                        value = contextW.charAt(0);
                         for (i = 0; i < 8; i++) {
-                            context_data_val = (context_data_val << 1) | (value & 1);
-                            if (context_data_position == bitsPerChar - 1) {
-                                context_data_position = 0;
-                                context_data.append(getCharFromInt.doFunc(context_data_val));
-                                context_data_val = 0;
+                            contextDataValue = (contextDataValue << 1) | (value & 1);
+                            if (contextDataPosition == bitsPerChar - 1) {
+                                contextDataPosition = 0;
+                                contextData.append(compress.apply(contextDataValue));
+                                contextDataValue = 0;
                             } else {
-                                context_data_position++;
+                                contextDataPosition++;
                             }
                             value = value >> 1;
                         }
                     } else {
                         value = 1;
-                        for (i = 0; i < context_numBits; i++) {
-                            context_data_val = (context_data_val << 1) | value;
-                            if (context_data_position == bitsPerChar - 1) {
-                                context_data_position = 0;
-                                context_data.append(getCharFromInt.doFunc(context_data_val));
-                                context_data_val = 0;
+                        for (i = 0; i < contextNumBits; i++) {
+                            contextDataValue = (contextDataValue << 1) | value;
+                            if (contextDataPosition == bitsPerChar - 1) {
+                                contextDataPosition = 0;
+                                contextData.append(compress.apply(contextDataValue));
+                                contextDataValue = 0;
                             } else {
-                                context_data_position++;
+                                contextDataPosition++;
                             }
                             value = 0;
                         }
-                        value = context_w.charAt(0);
+                        value = contextW.charAt(0);
                         for (i = 0; i < 16; i++) {
-                            context_data_val = (context_data_val << 1) | (value & 1);
-                            if (context_data_position == bitsPerChar - 1) {
-                                context_data_position = 0;
-                                context_data.append(getCharFromInt.doFunc(context_data_val));
-                                context_data_val = 0;
+                            contextDataValue = (contextDataValue << 1) | (value & 1);
+                            if (contextDataPosition == bitsPerChar - 1) {
+                                contextDataPosition = 0;
+                                contextData.append(compress.apply(contextDataValue));
+                                contextDataValue = 0;
                             } else {
-                                context_data_position++;
+                                contextDataPosition++;
                             }
                             value = value >> 1;
                         }
                     }
-                    context_enlargeIn--;
-                    if (context_enlargeIn == 0) {
-                        context_enlargeIn = powerOf2(context_numBits);
-                        context_numBits++;
+                    contextEnlargeIn--;
+                    if (contextEnlargeIn == 0) {
+                        contextEnlargeIn = powerOf2(contextNumBits);
+                        contextNumBits++;
                     }
-                    context_dictionaryToCreate.remove(context_w);
+                    contextDictionaryToCreate.remove(contextW);
                 } else {
-                    value = context_dictionary.get(context_w, -1);
-                    for (i = 0; i < context_numBits; i++) {
-                        context_data_val = (context_data_val << 1) | (value & 1);
-                        if (context_data_position == bitsPerChar - 1) {
-                            context_data_position = 0;
-                            context_data.append(getCharFromInt.doFunc(context_data_val));
-                            context_data_val = 0;
+                    value = contextDictionary.get(contextW, -1);
+                    for (i = 0; i < contextNumBits; i++) {
+                        contextDataValue = (contextDataValue << 1) | (value & 1);
+                        if (contextDataPosition == bitsPerChar - 1) {
+                            contextDataPosition = 0;
+                            contextData.append(compress.apply(contextDataValue));
+                            contextDataValue = 0;
                         } else {
-                            context_data_position++;
+                            contextDataPosition++;
                         }
                         value = value >> 1;
                     }
 
                 }
-                context_enlargeIn--;
-                if (context_enlargeIn == 0) {
-                    context_enlargeIn = powerOf2(context_numBits);
-                    context_numBits++;
+                contextEnlargeIn--;
+                if (contextEnlargeIn == 0) {
+                    contextEnlargeIn = powerOf2(contextNumBits);
+                    contextNumBits++;
                 }
                 // Add wc to the dictionary.
-                context_dictionary.put(context_wc, context_dictSize++);
-                context_w = context_c;
+                contextDictionary.put(contextWC, contextDictSize++);
+                contextW = contextC;
             }
         }
         
         // Output the code for w.
-        if (!context_w.isEmpty()) {
-            if (context_dictionaryToCreate.contains(context_w)) {
-                if (context_w.charAt(0) < 256) {
-                    for (i = 0; i < context_numBits; i++) {
-                        context_data_val = (context_data_val << 1);
-                        if (context_data_position == bitsPerChar - 1) {
-                            context_data_position = 0;
-                            context_data.append(getCharFromInt.doFunc(context_data_val));
-                            context_data_val = 0;
+        if (!contextW.isEmpty()) {
+            if (contextDictionaryToCreate.contains(contextW)) {
+                if (contextW.charAt(0) < 256) {
+                    for (i = 0; i < contextNumBits; i++) {
+                        contextDataValue = (contextDataValue << 1);
+                        if (contextDataPosition == bitsPerChar - 1) {
+                            contextDataPosition = 0;
+                            contextData.append(compress.apply(contextDataValue));
+                            contextDataValue = 0;
                         } else {
-                            context_data_position++;
+                            contextDataPosition++;
                         }
                     }
-                    value = context_w.charAt(0);
+                    value = contextW.charAt(0);
                     for (i = 0; i < 8; i++) {
-                        context_data_val = (context_data_val << 1) | (value & 1);
-                        if (context_data_position == bitsPerChar - 1) {
-                            context_data_position = 0;
-                            context_data.append(getCharFromInt.doFunc(context_data_val));
-                            context_data_val = 0;
+                        contextDataValue = (contextDataValue << 1) | (value & 1);
+                        if (contextDataPosition == bitsPerChar - 1) {
+                            contextDataPosition = 0;
+                            contextData.append(compress.apply(contextDataValue));
+                            contextDataValue = 0;
                         } else {
-                            context_data_position++;
+                            contextDataPosition++;
                         }
                         value = value >> 1;
                     }
                 } else {
                     value = 1;
-                    for (i = 0; i < context_numBits; i++) {
-                        context_data_val = (context_data_val << 1) | value;
-                        if (context_data_position == bitsPerChar - 1) {
-                            context_data_position = 0;
-                            context_data.append(getCharFromInt.doFunc(context_data_val));
-                            context_data_val = 0;
+                    for (i = 0; i < contextNumBits; i++) {
+                        contextDataValue = (contextDataValue << 1) | value;
+                        if (contextDataPosition == bitsPerChar - 1) {
+                            contextDataPosition = 0;
+                            contextData.append(compress.apply(contextDataValue));
+                            contextDataValue = 0;
                         } else {
-                            context_data_position++;
+                            contextDataPosition++;
                         }
                         value = 0;
                     }
-                    value = context_w.charAt(0);
+                    value = contextW.charAt(0);
                     for (i = 0; i < 16; i++) {
-                        context_data_val = (context_data_val << 1) | (value & 1);
-                        if (context_data_position == bitsPerChar - 1) {
-                            context_data_position = 0;
-                            context_data.append(getCharFromInt.doFunc(context_data_val));
-                            context_data_val = 0;
+                        contextDataValue = (contextDataValue << 1) | (value & 1);
+                        if (contextDataPosition == bitsPerChar - 1) {
+                            contextDataPosition = 0;
+                            contextData.append(compress.apply(contextDataValue));
+                            contextDataValue = 0;
                         } else {
-                            context_data_position++;
+                            contextDataPosition++;
                         }
                         value = value >> 1;
                     }
                 }
-                context_enlargeIn--;
-                if (context_enlargeIn == 0) {
-                    context_enlargeIn = powerOf2(context_numBits);
-                    context_numBits++;
+                contextEnlargeIn--;
+                if (contextEnlargeIn == 0) {
+                    contextEnlargeIn = powerOf2(contextNumBits);
+                    contextNumBits++;
                 }
-                context_dictionaryToCreate.remove(context_w);
+                contextDictionaryToCreate.remove(contextW);
             } else {
-                value = context_dictionary.get(context_w, -1);
-                for (i = 0; i < context_numBits; i++) {
-                    context_data_val = (context_data_val << 1) | (value & 1);
-                    if (context_data_position == bitsPerChar - 1) {
-                        context_data_position = 0;
-                        context_data.append(getCharFromInt.doFunc(context_data_val));
-                        context_data_val = 0;
+                value = contextDictionary.get(contextW, -1);
+                for (i = 0; i < contextNumBits; i++) {
+                    contextDataValue = (contextDataValue << 1) | (value & 1);
+                    if (contextDataPosition == bitsPerChar - 1) {
+                        contextDataPosition = 0;
+                        contextData.append(compress.apply(contextDataValue));
+                        contextDataValue = 0;
                     } else {
-                        context_data_position++;
+                        contextDataPosition++;
                     }
                     value = value >> 1;
                 }
 
             }
-            context_enlargeIn--;
-            if (context_enlargeIn == 0) {
-                context_enlargeIn = powerOf2(context_numBits);
-                context_numBits++;
+            contextEnlargeIn--;
+            if (contextEnlargeIn == 0) {
+                contextEnlargeIn = powerOf2(contextNumBits);
+                contextNumBits++;
             }
         }
 
         // Mark the end of the stream
         value = 2;
-        for (i = 0; i < context_numBits; i++) {
-            context_data_val = (context_data_val << 1) | (value & 1);
-            if (context_data_position == bitsPerChar - 1) {
-                context_data_position = 0;
-                context_data.append(getCharFromInt.doFunc(context_data_val));
-                context_data_val = 0;
+        for (i = 0; i < contextNumBits; i++) {
+            contextDataValue = (contextDataValue << 1) | (value & 1);
+            if (contextDataPosition == bitsPerChar - 1) {
+                contextDataPosition = 0;
+                contextData.append(compress.apply(contextDataValue));
+                contextDataValue = 0;
             } else {
-                context_data_position++;
+                contextDataPosition++;
             }
             value = value >> 1;
         }
 
         // Flush the last char
         while (true) {
-            context_data_val = (context_data_val << 1);
-            if (context_data_position == bitsPerChar - 1) {
-                context_data.append(getCharFromInt.doFunc(context_data_val));
+            contextDataValue = (contextDataValue << 1);
+            if (contextDataPosition == bitsPerChar - 1) {
+                contextData.append(compress.apply(contextDataValue));
                 break;
             }
             else
-                context_data_position++;
+                contextDataPosition++;
         }
 
-        return context_data.toString();
+        return contextData.toString();
     }
     
-    private static abstract class DecompressFunctionWrapper {
-        public abstract char doFunc(int i);
-    }
-    
-    private static class DecData {
+    private static class DecompressData {
         public char val;
         public int position;
         public int index;       
@@ -327,7 +309,7 @@ public class LZString {
     
     private static final StringBuilder result = new StringBuilder();
 
-    private static String _decompress(int length, int resetValue, DecompressFunctionWrapper getNextValue) {
+    private static String decompress(int length, int resetValue, IntCharFunction decompress) {
         Array<String> dictionary = new Array<String>();
         int enlargeIn = 4;
         int dictSize = 4;
@@ -335,10 +317,9 @@ public class LZString {
         String entry = "";
         result.setLength(0);
         String w;
-        int bits, resb; int maxpower, power;
         String c = null;
-        DecData data = new DecData();
-        data.val = getNextValue.doFunc(0);
+        DecompressData data = new DecompressData();
+        data.val = decompress.apply(0);
         data.position = resetValue;
         data.index = 1;
         
@@ -346,15 +327,16 @@ public class LZString {
             dictionary.insert(i, f(i));
         }
         
-        bits = 0;
-        maxpower = powerOf2(2);
-        power = 1;
+        int bits = 0;
+        int resb = 0;
+        int maxpower = powerOf2(2);
+        int power = 1;
         while (power != maxpower) {
             resb = data.val & data.position;
             data.position >>= 1;
             if (data.position == 0) {
                 data.position = resetValue;
-                data.val = getNextValue.doFunc(data.index++);
+                data.val = decompress.apply(data.index++);
             }
             bits |= (resb > 0 ? 1 : 0) * power;
             power <<= 1;
@@ -370,7 +352,7 @@ public class LZString {
                 data.position >>= 1;
                 if (data.position == 0) {
                   data.position = resetValue;
-                  data.val = getNextValue.doFunc(data.index++);
+                  data.val = decompress.apply(data.index++);
                 }
                 bits |= (resb>0 ? 1 : 0) * power;
                 power <<= 1;
@@ -386,7 +368,7 @@ public class LZString {
                 data.position >>= 1;
                 if (data.position == 0) {
                   data.position = resetValue;
-                  data.val = getNextValue.doFunc(data.index++);
+                  data.val = decompress.apply(data.index++);
                 }
                 bits |= (resb>0 ? 1 : 0) * power;
                 power <<= 1;
@@ -412,7 +394,7 @@ public class LZString {
               data.position >>= 1;
               if (data.position == 0) {
                 data.position = resetValue;
-                data.val = getNextValue.doFunc(data.index++);
+                data.val = decompress.apply(data.index++);
               }
               bits |= (resb>0 ? 1 : 0) * power;
               power <<= 1;
@@ -429,7 +411,7 @@ public class LZString {
                   data.position >>= 1;
                   if (data.position == 0) {
                     data.position = resetValue;
-                    data.val = getNextValue.doFunc(data.index++);
+                    data.val = decompress.apply(data.index++);
                   }
                   bits |= (resb>0 ? 1 : 0) * power;
                   power <<= 1;
@@ -448,7 +430,7 @@ public class LZString {
                   data.position >>= 1;
                   if (data.position == 0) {
                     data.position = resetValue;
-                    data.val = getNextValue.doFunc(data.index++);
+                    data.val = decompress.apply(data.index++);
                   }
                   bits |= (resb>0 ? 1 : 0) * power;
                   power <<= 1;
@@ -490,7 +472,7 @@ public class LZString {
         }
     }
 
-    public static String f(int i) {
+    private static String f(int i) {
         return String.valueOf((char) i);
     }
     
