@@ -1,13 +1,11 @@
 package com.upseil.gdx.testbed;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.upseil.gdx.scene2d.util.TextColor;
 
@@ -35,8 +33,7 @@ public class WrapColorMarkupTestbed extends TestbedApplication {
         container.setFillParent(true);
         container.pad(10);
         
-        FileHandle fontFile = Gdx.files.internal("arial-15.fnt");
-        font = new BitmapFont(fontFile);
+        font = new BitmapFont();
         font.getData().markupEnabled = true;
         
         LabelStyle labelStyle = new LabelStyle(font, Color.WHITE);
