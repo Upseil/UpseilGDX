@@ -26,16 +26,20 @@ public abstract class DelegateAction<S, A extends Action<S, A>, T extends Delega
     public void setAction(A action) {
         this.action = action;
     }
+    
+    @Override
+    public S getState() {
+        return action != null ? action.getState() : null; 
+    }
 
     @Override
     public void setState(S state) {
         if (action != null) action.setState(state);
-        super.setState(state);
     }
-
+    
     @Override
     public void restart() {
-        if (getState() != null) action.restart();
+        if (action != null) action.restart();
     }
     
     @Override

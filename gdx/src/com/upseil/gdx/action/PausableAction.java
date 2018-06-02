@@ -2,7 +2,7 @@ package com.upseil.gdx.action;
 
 public class PausableAction<S, A extends Action<S, A>> extends DelegateAction<S, A, PausableAction<S, A>> {
     
-    private boolean isActive;
+    private boolean isActive = true;
     
     @Override
     public boolean delegate(float deltaTime) {
