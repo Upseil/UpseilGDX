@@ -5,6 +5,8 @@ import com.upseil.gdx.util.FloatFloatPair;
 
 public class ScreenRatioDivider implements ScreenDivider {
     
+    private static final char RatioSeparator = ':';
+    
     private float ratio; // width / height
     
     public ScreenRatioDivider(String ratio) {
@@ -34,7 +36,7 @@ public class ScreenRatioDivider implements ScreenDivider {
     }
     
     private static FloatFloatPair parseToRatio(String ratio) {
-        int separatorIndex = ratio.indexOf(':');
+        int separatorIndex = ratio.indexOf(RatioSeparator);
         boolean isRatioValid = separatorIndex > 0;
         Throwable error = null;
         
