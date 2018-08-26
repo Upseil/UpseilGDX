@@ -62,13 +62,14 @@ public abstract class AbstractLoadSystem<T> extends BaseSystem {
 
     @Override
     protected void processSystem() {
-    	T savegame = mapper.read(dataToLoad);
-        if (savegame == null) {
-            onLoadingFailed();
-        } else {
-            loadGame(savegame);
+    	if (dataToLoad != null && !dataToLoad.isEmpty()) {
+            T savegame = mapper.read(dataToLoad);
+            if (savegame == null) {
+                onLoadingFailed();
+            } else {
+                loadGame(savegame);
+            } 
         }
-        
         dataToLoad = null;
         isScheduled = false;
     }

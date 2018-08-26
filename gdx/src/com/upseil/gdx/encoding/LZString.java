@@ -48,7 +48,7 @@ public class LZString {
     
     public static String compressToBase64(String input) {
         if (input == null || input.isEmpty()) {
-            return null;
+            return input;
         }
         
         String res = compress(input, 6, base64CompressFunction);
@@ -65,7 +65,7 @@ public class LZString {
     
     public static String decompressFromBase64(String input) {
         if (input == null || input.isEmpty()) {
-            return null;
+            return input;
         }
         return decompress(input.length(), 32, i -> getBaseValue(keyStrBase64, input.charAt(i)));
     }
