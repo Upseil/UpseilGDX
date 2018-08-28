@@ -18,22 +18,6 @@ public class CompoundDrawable implements Drawable {
             adjustValues(drawable);
         }
     }
-    
-    private void adjustValues(Drawable drawable) {
-        float leftWidth = drawable.getLeftWidth();
-        float rightWidth = drawable.getRightWidth();
-        float topHeight = drawable.getTopHeight();
-        float bottomHeight = drawable.getBottomHeight();
-        float minWidth = drawable.getMinWidth();
-        float minHeight = drawable.getMinHeight();
-
-        if (leftWidth > this.leftWidth) this.leftWidth = leftWidth;
-        if (rightWidth > this.rightWidth) this.rightWidth = rightWidth;
-        if (topHeight > this.topHeight) this.topHeight = topHeight;
-        if (bottomHeight > this.bottomHeight) this.bottomHeight = bottomHeight;
-        if (minWidth > this.minWidth) this.minWidth = minWidth;
-        if (minHeight > this.minHeight) this.minHeight = minHeight;
-    }
 
     public CompoundDrawable(Array<Drawable> drawables) {
         this.drawables = drawables;
@@ -152,6 +136,22 @@ public class CompoundDrawable implements Drawable {
             adjustValues(drawable);
         }
         valuesInvalid = false;
+    }
+    
+    private void adjustValues(Drawable drawable) {
+        float leftWidth = drawable.getLeftWidth();
+        float rightWidth = drawable.getRightWidth();
+        float topHeight = drawable.getTopHeight();
+        float bottomHeight = drawable.getBottomHeight();
+        float minWidth = drawable.getMinWidth();
+        float minHeight = drawable.getMinHeight();
+
+        if (leftWidth > this.leftWidth) this.leftWidth = leftWidth;
+        if (rightWidth > this.rightWidth) this.rightWidth = rightWidth;
+        if (topHeight > this.topHeight) this.topHeight = topHeight;
+        if (bottomHeight > this.bottomHeight) this.bottomHeight = bottomHeight;
+        if (minWidth > this.minWidth) this.minWidth = minWidth;
+        if (minHeight > this.minHeight) this.minHeight = minHeight;
     }
 
     @Override
