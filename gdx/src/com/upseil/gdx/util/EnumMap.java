@@ -6,20 +6,20 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 public class EnumMap<K extends Enum<K>, V> {
     
     private final Class<K> keyType;
-    private final K[] keyUniverse;
+    private final Object[] keyUniverse;
     
     private final Object[] values;
     private int size;
     
     public EnumMap(Class<K> keyType) {
         this.keyType = keyType;
-        keyUniverse = getKeyUniverse(keyType);
+        keyUniverse = ClassReflection.getEnumConstants(keyType);
         values = new Object[keyUniverse.length];
     }
 
     public EnumMap(EnumMap<K, V> source) {
         keyType = source.keyType;
-        keyUniverse = getKeyUniverse(keyType);
+        keyUniverse = ClassReflection.getEnumConstants(keyType);
         values = new Object[keyUniverse.length];
         putAll(source);
     }
@@ -106,11 +106,13 @@ public class EnumMap<K extends Enum<K>, V> {
     public String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName()).append("[");
         boolean first = true;
-        for (K key : keyUniverse) {
+        for (Object key : keyUniverse) {
             if (!first) {
                 builder.append(", ");
             }
-            builder.append(key).append("=").append(get(key));
+            @SuppressWarnings("unchecked")
+            K typedKey = (K) key;
+            builder.append(key).append("=").append(get(typedKey));
             first = false;
         }
         builder.append("]");
@@ -149,11 +151,6 @@ public class EnumMap<K extends Enum<K>, V> {
             }
         }
         return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <K extends Enum<K>> K[] getKeyUniverse(Class<K> keyType) {
-        return (K[]) ClassReflection.getEnumConstants(keyType);
     }
 
     private static final Object NULL = new Object() {
