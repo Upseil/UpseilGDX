@@ -1,31 +1,21 @@
 package com.upseil.gdx.util;
 
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-
 // TODO Implement Iterable, Tests
-public class EnumFloatMap<K extends Enum<K>> {
-    
-    private final Class<K> keyType;
-    private final K[] keyUniverse;
+public class EnumFloatMap<K extends Enum<K>> extends AbstractEnumMap<K> {
     
     private final boolean[] contains;
     private final float[] values;
     private int size;
     
-    public EnumFloatMap(Class<K> keyType) {
-        this.keyType = keyType;
-        keyUniverse = getKeyUniverse(keyType);
-        contains = new boolean[keyUniverse.length];
-        values = new float[keyUniverse.length];
-    }
-
     public EnumFloatMap(EnumFloatMap<K> source) {
-        keyType = source.keyType;
-        keyUniverse = getKeyUniverse(keyType);
-        contains = new boolean[keyUniverse.length];
-
-        values = new float[keyUniverse.length];
+        this(source.getKeyType());
         putAll(source);
+    }
+    
+    public EnumFloatMap(Class<K> keyType) {
+        super(keyType);
+        contains = new boolean[keyUniverseSize()];
+        values = new float[keyUniverseSize()];
     }
     
     public boolean containsKey(K key) {
@@ -33,16 +23,12 @@ public class EnumFloatMap<K extends Enum<K>> {
     }
     
     public boolean containsValue(float value) {
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index] && values[index] == value) {
                 return true;
             }
         }
         return false;
-    }
-    
-    public Class<K> getKeyType() {
-        return keyType;
     }
     
     public float get(K key) {
@@ -71,7 +57,6 @@ public class EnumFloatMap<K extends Enum<K>> {
         put(key, get(key) - by);
     }
 
-    // TODO Return old value?
     public void put(K key, float value) {
         int index = key.ordinal();
         if (!contains[index]) size++;
@@ -80,9 +65,9 @@ public class EnumFloatMap<K extends Enum<K>> {
     }
     
     public void putAll(EnumFloatMap<K> map) {
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (map.contains[index]) {
-                put(keyUniverse[index], map.values[index]);
+                put(getKeyFromUniverse(index), map.values[index]);
             }
         }
     }
@@ -103,10 +88,8 @@ public class EnumFloatMap<K extends Enum<K>> {
     }
     
     public void clear() {
-        for (int index = 0; index < keyUniverse.length; index++) {
-            contains[index] = false;
-            values[index] = 0;
-        }
+        GDXArrays.clear(contains);
+        GDXArrays.clear(values);
         size = 0;
     }
     
@@ -122,10 +105,11 @@ public class EnumFloatMap<K extends Enum<K>> {
     public String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName()).append("[");
         boolean first = true;
-        for (K key : keyUniverse) {
+        for (int i = 0; i < keyUniverseSize(); i++) {
             if (!first) {
                 builder.append(", ");
             }
+            K key = getKeyFromUniverse(i);
             builder.append(key).append("=").append(get(key));
             first = false;
         }
@@ -136,9 +120,9 @@ public class EnumFloatMap<K extends Enum<K>> {
     @Override
     public int hashCode() {
         int result = 0;
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index]) {
-                result += (keyUniverse[index].hashCode() ^ Float.hashCode(values[index]));
+                result += (getKeyFromUniverse(index).hashCode() ^ Float.hashCode(values[index]));
             }
         }
         return result;
@@ -154,21 +138,16 @@ public class EnumFloatMap<K extends Enum<K>> {
             return false;
         
         EnumFloatMap<?> other = (EnumFloatMap<?>) obj;
-        if (keyType != other.keyType)
+        if (getKeyType() != other.getKeyType())
             return size == 0 && other.size == 0;
 
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index] != other.contains[index] ||
                 (contains[index] && values[index] != other.values[index])) {
                 return false;
             }
         }
         return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <K extends Enum<K>> K[] getKeyUniverse(Class<K> keyType) {
-        return (K[]) ClassReflection.getEnumConstants(keyType);
     }
     
 }

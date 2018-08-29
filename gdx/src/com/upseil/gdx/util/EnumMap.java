@@ -1,27 +1,19 @@
 package com.upseil.gdx.util;
 
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-
 // TODO Implement Map<K, V>, Tests
-public class EnumMap<K extends Enum<K>, V> {
-    
-    private final Class<K> keyType;
-    private final Object[] keyUniverse;
+public class EnumMap<K extends Enum<K>, V> extends AbstractEnumMap<K> {
     
     private final Object[] values;
     private int size;
-    
-    public EnumMap(Class<K> keyType) {
-        this.keyType = keyType;
-        keyUniverse = ClassReflection.getEnumConstants(keyType);
-        values = new Object[keyUniverse.length];
-    }
 
     public EnumMap(EnumMap<K, V> source) {
-        keyType = source.keyType;
-        keyUniverse = ClassReflection.getEnumConstants(keyType);
-        values = new Object[keyUniverse.length];
+        this(source.getKeyType());
         putAll(source);
+    }
+    
+    public EnumMap(Class<K> keyType) {
+        super(keyType);
+        values = new Object[keyUniverseSize()];
     }
     
     public boolean containsKey(K key) {
@@ -36,23 +28,19 @@ public class EnumMap<K extends Enum<K>, V> {
         Object maskedValue = maskNull(value);
 
         if (identity) {
-            for (int index = 0; index < keyUniverse.length; index++) {
+            for (int index = 0; index < keyUniverseSize(); index++) {
                 if (values[index] == maskedValue) {
                     return true;
                 }
             }
         } else {
-            for (int index = 0; index < keyUniverse.length; index++) {
+            for (int index = 0; index < keyUniverseSize(); index++) {
                 if (maskedValue.equals(values[index])) {
                     return true;
                 }
             }
         }
         return false;
-    }
-    
-    public Class<K> getKeyType() {
-        return keyType;
     }
     
     public V get(K key) {
@@ -70,7 +58,7 @@ public class EnumMap<K extends Enum<K>, V> {
     public void putAll(EnumMap<K, V> map) {
         if (map.size == 0) return;
         
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             Object mapValue = map.values[index];
             if (mapValue != null) {
                 if (values[index] == null) size++;
@@ -88,9 +76,7 @@ public class EnumMap<K extends Enum<K>, V> {
     }
     
     public void clear() {
-        for (int index = 0; index < keyUniverse.length; index++) {
-            values[index] = null;
-        }
+        GDXArrays.clear(values);
         size = 0;
     }
     
@@ -106,13 +92,12 @@ public class EnumMap<K extends Enum<K>, V> {
     public String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName()).append("[");
         boolean first = true;
-        for (Object key : keyUniverse) {
+        for (int i = 0; i < keyUniverseSize(); i++) {
             if (!first) {
                 builder.append(", ");
             }
-            @SuppressWarnings("unchecked")
-            K typedKey = (K) key;
-            builder.append(key).append("=").append(get(typedKey));
+            K key = getKeyFromUniverse(i);
+            builder.append(key).append("=").append(get(key));
             first = false;
         }
         builder.append("]");
@@ -122,9 +107,9 @@ public class EnumMap<K extends Enum<K>, V> {
     @Override
     public int hashCode() {
         int result = 0;
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (values[index] != null) {
-                result += (keyUniverse[index].hashCode() ^ values[index].hashCode());
+                result += (getKeyFromUniverse(index).hashCode() ^ values[index].hashCode());
             }
         }
         return result;
@@ -140,10 +125,10 @@ public class EnumMap<K extends Enum<K>, V> {
             return false;
         
         EnumMap<?, ?> other = (EnumMap<?, ?>) obj;
-        if (keyType != other.keyType)
+        if (getKeyType() != other.getKeyType())
             return size == 0 && other.size == 0;
 
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             Object value = values[index];
             Object otherValue = other.values[index];
             if (value != otherValue && (otherValue != null && !value.equals(otherValue))) {

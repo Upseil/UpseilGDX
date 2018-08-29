@@ -147,6 +147,22 @@ public class GDXArrays {
         fill(array, null);
     }
     
+    public static void clear(boolean[] array) {
+        fill(array, false);
+    }
+    
+    public static void clear(int[] array) {
+        fill(array, 0);
+    }
+    
+    public static void clear(float[] array) {
+        fill(array, 0);
+    }
+    
+    public static void clear(double[] array) {
+        fill(array, 0);
+    }
+    
     public static <T> void clear(T[][] table) {
         fill(table, null);
     }
@@ -154,6 +170,22 @@ public class GDXArrays {
     // Filling ------------------------------------------------------------------------------------
     
     public static <T> void fill(T[] array, T value) {
+        Arrays.fill(array, value);
+    }
+    
+    public static void fill(boolean[] array, boolean value) {
+        Arrays.fill(array, value);
+    }
+    
+    public static void fill(int[] array, int value) {
+        Arrays.fill(array, value);
+    }
+    
+    public static void fill(float[] array, float value) {
+        Arrays.fill(array, value);
+    }
+    
+    public static void fill(double[] array, double value) {
         Arrays.fill(array, value);
     }
     

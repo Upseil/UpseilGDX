@@ -1,31 +1,21 @@
 package com.upseil.gdx.util;
 
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-
 // TODO Implement Iterable, Tests
-public class EnumDoubleMap<K extends Enum<K>> {
-    
-    private final Class<K> keyType;
-    private final K[] keyUniverse;
+public class EnumDoubleMap<K extends Enum<K>> extends AbstractEnumMap<K> {
     
     private final boolean[] contains;
     private final double[] values;
     private int size;
     
-    public EnumDoubleMap(Class<K> keyType) {
-        this.keyType = keyType;
-        keyUniverse = getKeyUniverse(keyType);
-        contains = new boolean[keyUniverse.length];
-        values = new double[keyUniverse.length];
-    }
-
     public EnumDoubleMap(EnumDoubleMap<K> source) {
-        keyType = source.keyType;
-        keyUniverse = getKeyUniverse(keyType);
-        contains = new boolean[keyUniverse.length];
-
-        values = new double[keyUniverse.length];
+        this(source.getKeyType());
         putAll(source);
+    }
+    
+    public EnumDoubleMap(Class<K> keyType) {
+        super(keyType);
+        contains = new boolean[keyUniverseSize()];
+        values = new double[keyUniverseSize()];
     }
     
     public boolean containsKey(K key) {
@@ -33,24 +23,12 @@ public class EnumDoubleMap<K extends Enum<K>> {
     }
     
     public boolean containsValue(double value) {
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index] && values[index] == value) {
                 return true;
             }
         }
         return false;
-    }
-    
-    public Class<K> getKeyType() {
-        return keyType;
-    }
-
-    public float getAsFloat(K key) {
-        return (float) get(key, 0);
-    }
-
-    public float getAsFloat(K key, float defaultValue) {
-        return (float) get(key, defaultValue);
     }
     
     public double get(K key) {
@@ -79,7 +57,6 @@ public class EnumDoubleMap<K extends Enum<K>> {
         put(key, get(key) - by);
     }
 
-    // TODO Return old value?
     public void put(K key, double value) {
         int index = key.ordinal();
         if (!contains[index]) size++;
@@ -88,9 +65,9 @@ public class EnumDoubleMap<K extends Enum<K>> {
     }
     
     public void putAll(EnumDoubleMap<K> map) {
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (map.contains[index]) {
-                put(keyUniverse[index], map.values[index]);
+                put(getKeyFromUniverse(index), map.values[index]);
             }
         }
     }
@@ -111,10 +88,8 @@ public class EnumDoubleMap<K extends Enum<K>> {
     }
     
     public void clear() {
-        for (int index = 0; index < keyUniverse.length; index++) {
-            contains[index] = false;
-            values[index] = 0;
-        }
+        GDXArrays.clear(contains);
+        GDXArrays.clear(values);
         size = 0;
     }
     
@@ -130,10 +105,11 @@ public class EnumDoubleMap<K extends Enum<K>> {
     public String toString() {
         StringBuilder builder = new StringBuilder(getClass().getSimpleName()).append("[");
         boolean first = true;
-        for (K key : keyUniverse) {
+        for (int i = 0; i < keyUniverseSize(); i++) {
             if (!first) {
                 builder.append(", ");
             }
+            K key = getKeyFromUniverse(i);
             builder.append(key).append("=").append(get(key));
             first = false;
         }
@@ -144,9 +120,9 @@ public class EnumDoubleMap<K extends Enum<K>> {
     @Override
     public int hashCode() {
         int result = 0;
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index]) {
-                result += (keyUniverse[index].hashCode() ^ Double.hashCode(values[index]));
+                result += (getKeyFromUniverse(index).hashCode() ^ Double.hashCode(values[index]));
             }
         }
         return result;
@@ -162,21 +138,16 @@ public class EnumDoubleMap<K extends Enum<K>> {
             return false;
         
         EnumDoubleMap<?> other = (EnumDoubleMap<?>) obj;
-        if (keyType != other.keyType)
+        if (getKeyType() != other.getKeyType())
             return size == 0 && other.size == 0;
 
-        for (int index = 0; index < keyUniverse.length; index++) {
+        for (int index = 0; index < keyUniverseSize(); index++) {
             if (contains[index] != other.contains[index] ||
                 (contains[index] && values[index] != other.values[index])) {
                 return false;
             }
         }
         return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <K extends Enum<K>> K[] getKeyUniverse(Class<K> keyType) {
-        return (K[]) ClassReflection.getEnumConstants(keyType);
     }
     
 }
