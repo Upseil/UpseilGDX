@@ -8,6 +8,8 @@ public interface Properties<K> {
     
     // ----- Factory Methods ------------------------------------------------------------------------------------------------------------------------
     
+    // TODO Strict parameter
+    
     static Properties<String> fromPropertiesText(String text) {
         return fromPropertiesLines(Arrays.asList(text.split("\\n")));
     }
