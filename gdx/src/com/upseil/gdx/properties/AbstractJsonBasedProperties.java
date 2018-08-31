@@ -4,15 +4,20 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import com.badlogic.gdx.utils.JsonValue;
-import com.upseil.gdx.util.properties.Properties;
+import com.upseil.gdx.util.properties.AbstractProperties;
 
-public abstract class AbstractJsonBasedProperties<K> implements Properties<K> {
+public abstract class AbstractJsonBasedProperties<K> extends AbstractProperties<K> {
     
     protected final JsonValue json;
     
     private Collection<K> keys;
     
     public AbstractJsonBasedProperties(JsonValue json) {
+        this(json, false);
+    }
+    
+    public AbstractJsonBasedProperties(JsonValue json, boolean strict) {
+        super(strict);
         this.json = json;
     }
 

@@ -139,7 +139,7 @@ public class BorderBuilder extends AbstractDrawableBuilder {
     public static class Config extends EnumerizedJsonBasedProperties<BorderBuilderConfig> {
         
         public Config(JsonValue json) {
-            super(json, BorderBuilderConfig.class);
+            super(json, true, BorderBuilderConfig.class);
         }
         
     }

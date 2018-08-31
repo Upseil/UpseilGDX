@@ -8,6 +8,10 @@ public class JsonBasedProperties extends AbstractJsonBasedProperties<String> {
         super(json);
     }
 
+    public JsonBasedProperties(JsonValue json, boolean strict) {
+        super(json, strict);
+    }
+
     @Override
     protected String keyToString(String key) {
         return key;

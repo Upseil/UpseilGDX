@@ -10,7 +10,11 @@ public abstract class EnumerizedJsonBasedProperties<E extends Enum<E>> extends A
     private final Map<String, E> keyUniverse;
 
     public EnumerizedJsonBasedProperties(JsonValue json, Class<E> keyType) {
-        super(json);
+        this(json, false, keyType);
+    }
+
+    public EnumerizedJsonBasedProperties(JsonValue json, boolean strict, Class<E> keyType) {
+        super(json, strict);
         keyUniverse = new HashMap<>();
         for (E key : keyType.getEnumConstants()) {
             keyUniverse.put(keyToString(key).toLowerCase(), key);

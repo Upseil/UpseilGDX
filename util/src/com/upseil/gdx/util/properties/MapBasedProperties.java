@@ -3,11 +3,16 @@ package com.upseil.gdx.util.properties;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapBasedProperties<K> implements ModifiableProperties<K> {
+public class MapBasedProperties<K> extends AbstractProperties<K> implements ModifiableProperties<K> {
     
     private final Map<K, String> map;
     
     public MapBasedProperties() {
+        this(false);
+    }
+    
+    public MapBasedProperties(boolean strict) {
+        super(strict);
         map = new HashMap<>();
     }
     

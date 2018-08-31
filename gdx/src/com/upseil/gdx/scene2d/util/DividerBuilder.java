@@ -111,7 +111,7 @@ public class DividerBuilder extends AbstractDrawableBuilder {
     public static class Config extends EnumerizedJsonBasedProperties<DividerBuilderConfig> {
         
         public Config(JsonValue json) {
-            super(json, DividerBuilderConfig.class);
+            super(json, true, DividerBuilderConfig.class);
         }
         
     }

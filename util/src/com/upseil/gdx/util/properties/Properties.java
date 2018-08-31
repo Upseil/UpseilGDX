@@ -58,16 +58,23 @@ public interface Properties<K> {
     // ----- Methods --------------------------------------------------------------------------------------------------------------------------------
 
     boolean contains(K key);
+    boolean isStrict();
     Iterable<K> keys();
     
     String get(K key, String defaultValue);
     default String get(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return get(key, null);
     }
     
     // ----- Type Specific Getters ------------------------------------------------------------------------------------------------------------------
     
     default int getInt(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getInt(key, 0);
     }
     default int getInt(K key, int defaultValue) {
@@ -83,7 +90,10 @@ public interface Properties<K> {
         }
     }
     
-    default long getLont(K key) {
+    default long getLong(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getLong(key, 0);
     }
     default long getLong(K key, long defaultValue) {
@@ -100,6 +110,9 @@ public interface Properties<K> {
     }
     
     default float getFloat(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getFloat(key, 0);
     }
     default float getFloat(K key, float defaultValue) {
@@ -116,6 +129,9 @@ public interface Properties<K> {
     }
     
     default double getDouble(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getDouble(key, 0);
     }
     default double getDouble(K key, double defaultValue) {
@@ -132,6 +148,9 @@ public interface Properties<K> {
     }
     
     default boolean getBoolean(K key) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getBoolean(key, false);
     }
     default boolean getBoolean(K key, boolean defaultValue) {
@@ -144,6 +163,9 @@ public interface Properties<K> {
     }
     
     default <E extends Enum<E>> E getEnum(K key, Class<E> type) {
+        if (isStrict() && !contains(key)) {
+            throw new IllegalArgumentException("Element for key not found: " + key);
+        }
         return getEnum(key, type, null);
     }
     default <E extends Enum<E>> E getEnum(K key, Class<E> type, E defaultValue) {

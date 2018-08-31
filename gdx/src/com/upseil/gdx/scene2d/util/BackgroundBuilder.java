@@ -203,7 +203,7 @@ public class BackgroundBuilder extends AbstractDrawableBuilder {
     public static class Config extends EnumerizedJsonBasedProperties<BackgroundBuilderConfig> {
         
         public Config(JsonValue json) {
-            super(json, BackgroundBuilderConfig.class);
+            super(json, true, BackgroundBuilderConfig.class);
         }
         
     }

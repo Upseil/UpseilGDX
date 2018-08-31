@@ -3,12 +3,13 @@ package com.upseil.gdx.util.properties;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CachingProperties<K> implements Properties<K> {
+public class CachingProperties<K> extends AbstractProperties<K> {
     
     private final Properties<K> properties;
     private final Map<K, Object> cache;
     
     public CachingProperties(Properties<K> properties) {
+        super(properties.isStrict());
         this.properties = properties;
         cache = new HashMap<>();
     }
