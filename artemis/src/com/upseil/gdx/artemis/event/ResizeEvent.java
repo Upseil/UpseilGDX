@@ -5,11 +5,15 @@ import com.upseil.gdx.event.EventType;
 
 public class ResizeEvent extends AbstractEvent<ResizeEvent> {
     
-    public static EventType<ResizeEvent> Type = new EventType<>("Resize");
+    public static final EventType<ResizeEvent> Type = new EventType<>("Resize");
     
     private int newWidth;
     private int newHeight;
     
+    public ResizeEvent() {
+        super(Type);
+    }
+
     public ResizeEvent set(int newWidth, int newHeight) {
         this.newWidth = newWidth;
         this.newHeight = newHeight;
@@ -22,11 +26,6 @@ public class ResizeEvent extends AbstractEvent<ResizeEvent> {
 
     public int getNewHeight() {
         return newHeight;
-    }
-
-    @Override
-    protected void setType() {
-        this.type = Type;
     }
     
     @Override

@@ -2,12 +2,14 @@ package com.upseil.gdx.artemis.event;
 
 import com.artemis.utils.IntBag;
 import com.upseil.gdx.event.AbstractEvent;
+import com.upseil.gdx.event.EventType;
 
 public abstract class AbstractEntityCollectionEvent<T extends AbstractEntityCollectionEvent<T>> extends AbstractEvent<T> {
 
     private final IntBag entities;
     
-    public AbstractEntityCollectionEvent() {
+    public AbstractEntityCollectionEvent(EventType<T> type) {
+        super(type);
         entities = new IntBag(16);
     }
     

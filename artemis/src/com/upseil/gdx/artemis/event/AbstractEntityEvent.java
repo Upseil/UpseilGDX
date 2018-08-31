@@ -1,12 +1,17 @@
 package com.upseil.gdx.artemis.event;
 
 import com.upseil.gdx.event.AbstractEvent;
+import com.upseil.gdx.event.EventType;
 
 public abstract class AbstractEntityEvent<T extends AbstractEntityEvent<T>> extends AbstractEvent<T> {
 
 	private int entityId = -1;
 
-	public int getEntityId() {
+	public AbstractEntityEvent(EventType<T> type) {
+        super(type);
+    }
+
+    public int getEntityId() {
 		return entityId;
 	}
 
