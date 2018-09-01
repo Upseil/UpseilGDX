@@ -5,6 +5,7 @@ import com.artemis.Aspect.Builder;
 import com.artemis.annotations.SkipWire;
 import com.artemis.ComponentMapper;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.upseil.gdx.artemis.component.Ignore;
 import com.upseil.gdx.artemis.component.Layer;
 import com.upseil.gdx.artemis.component.Scene;
@@ -35,6 +36,17 @@ public class LayeredSceneRenderSystem<B extends Batch> extends LayeredIteratingS
     protected void initialize() {
         layerMapper = world.getMapper(Layer.class);
         sceneMapper = world.getMapper(Scene.class);
+    }
+    
+    @Override
+    protected void inserted(int entityId) {
+        super.inserted(entityId);
+
+        Scene scene = sceneMapper.get(entityId);
+        Viewport viewport = scene.getViewport();
+        if (viewport.getScreenWidth() != screenWidth || viewport.getScreenHeight() != screenHeight) {
+            scene.update(screenWidth, screenHeight);
+        }
     }
     
     @Override

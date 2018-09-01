@@ -4,6 +4,7 @@ import com.artemis.PooledComponent;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Scene extends PooledComponent implements Disposable {
     
@@ -39,6 +40,10 @@ public class Scene extends PooledComponent implements Disposable {
     
     public Stage getStage() {
         return stage;
+    }
+    
+    public Viewport getViewport() {
+        return stage.getViewport();
     }
 
     public void apply() {
