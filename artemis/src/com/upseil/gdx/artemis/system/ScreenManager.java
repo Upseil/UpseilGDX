@@ -28,12 +28,13 @@ public class ScreenManager extends BaseSystem {
     protected void processSystem() {
         if (currentScreenId != -1) {
             Screen currentScreen = screenMapper.get(currentScreenId);
-            if (!exitActionInProgress && executeActions) {
+            boolean executeExitAction = executeActions && currentScreen.getExitAction() != null;
+            if (!exitActionInProgress && executeExitAction) {
                 Action<Screen, ?> exitAction = currentScreen.getExitAction();
                 exitAction.restart();
                 exitActionInProgress = true;
             }
-            if ((exitActionInProgress && currentScreen.getExitAction().act(world.delta)) || !executeActions) {
+            if (!executeExitAction ||(exitActionInProgress && currentScreen.getExitAction().act(world.delta))) {
                 hideScenes(currentScreen);
                 currentScreenId = -1;
                 exitActionInProgress = false;
@@ -42,12 +43,13 @@ public class ScreenManager extends BaseSystem {
         
         if (currentScreenId == -1) {
             Screen newScreen = screenMapper.get(newScreenId);
-            if (!entranceActionInProgress && executeActions) {
+            boolean executeEntranceAction = executeActions && newScreen.getEntranceAction() != null;
+            if (!entranceActionInProgress && executeEntranceAction) {
                 Action<Screen, ?> entranceAction = newScreen.getEntranceAction();
                 entranceAction.restart();
                 entranceActionInProgress = true;
             }
-            if ((entranceActionInProgress && newScreen.getEntranceAction().act(world.delta)) || !executeActions) {
+            if (!executeEntranceAction || (entranceActionInProgress && newScreen.getEntranceAction().act(world.delta))) {
                 showScenes(newScreen);
                 currentScreenId = newScreenId;
                 newScreenId = -1;
