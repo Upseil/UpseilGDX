@@ -1,5 +1,7 @@
 package com.upseil.gdx.util.properties;
 
+import com.upseil.gdx.util.Pair;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,53 +10,72 @@ public interface Properties<K> {
     
     // ----- Factory Methods ------------------------------------------------------------------------------------------------------------------------
     
-    // TODO Strict parameter
-    
     static Properties<String> fromPropertiesText(String text) {
-        return fromPropertiesLines(Arrays.asList(text.split("\\n")));
+        return fromPropertiesText(text, false);
+    }
+
+    static Properties<String> fromPropertiesText(String text, boolean strict) {
+        return fromPropertiesLines(Arrays.asList(text.split("\\n")), strict);
+    }
+
+    static Properties<String> fromPropertiesLines(Iterable<String> lines) {
+        return fromPropertiesLines(lines, false);
     }
     
-    static Properties<String> fromPropertiesLines(Iterable<String> lines) {
-        ModifiableProperties<String> properties = new MapBasedProperties<>();
+    static Properties<String> fromPropertiesLines(Iterable<String> lines, boolean strict) {
+        ModifiableProperties<String> properties = new MapBasedProperties<>(strict);
         for (String line : lines) {
-            String trimmedLine = line.trim();
-            if (trimmedLine.startsWith("#") || trimmedLine.startsWith("!")) {
-                continue;
-            }
-            
-            String[] property = line.split("=");
-            if (property.length == 2) {
-                properties.put(property[0].trim(), property[1].trim());
+            Pair<String, String> property = parseLine(line);
+            if (property != null) {
+                properties.put(property.getA(), property.getB());
             }
         }
         return properties;
     }
-    
-    static <E extends Enum<E>> Properties<E> fromPropertiesText(String text, Class<E> type) {
-        return fromPropertiesLines(Arrays.asList(text.split("\\n")), type);
+
+    static <E extends Enum<E>> Properties<E> fromPropertiesText(String text, Class<E> keyType) {
+        return fromPropertiesText(text, keyType, false);
     }
-    
-    static <E extends Enum<E>> Properties<E> fromPropertiesLines(Iterable<String> lines, Class<E> type) {
-        E[] enumValues = type.getEnumConstants();
+
+    static <E extends Enum<E>> Properties<E> fromPropertiesText(String text, Class<E> keyType, boolean strict) {
+        return fromPropertiesLines(Arrays.asList(text.split("\\n")), keyType, strict);
+    }
+
+    static <E extends Enum<E>> Properties<E> fromPropertiesLines(Iterable<String> lines, Class<E> keyType) {
+        return fromPropertiesLines(lines, keyType, false);
+    }
+
+    static <E extends Enum<E>> Properties<E> fromPropertiesLines(Iterable<String> lines, Class<E> keyType, boolean strict) {
+        E[] enumValues = keyType.getEnumConstants();
         Map<String, E> keyUniverse = new HashMap<>();
         for (E enumValue : enumValues) {
             keyUniverse.put(enumValue.name().toLowerCase(), enumValue);
         }
         
-        ModifiableProperties<E> properties = new MapBasedProperties<>();
+        ModifiableProperties<E> properties = new MapBasedProperties<>(strict);
         for (String line : lines) {
-            String trimmedLine = line.trim();
-            if (trimmedLine.startsWith("#") || trimmedLine.startsWith("!")) {
-                continue;
-            }
-            
-            String[] property = line.split("=");
-            String keyString = property[0].trim().toLowerCase();
-            if (property.length == 2 && keyUniverse.containsKey(keyString)) {
-                properties.put(keyUniverse.get(keyString), property[1].trim());
+            Pair<String, String> property = parseLine(line);
+            if (property != null) {
+                String keyString = property.getA().toLowerCase();
+                if (keyUniverse.containsKey(keyString))  {
+                    properties.put(keyUniverse.get(keyString), property.getB());
+                }
             }
         }
         return properties;
+    }
+
+    static Pair<String, String> parseLine(String line) {
+        String trimmedLine = line.trim();
+        if (trimmedLine.startsWith("#") || trimmedLine.startsWith("!")) {
+            return null;
+        }
+
+        String[] property = line.split("=");
+        if (property.length != 2) {
+            return null;
+        }
+        return new Pair<>(property[0].trim(), property[1].trim());
     }
     
     // ----- Methods --------------------------------------------------------------------------------------------------------------------------------

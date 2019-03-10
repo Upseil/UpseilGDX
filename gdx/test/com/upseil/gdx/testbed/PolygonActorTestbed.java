@@ -47,7 +47,7 @@ public class PolygonActorTestbed extends TestbedApplication {
         star.setName("Star");
         star.setColor(Color.WHITE);
         star.setPosition(15, 60);
-        star.setSize(15, 15);
+        star.setSize(15, 15); // FIXME Changed Size and Origin breaks polygon positioning
         star.setOrigin(Align.center);
         star.addAction(Actions.forever(Actions.rotateBy(360, 10)));
         star.addAction(Actions.forever(Actions.sequence(Actions.scaleTo(0.5f, 0.5f, 2), Actions.scaleTo(1.5f, 1.5f, 2))));

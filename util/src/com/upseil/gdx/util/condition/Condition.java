@@ -10,19 +10,16 @@ public interface Condition extends BooleanSupplier {
     void evaluate();
     void invalidate();
     
-    public static Condition simple(BooleanSupplier simpleCondition) {
+    static Condition simple(BooleanSupplier simpleCondition) {
         return new SimpleCondition(simpleCondition);
     }
-
-    public static Condition not(Condition condition) {
+    static Condition not(Condition condition) {
         return new NegateCondition(condition);
     }
-    
-    public static Condition and(Condition... conditions) {
+    static Condition and(Condition... conditions) {
         return new AndConditions(conditions);
     }
-    
-    public static Condition or(Condition... conditions) {
+    static Condition or(Condition... conditions) {
         return new OrConditions(conditions);
     }
     

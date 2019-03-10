@@ -3,6 +3,8 @@ package com.upseil.gdx.viewport;
 import com.badlogic.gdx.math.Rectangle;
 import com.upseil.gdx.util.FloatFloatPair;
 
+import static com.badlogic.gdx.math.MathUtils.ceil;
+
 public class ScreenRatioDivider implements ScreenDivider {
     
     private static final char RatioSeparator = ':';
@@ -31,7 +33,8 @@ public class ScreenRatioDivider implements ScreenDivider {
             float newHeight = screen.width / ratio;
             screen.set(screen.x, screen.y + (screen.height - newHeight) / 2, screen.width, newHeight);
         }
-        // TODO Round values
+        screen.setPosition((int) screen.x, (int) screen.y);
+        screen.setSize(ceil(screen.width), ceil(screen.height));
         return screen;
     }
     
